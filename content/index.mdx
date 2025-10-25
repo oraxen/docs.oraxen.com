@@ -19,7 +19,9 @@ layout:
     visible: true
 ---
 
-# Getting started
+# Welcome to Oraxen docs
+
+*Looking for the old documentation? Visit the [legacy GitBook site](http://oraxen.gitbook.io/).*
 
 ## What Is Oraxen?
 
@@ -33,8 +35,20 @@ When a Spigot server starts with Oraxen installed, the plugin will read all the 
 
 Installing Oraxen is a fairly straight forward process:&#x20;
 
-* Drop the Oraxen and [ProtocolLib](https://www.spigotmc.org/resources/protocollib.1997/) .jar files into your /plugins/ folder.
-* Restart your server.
+### Required Dependencies
+
+1. **CommandAPI** - Download the version-specific CommandAPI for your server:
+   - For **Spigot**: Download from [CommandAPI releases](https://github.com/JorelAli/CommandAPI/releases)
+   - For **Paper**: Download from [CommandAPI releases](https://github.com/JorelAli/CommandAPI/releases) (Paper version)
+   - For more details, see the [CommandAPI installation guide](https://docs.commandapi.dev/user-setup/install)
+
+2. Drop the Oraxen and CommandAPI .jar files into your `/plugins/` folder.
+
+### Optional Dependencies
+
+* **[ProtocolLib](https://www.spigotmc.org/resources/protocollib.1997/)** - Recommended but not mandatory.
+
+3. Restart your server.
 
 That's it! Although, we highly recommend heading into your settings.yml config and making any desired adjustments (then restarting once more) before continuing!
 
@@ -43,3 +57,4 @@ Oraxen has been tested with Spigot and Paper 1.18 -> 1.21.4
 
 
 For Minecraft 1.21.2+, using the latest version of Oraxen is advised. Oraxen is developed and designed for use with the [Paper](https://papermc.io/downloads/paper) server software. For older Minecraft versions, start by installing Oraxen 1.183.0 to get compatible configuration files. You can then update the jar file accordingly.
+
