@@ -1,14 +1,60 @@
-import { Bleed } from 'nextra/components'
+---
+description: How to install and setup Oraxen on Paper or Spigot
+icon: play
+cover: https://images.polymart.org/resource/629/default.jpg
+coverY: 0
+layout:
+  cover:
+    visible: true
+    size: full
+  title:
+    visible: true
+  description:
+    visible: true
+  tableOfContents:
+    visible: true
+  outline:
+    visible: true
+  pagination:
+    visible: true
+---
 
-# Introduction
+# Welcome to Oraxen docs
 
-**Nextra** is a [Next.js](https://nextjs.org) based static site generator.
+*Looking for the old documentation? Visit the [legacy GitBook site](http://oraxen.gitbook.io/).*
 
-It supports Markdown and React components ([MDX](/features/mdx)), automatically
-generated [sidebar and anchor links](/get-started#sidebar-and-anchor-links),
-file-system based routing, built-in syntax highlighting, image optimization,
-custom layouts, i18n, and all the features you love about Next.js.
+## What Is Oraxen?
 
-Here's what you will get in 1 minute:
+Oraxen is a Minecraft plugin which allows the creation of new items & blocks using custom textures and models. It also handles resourcepack generation, upload and storage (using Polymath), and is entirely open source with an extensible API.
 
-<Bleed>![Nextra Example](/demo.png)</Bleed>
+## How Does It All Work?
+
+When a Spigot server starts with Oraxen installed, the plugin will read all the item configurations (your .yml files inside /plugins/oraxen/items) and use them to generate .json models that link your .png textures to your new items. After this, Oraxen zips the resources using an optimized algorithm and uploads it to a polymath instance. Polymath is a free and opensource software written in Python to host Minecraft resourcepacks. By default Oraxen will use an Oraxen supplied Polymath instance, hosted in Switzerland on an oracle virtual private server. Whenever a player connects to your server, Oraxen will link them to the polymath instance which then sends them the resourcepack.
+
+## Install Oraxen In Seconds!
+
+Installing Oraxen is a fairly straight forward process:&#x20;
+
+### Required Dependencies
+
+1. **CommandAPI** - Download the version-specific CommandAPI for your server:
+   - For **Spigot**: Download from [CommandAPI releases](https://github.com/JorelAli/CommandAPI/releases)
+   - For **Paper**: Download from [CommandAPI releases](https://github.com/JorelAli/CommandAPI/releases) (Paper version)
+   - For more details, see the [CommandAPI installation guide](https://docs.commandapi.dev/user-setup/install)
+
+2. Drop the Oraxen and CommandAPI .jar files into your `/plugins/` folder.
+
+### Optional Dependencies
+
+* **[ProtocolLib](https://www.spigotmc.org/resources/protocollib.1997/)** - Recommended but not mandatory.
+
+3. Restart your server.
+
+That's it! Although, we highly recommend heading into your settings.yml config and making any desired adjustments (then restarting once more) before continuing!
+
+
+Oraxen has been tested with Spigot and Paper 1.18 -> 1.21.4
+
+
+For Minecraft 1.21.2+, using the latest version of Oraxen is advised. Oraxen is developed and designed for use with the [Paper](https://papermc.io/downloads/paper) server software. For older Minecraft versions, start by installing Oraxen 1.183.0 to get compatible configuration files. You can then update the jar file accordingly.
+
