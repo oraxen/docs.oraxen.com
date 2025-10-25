@@ -1,0 +1,4 @@
+{
+  "search.exclude": { "**/.next": true },
+  "files.exclude": { "**/.next": true }
+}
