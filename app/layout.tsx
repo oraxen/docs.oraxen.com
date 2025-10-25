@@ -14,13 +14,10 @@ export const metadata: Metadata = {
   appleWebApp: {
     title: "Nextra",
   },
-  other: {
-    "msapplication-TileImage": "/ms-icon-144x144.png",
-    "msapplication-TileColor": "#fff",
-  },
   twitter: {
     site: "https://nextra.site",
   },
+  icons: "/favicon.ico",
 };
 
 export default async function RootLayout({
@@ -31,11 +28,19 @@ export default async function RootLayout({
   const navbar = (
     <Navbar
       logo={
-        <div>
-          <b>Nextra</b>{" "}
-          <span style={{ opacity: "60%" }}>The Next Docs Builder</span>
+        <div style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
+          <img
+            src="/logo_lowres.png"
+            width={26}
+            height={26}
+            alt="Logo"
+            style={{ imageRendering: "pixelated" }}
+          />
+          <span style={{ opacity: "60%" }}>Oraxen</span>
         </div>
       }
+      logoLink="https://oraxen.com"
+      projectLink="https://git.io/oraxen"
       // Next.js discord server
       chatLink="https://discord.gg/hEM84NMkRv"
     />
@@ -51,7 +56,7 @@ export default async function RootLayout({
       : pageMap;
   return (
     <html lang="en" dir="ltr" suppressHydrationWarning>
-      <Head faviconGlyph="✦" />
+      <Head />
       <body>
         <Layout
           //banner={<Banner storageKey="Nextra 2">Nextra 2 Alpha</Banner>}
