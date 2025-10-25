@@ -61,7 +61,7 @@ export default async function RootLayout({
       logo={<LogoWithExternalIcon />}
       logoLink="https://oraxen.com"
       projectLink="https://git.io/oraxen"
-      chatLink="https://discord.gg/hEM84NMkRv"
+      chatLink="https://discord.gg/2ng6q3JNQ7"
     />
   );
   const pageMap = await getPageMap();
