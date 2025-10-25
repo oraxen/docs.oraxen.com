@@ -1,11 +1,10 @@
 export default {
-  index: '',
-  'get-started': '',
-  features: '',
-  themes: '',
-  advanced: {
-    theme: {
-      copyPage: false
-    }
-  }
-}
+  index: "Getting started",
+  faq: "Frequently Asked Questions",
+  usage: "Usage",
+  configuration: "Configuration",
+  mechanics: "Mechanics",
+  compatibility: "Compatibility",
+  vendors: "Vendors",
+  developers: "Developers",
+};
