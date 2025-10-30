@@ -130,3 +130,59 @@ Pack:
     - default/diamond_sword_damaged3
 ```
 This also works with damaged_textures if you only have texture files
+
+### Use advanced model properties (Minecraft 1.21.4+)
+
+Since Minecraft 1.21.4, you can customize additional item model properties:
+
+**GUI Oversize**
+Allows items to extend beyond slot boundaries in GUI when scaled up
+
+```yaml
+  Pack:
+    generate_model: false
+    model: item/large_item
+    oversized_in_gui: true
+```
+
+When combined with a scaled display model like this, it creates an item that stands out prominently in inventory slots.
+
+```json
+{
+	"parent": "item/handheld",
+	"textures": {
+		"layer0": "default/welcome_disk"
+	},
+	"display": {
+		"gui": {
+			"translation": [-2, -2, 0],
+			"scale": [2, 2, 2]
+		}
+	}
+}
+```
+See how oversized rendering looks in practice.
+![model-definitions-showcase.png](/assets/model-definitions-showcase.png)
+
+Here is an example use case provided by Wollodriin.
+![model-definitions-use-case.png](/assets/model-definitions-use-case.png)
+
+**Hand Swap Animation**
+Controls whether hand animation plays when swapping items (only when switching from an item to another item)
+
+```yaml
+  Pack:
+    generate_model: false
+    model: item/example_item
+    hand_animation_on_swap: false
+```
+
+**Hand Swap Animation Scale**
+Adjusts the scale of the swap animation
+
+```yaml
+  Pack:
+    generate_model: false
+    model: item/example_item
+    swap_animation_scale: 1.5
+```
