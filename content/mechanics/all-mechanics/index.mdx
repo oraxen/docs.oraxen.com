@@ -322,6 +322,26 @@ Mechanics:
     amount: 2 # the amount of 1/2 hearts that you'll steal to your opponents
 ```
 
+### Bleeding
+
+Makes your enemies bleed for a specific amount of time.
+
+#### Per item configuration
+
+```yaml
+Mechanics:
+  bleeding:
+    chance: 0.3 # 30% chance to apply bleeding on hit
+    duration: 100 # bleeding lasts for 100 ticks (5 seconds)
+    damage_per_interval: 0.5 # deals 0.5 damage (1/4 heart) per interval
+    interval: 20 # damage is applied every 20 ticks (1 second)
+```
+
+* **chance**: the chance of applying bleeding on hit 
+* **duration**: the duration of bleeding in ticks (20 ticks = 1 second)
+* **damage\_per\_interval**: the damage dealt per interval
+* **interval**: the interval between damages in ticks (20 ticks = 1 second)
+
 ### EnergyBlast
 
 EnergyBlast is a very cool mechanic that creates a cone of particles to attack entities.
