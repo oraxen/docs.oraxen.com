@@ -17,7 +17,7 @@ It also lets you set a replacement item for when the food has been consumed.
 Below is a config example of the mechanic-part for a custom food:
 
 
-On 1.20.5+ use the new [Food-Component](../../configuration/items-advanced/README#1205-specific-properties) instead
+On 1.20.5+ use the new [Food-Component](/configuration/items-advanced#1205-specific-properties) instead
 
 
 ```yaml
@@ -73,7 +73,7 @@ If you want this you need to make sure your .ogg sound-file is in mono sound for
 
 
 
-On 1.21+ use the new [JukeboxPlayable-Component](../../configuration/items-advanced/README#121-specific-properties) instead
+On 1.21+ use the new [JukeboxPlayable-Component](/configuration/items-advanced#121-specific-properties) instead
 
 
 `song` is the namespace:sound.name as you defined it in `sound.yml`.\
@@ -98,7 +98,7 @@ Mechanics:
 This allows you to change the durability of an item created with Oraxen. Minecraft vanilla wasn't made to handle that kind of modifications, this is why this system is not perfect. You'll not see the good  durability on your item, it will just work as a percentage. What that means is that if for example you create a pickaxe based off the wooden pickaxe (which has 59 of durability by default) and you change it to 5900, you'll still see 59 of durability on your item. But you'll need to break 100 blocks in order to lose of one durability. The cool thing is that the displayed bar will be updated correctly.
 
 
-On 1.20.5+ use the new [Durability-Component](../../configuration/items-advanced/README#1205-specific-properties) instead
+On 1.20.5+ use the new [Durability-Component](/configuration/items-advanced#1205-specific-properties) instead
 
 
 #### Per item configuration
@@ -116,8 +116,8 @@ This mechanic has a bunch of small changes you can make to your item.\
 What they each do should be pretty self-explanatory.
 
 
-On 1.20.5+ use the new [FireResistant-Component](../../configuration/items-advanced/README#1205-specific-properties) instead of burns_in_X below
-On 1.21.2+ use the new [DamageResistant-Component](../../configuration/items-advanced/README#1212-specific-properties) instead of burns_in_X/breaks_from_cactus below
+On 1.20.5+ use the new [FireResistant-Component](/configuration/items-advanced#1205-specific-properties) instead of burns_in_X below
+On 1.21.2+ use the new [DamageResistant-Component](/configuration/items-advanced#1212-specific-properties) instead of burns_in_X/breaks_from_cactus below
 
 
 ```yaml
@@ -209,11 +209,11 @@ Mechanics:
 
 ### Block and NoteBlock
 
-These mechanic allows you to use an item as block. Since these are quite special mechanics, they have a [dedicated tutorial page](../noteblock-mechanic/).
+These mechanic allows you to use an item as block. Since these are quite special mechanics, they have a [dedicated tutorial page](/mechanics/noteblock-mechanic).
 
 ### clickAction
 
-This mechanic allows you to run various events when a player clicks a block or furniture. It is very customizable, so it also has a [dedicated tutorial page](clickaction-mechanic).
+This mechanic allows you to run various events when a player clicks a block or furniture. It is very customizable, so it also has a [dedicated tutorial page](/mechanics/all-mechanics/clickaction-mechanic).
 
 ### Aura
 
@@ -253,7 +253,7 @@ Mechanics:
 
 ### ItemType
 
-With this mechanic, you can change the item type detected by OraxenBlocks. Make sure to use a type declared [inside the block mechanic](../noteblock-mechanic/#global-configuration).&#x20;
+With this mechanic, you can change the item type detected by OraxenBlocks. Make sure to use a type declared [inside the block mechanic](/mechanics/noteblock-mechanic#global-configuration).&#x20;
 
 #### Per item configuration
 
@@ -276,7 +276,7 @@ soulbound:
 
 ### Custom mechanic
 
-This mechanic allows you to customize events, conditions and actions. Since it is a quite rspecial mechanic, it has its [dedicated tutorial page](custom-mechanic).
+This mechanic allows you to customize events, conditions and actions. Since it is a quite rspecial mechanic, it has its [dedicated tutorial page](/mechanics/all-mechanics/custom-mechanic).
 
 ### Skin
 
