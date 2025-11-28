@@ -6,6 +6,8 @@ export default {
   'custom-armors': 'Custom Armors',
   'custom-hud': 'Custom HUD',
   'item-appearance': 'Item Appearance',
+  'pack-hosting': 'Pack Hosting',
+  'merging-packs': 'Pack Merging',
   glyphs: 'Glyphs',
   emoji: 'Emoji',
   'textures-and-models': 'Textures and Models'
