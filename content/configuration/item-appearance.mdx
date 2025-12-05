@@ -5,7 +5,95 @@ cover: >-
 coverY: 0
 ---
 
-Unlike most other plugins that allow you to create custom items, oraxen supports the creation of a texture pack: that is, you can define directly in the configuration what you want your items to look like and it will take care of generating the pack. For minecraft, the appearance of each item is managed by a json file called the model. Most of the items have a very simple model that simply displays a two-dimensional texture. To avoid having to write this json file (which is repetitive and boring), you can ask Oraxen to generate it itself.
+import { Callout } from 'nextra/components'
+
+Unlike most other plugins that allow you to create custom items, Oraxen supports the creation of a texture pack: you can define directly in the configuration what you want your items to look like and it will take care of generating the pack. For Minecraft, the appearance of each item is managed by a json file called the model. Oraxen can generate these files automatically.
+
+### How Oraxen handles item models
+
+Oraxen supports two systems for item appearance, which can be used independently or together:
+
+| System | Pack Output | Item Component | Versions |
+|--------|-------------|----------------|----------|
+| **Item Model Definitions** | `assets/oraxen/items/<id>.json` | `item_model` component | 1.21.4+ only |
+| **Predicates** | `assets/minecraft/models/item/<material>.json` | `custom_model_data` | All versions |
+
+<Callout type="info">
+**Default behavior:**
+- **Pre-1.21.4**: Only predicates (forced)
+- **1.21.4+**: Only item_model (default, configurable)
+</Callout>
+
+### Appearance System Settings (1.21.4+)
+
+On 1.21.4+, you can configure which systems to use in `settings.yml`:
+
+```yaml
+Pack:
+  generation:
+    appearance:
+      item_model: true    # Generate item model definitions
+      predicates: false   # Generate predicate overrides
+```
+
+**Available modes:**
+
+| Mode | item_model | predicates | Use Case |
+|------|------------|------------|----------|
+| **Modern** (default) | `true` | `false` | Clean 1.21.4+ setup |
+| **Hybrid** | `true` | `true` | Compatibility with plugins using CMD |
+| **Legacy** | `false` | `true` | Full backwards compatibility |
+
+<Callout type="warning">
+**Hybrid mode** generates both systems, making your items work with native 1.21.4+ features AND plugins that rely on custom_model_data. This increases pack size slightly but maximizes compatibility.
+</Callout>
+
+### Per-Item System Exclusions
+
+You can exclude specific items from either system:
+
+```yaml
+my_item:
+  Pack:
+    generate_model: true
+    textures:
+      - my_texture
+    exclude_from_predicates: false   # Don't add to predicate file
+    exclude_from_item_model: false   # Don't generate item model definition
+```
+
+**Use cases:**
+- `exclude_from_predicates: true` - Item only uses item_model (cleaner pack)
+- `exclude_from_item_model: true` - Item only uses CMD (for plugin compatibility)
+
+<details>
+<summary>**Advanced**: How each system works</summary>
+
+**Item Model Definitions (1.21.4+)**
+
+Oraxen generates files in `assets/oraxen/items/` for each custom item. For example, an item with ID `my_sword` creates:
+
+```
+assets/oraxen/items/my_sword.json
+```
+
+This file defines which model to display. Items are then given an `item_model` component pointing to `oraxen:my_sword`.
+
+If you need a custom namespace or model path, you can override this using the Components section:
+
+```yaml
+my_item:
+  Components:
+    item_model: "custom:weapons/legendary_sword"
+```
+
+This would reference `assets/custom/items/weapons/legendary_sword.json` in the resource pack.
+
+**Predicates (Custom Model Data)**
+
+Oraxen generates predicate overrides in the base item model files (e.g., `assets/minecraft/models/item/diamond_sword.json`). Each custom item gets a `custom_model_data` value that maps to its model.
+
+</details>
 
 ### The pack folder
 
@@ -24,7 +112,7 @@ Put the textures that you need in the textures directory of the pack folder. You
       - example_image2.png
 ```
 
-The parent\_model field is required by minecraft. In fact this will allow your item to inherit the rendering properties of an item template from minecraft. You can look at the minecraft default models in order to find new ones but I personnaly use item/handheld for weapons like swords and item/generated for simple items or gems like amethysts.
+The `parent_model` field is required by Minecraft. It allows your item to inherit the rendering properties of an item template. Common values are `item/handheld` for weapons like swords, and `item/generated` for simple items or gems like amethysts.
 
 You can also use an alternative way of declaring textures, especially nice when using block parent-models.\
 ```yaml
@@ -186,3 +274,19 @@ Adjusts the scale of the swap animation
     model: item/example_item
     swap_animation_scale: 1.5
 ```
+
+### Setting a specific Custom Model Data
+
+You can manually specify a custom model data value:
+
+```yaml
+my_item:
+  Pack:
+    generate_model: true
+    parent_model: "item/generated"
+    textures:
+      - my_texture
+    custom_model_data: 452
+```
+
+On 1.21.4+, this value is used when the predicates system is enabled (see [Appearance System Settings](#appearance-system-settings-1214) above). If you're using hybrid or legacy mode, this lets you control which CMD value your item uses for compatibility with other plugins.
