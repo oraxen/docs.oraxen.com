@@ -1,5 +1,5 @@
 export default {
-  index: 'Items (advanced)',
-  components: 'Components',
+  index: 'Configuration Reference',
+  components: 'Item Components',
   'dyeable-items': 'Dyeable Items'
 }
