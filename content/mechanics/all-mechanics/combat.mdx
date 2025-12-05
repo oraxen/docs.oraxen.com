@@ -1,0 +1,114 @@
+---
+description: Combat mechanics for weapons and spells
+---
+
+import { Callout } from 'nextra/components'
+
+# Combat Mechanics
+
+<Callout type="info">
+All spell-based combat mechanics (Thor, EnergyBlast, WitherSkull, Fireball) support a `charges` option that limits the number of uses before the item is consumed. Set to `-1` or omit for unlimited uses.
+</Callout>
+
+### Thor
+
+Have you ever dreamed of being able to throw lightning bolts? This is for you.
+
+#### Per item configuration
+
+```yaml
+Mechanics:
+  thor:
+    lightning_bolts_amount: 5
+    random_location_variation: 1.5
+    delay: 20000 # in milliseconds (20000ms = 20s)
+    charges: -1 # optional: number of uses before item is consumed (-1 for infinite)
+```
+
+* **lightning\_bolts\_amount**: how many lightning bolts will be spawned?
+* **random\_location\_variation**: the random variation range between bolts (in blocks)
+* **delay**: delay between usage in milliseconds (1000ms = 1s)
+
+### Lifeleech
+
+Want to steal hearts to your opponents when you hit them?
+
+#### Per item configuration
+
+```yaml
+Mechanics:
+  lifeleech:
+    amount: 2 # the amount of 1/2 hearts that you'll steal to your opponents
+```
+
+### Bleeding
+
+Makes your enemies bleed for a specific amount of time.
+
+#### Per item configuration
+
+```yaml
+Mechanics:
+  bleeding:
+    chance: 0.3 # 30% chance to apply bleeding on hit
+    duration: 100 # bleeding lasts for 100 ticks (5 seconds)
+    damage_per_interval: 0.5 # deals 0.5 damage (1/4 heart) per interval
+    interval: 20 # damage is applied every 20 ticks (1 second)
+```
+
+* **chance**: the chance of applying bleeding on hit 
+* **duration**: the duration of bleeding in ticks (20 ticks = 1 second)
+* **damage\_per\_interval**: the damage dealt per interval
+* **interval**: the interval between damages in ticks (20 ticks = 1 second)
+
+### EnergyBlast
+
+EnergyBlast is a very cool mechanic that creates a cone of particles to attack entities.
+
+#### Per item configuration
+
+```yaml
+Mechanics:
+  energyblast:
+    delay: 20000
+    length: 5
+    damage: 10.0
+    charges: -1 # optional: number of uses before item is consumed (-1 for infinite)
+    particle:
+      type: REDSTONE # only REDSTONE particle can change size and color
+      size: 1
+      color:
+        red: 0
+        green: 255
+        blue: 255
+```
+
+### Witherskull
+
+Send wither skulls when right clicking!
+
+#### Per item configuration
+
+```yaml
+Mechanics:
+  witherskull:
+    charged: false # a charged skull can break blocks
+    delay: 3000 # in milliseconds (3000ms = 3s)
+    charges: -1 # optional: number of uses before item is consumed (-1 for infinite)
+```
+
+### Fireball
+
+Launch fireballs when right clicking! The fireball explodes on impact.
+
+#### Per item configuration
+
+```yaml
+Mechanics:
+  fireball:
+    delay: 3000 # in milliseconds (3000ms = 3s)
+    yield: 2.0 # explosion power
+    speed: 1.0 # projectile speed
+    charges: 5 # optional: number of uses before item is consumed (-1 for infinite)
+```
+

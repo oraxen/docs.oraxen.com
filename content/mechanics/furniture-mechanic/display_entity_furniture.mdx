@@ -44,7 +44,7 @@ cart:
 First off, `type` is a new property added in Oraxen 1.154.0.\
 It allows you to specify if you want to use the old ItemFrame type, or new Display Entity type.\
 If your server allows players on versions below 1.19.4, we suggest sticking with ItemFrame, as the other will not be visible.\
-If this property is not specified, it will default to ITEM_FRAME.\
+If this property is not specified, it defaults to `DISPLAY_ENTITY` on servers that support it (1.19.4+), otherwise `ITEM_FRAME`.\
 The available options are: `ITEM_FRAME`, `GLOW_ITEM_FRAME` & `DISPLAY_ENTITY`
 
 ### Hitbox
@@ -97,4 +97,28 @@ display_entity_properties:
     z: 1
 ```
 
-`view_range`, `shadow_radius`, `shadow_strength` should be self-explanatory.
+`view_range` controls from how far the furniture can be seen (in blocks).
+
+`shadow_radius` and `shadow_strength` control the shadow cast by the furniture.
+
+### Animation Properties
+
+`interpolation_duration` sets how many ticks transformations (scale/rotation changes) take to complete. Useful for smooth animations.
+
+`interpolation_delay` sets a delay in ticks before transformations begin.
+
+```yaml
+display_entity_properties:
+  interpolation_duration: 10 # 10 ticks for smooth transitions
+  interpolation_delay: 0
+```
+
+### Display Dimensions
+
+`displayWidth` and `displayHeight` control the bounding box dimensions used for culling (when the furniture is hidden if not in view).
+
+```yaml
+display_entity_properties:
+  displayWidth: 1.0
+  displayHeight: 1.0
+```
