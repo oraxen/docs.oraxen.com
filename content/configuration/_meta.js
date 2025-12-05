@@ -7,7 +7,7 @@ export default {
   'custom-hud': 'Custom HUD',
   'item-appearance': 'Item Appearance',
   'pack-hosting': 'Pack Hosting',
-  'merging-packs': 'Pack Merging',
+  'pack-merging': 'Pack Merging',
   glyphs: 'Glyphs',
   emoji: 'Emoji'
 }
