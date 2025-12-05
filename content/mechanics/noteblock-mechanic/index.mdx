@@ -115,16 +115,11 @@ You can use this to allow protection via [BlockLocker](https://www.spigotmc.org/
 Valid protectionTypes are CONTAINER, DOOR, ATTACHABLE
 ```yaml
 Mechanics:
-  furniture:
+  noteblock:
     blocklocker:
       can_protect: true
       protection_type: CONTAINER
 ```
-
-
-You need LightAPI for this, but will not work on any modern version of Paper due to chunk and lighting changes in Paper.\
-You can find a fork of the original plugin [here](https://github.com/IPECTER/LighterAPI/releases/tag/5.4.0-SNAPSHOT)\
-This should work on any modern version of Spigot and Paper.\
 
 
 
@@ -157,12 +152,24 @@ This mechanic can also be used with the furniture mechanic!\
 
 ### Falling Blocks
 This is a sub-mechanic that mimics sand & gravel for your custom block.
-Placing it next to another block, with no block beneath, will make it fall
+Placing it next to another block, with no block beneath, will make it fall.
 ```yaml
 Mechanics:
   noteblock:
     is_falling: true # Default to false if unspecified
 ```
+
+### Ignitable Blocks
+Allow the block to be ignited by fire/flint and steel.
+```yaml
+Mechanics:
+  noteblock:
+    can_ignite: true # Default: false
+```
+
+### Click Actions
+Run commands, play sounds, or send messages when a player clicks the block.\
+See the [clickAction mechanic](/mechanics/all-mechanics/clickaction-mechanic) for detailed configuration.
 
 ### Ores
 

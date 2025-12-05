@@ -96,6 +96,8 @@ Mechanics:
 
 Barriers are invisible blocks placed with your furniture so that it has a realistic hitbox. You can place a single one or a list relative to the position of the player who places them.
 
+Note: For Display Entity furniture, you can use `hitbox` instead of barriers for a simpler configuration. Barriers are still useful for larger furniture or when you need collision.
+
 ### Single barrier:
 
 ```yaml
@@ -231,3 +233,51 @@ Mechanics:
       can_protect: true
       protection_type: CONTAINER
 ```
+
+## Hardness
+You can set a custom hardness for your furniture, which affects how long it takes to break.
+```yaml
+Mechanics:
+  furniture:
+    hardness: 5 # Default: 1
+```
+
+## Alternative Display Item
+Use a different Oraxen item's model when the furniture is placed. Useful for having a different inventory icon vs placed appearance.
+```yaml
+Mechanics:
+  furniture:
+    item: different_item_id # The item model to display when placed
+```
+
+## Placement Requirements
+Require the furniture to be placed on farmland or a custom Oraxen farm block.
+```yaml
+Mechanics:
+  furniture:
+    farmland_required: true # Requires vanilla farmland
+    # OR
+    farmblock_required: true # Requires Oraxen custom farm block
+```
+
+## Evolution
+Make furniture evolve over time into different stages, like crops growing. Useful for custom plants.
+```yaml
+Mechanics:
+  furniture:
+    evolution:
+      delay: 6000 # Ticks between evolution checks
+      next_stage: my_plant_stage2 # The item ID to evolve into
+      probability: 0.5 # Chance to evolve (0.0 to 1.0)
+      light_boost: # Optional: speed up in light
+        minimum_light_level: 9
+        boost_tick: 2000 # Ticks to add per check when light is sufficient
+      rain_boost: # Optional: speed up in rain
+        boost_tick: 1500
+      bone_meal: # Optional: allow bone meal to advance growth
+        chance: 30 # Percentage chance to advance on bone meal use
+```
+
+## Click Actions
+Run commands, play sounds, or send messages when a player clicks the furniture.\
+See the [clickAction mechanic](/mechanics/all-mechanics/clickaction-mechanic) for detailed configuration.

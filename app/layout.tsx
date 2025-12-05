@@ -38,17 +38,45 @@ function LogoWithExternalIcon() {
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://docs.oraxen.com"),
-  title: "Oraxen Docs",
+  title: {
+    default: "Oraxen Docs",
+    template: "%s | Oraxen Docs",
+  },
   description: "Oraxen: Create custom items & blocks for Minecraft",
   applicationName: "Oraxen Docs",
   generator: "Next.js",
+  manifest: "/manifest.json",
   appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
     title: "Oraxen Docs",
   },
-  twitter: {
-    site: "https://docs.oraxen.com",
+  formatDetection: {
+    telephone: false,
   },
-  icons: "/favicon.ico",
+  twitter: {
+    card: "summary_large_image",
+    site: "@oraborern",
+    creator: "@oraborern",
+  },
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    siteName: "Oraxen Docs",
+  },
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/icon-192.png", sizes: "192x192", type: "image/png" },
+      { url: "/icon-512.png", sizes: "512x512", type: "image/png" },
+    ],
+    apple: [
+      { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
+    ],
+  },
+  other: {
+    "mobile-web-app-capable": "yes",
+  },
 };
 
 export default async function RootLayout({
@@ -76,6 +104,14 @@ export default async function RootLayout({
   return (
     <html lang="en" dir="ltr" suppressHydrationWarning>
       <Head>
+        {/* Safari/iOS theme color - matches dark mode background */}
+        <meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)" />
+        <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+        {/* Optimal viewport for PWA */}
+        <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+        {/* Preconnect to external resources for faster loading */}
+        <link rel="preconnect" href="https://cdn.discordapp.com" />
+        <link rel="dns-prefetch" href="https://cdn.discordapp.com" />
         <script
           dangerouslySetInnerHTML={{
             __html: `

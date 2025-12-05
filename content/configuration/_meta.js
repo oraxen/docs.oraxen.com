@@ -9,6 +9,5 @@ export default {
   'pack-hosting': 'Pack Hosting',
   'merging-packs': 'Pack Merging',
   glyphs: 'Glyphs',
-  emoji: 'Emoji',
-  'textures-and-models': 'Textures and Models'
+  emoji: 'Emoji'
 }
