@@ -16,11 +16,30 @@ Plugin:
 
 The plugin related options. Here you can configure how some things work. Should the repair only repair Oraxen items with an oraxen durability?
 
+## Plugin Options
+
+```yaml
+Plugin:
+  language: english # Language file to use
+  generation:
+    default_assets: true # Generate default textures/models on first run
+    default_configs: true # Generate default item configs on first run
+  formatting: # Enable MiniMessage formatting in various contexts
+    inventory_titles: true
+    titles: true
+    subtitles: true
+    action_bar: true
+    anvil: false
+    signs: false
+    chat: false
+    books: false
+```
+
 ## Item configurations
 
 ### How do the Oraxen configurations work?
 
-First, Oraxen has several folders and 3 of these are to configure things, the first one is `Oraxen/ghyphs/` and is to configure the Custom Font or Ghyph, then\
+First, Oraxen has several folders and 3 of these are to configure things, the first one is `Oraxen/glyphs/` and is to configure the Custom Font or Glyph, then\
 `Oraxen/items/` and is to configure and create your own configuration yaml and lastly `Oraxen/pack/` the target place where all the files like textures and models will be created,
 
 ## Pack
@@ -41,9 +60,32 @@ First, Oraxen has several folders and 3 of these are to configure things, the fi
      \nplugin and any complete or partial
      \nuse must comply with the terms and
      \nconditions of Oraxen."
+    appearance:
+      item_model: true    # Generate item model definitions (1.21.4+ only)
+      predicates: false   # Generate predicate overrides (custom_model_data)
 ```
 
 This section allows you to configure the **generation** of the pack. The **compression** is configured to make the smallest zip possible by default. You can change the **comment** which is basically a watermark inside your zip.
+
+#### Appearance Systems (1.21.4+)
+
+The `appearance` section controls how item textures are applied:
+
+| Setting | Description |
+|---------|-------------|
+| `item_model` | Generate Item Model Definitions in `assets/oraxen/items/`. Items use the `item_model` component. |
+| `predicates` | Generate predicate overrides in vanilla item models. Items use `custom_model_data`. |
+
+**Default behavior by version:**
+- **Pre-1.21.4**: Only predicates (forced, regardless of settings)
+- **1.21.4+**: Only item_model by default
+
+**Common configurations:**
+- `item_model: true, predicates: false` - Modern (default): Clean 1.21.4+ setup
+- `item_model: true, predicates: true` - Hybrid: Both systems for max compatibility
+- `item_model: false, predicates: true` - Legacy: Classic custom_model_data behavior
+
+See [Item Appearance](/configuration/item-appearance#appearance-system-settings-1214) for detailed documentation and per-item options.
 
 #### Protection
 
@@ -196,13 +238,82 @@ This option lets you hide the scoreboard background.
   hide_scoreboard_background: true
 ```
 
+### hide\_tablist\_background
+
+```yaml
+  hide_tablist_background: true
+```
+
+This option lets you hide the tablist background (1.21+ only).
+
 ### reset\_recipes
 
 ```yaml
 reset_recipes: true
 ```
 
-This option can causes bug with other recipes plugins. If you notice bugs with a recipes plugin when reloading Oraxen, you can disable this option. If you do that, you will have to restart the server to refresh Oraxen recipes.
+This option can cause bugs with other recipe plugins. If you notice bugs with a recipe plugin when reloading Oraxen, you can disable this option. If you do that, you will have to restart the server to refresh Oraxen recipes.
+
+## Glyphs
+
+```yaml
+Glyphs:
+  glyph_handler: vanilla # or nms - vanilla is recommended
+  emoji_list_permission_only: false # Only show emojis player has permission for
+  unicode_completions: true # Enable tab-completion for unicode characters
+  chat_hover_text: true # Show glyph name on hover in chat
+```
+
+## Chat
+
+```yaml
+Chat:
+  chat_handler: vanilla # or nms
+```
+
+## WorldEdit
+
+Enable/disable WorldEdit integration for custom blocks.
+
+```yaml
+WorldEdit:
+  noteblock_mechanic: true
+  stringblock_mechanic: true
+  furniture_mechanic: true
+```
+
+## ItemUpdater
+
+Control how Oraxen updates existing items when configs change.
+
+```yaml
+ItemUpdater:
+  update_items: true # Auto-update items in inventories
+  update_items_on_reload: true # Update on /o reload
+  override_renamed_items: false # Update even if player renamed the item
+  override_item_lore: true # Override lore changes
+```
+
+## FurnitureUpdater
+
+Control how Oraxen updates placed furniture.
+
+```yaml
+FurnitureUpdater:
+  update_furniture: true
+  update_on_reload: true
+  update_on_load: true
+  experimental_furniture_type_update: false # Update furniture entity type on config change
+  experimental_fix_broken_furniture: false # Attempt to fix broken furniture
+```
+
+## CustomBlocks
+
+```yaml
+CustomBlocks:
+  block_correction: true # Auto-correct block states
+  use_legacy_noteblocks: false # Use old noteblock system (not recommended)
+```
 
 ## Oraxen Inventory
 
