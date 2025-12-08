@@ -198,12 +198,27 @@ receive:
 ## ConfigTools
 
 ```yaml
+ConfigsTools:
   enable_configs_updater: true
+  disable_automatic_model_data: false
+  disable_automatic_glyph_code: false
   error_item:
     material: PODZOL
     excludeFromInventory: false # set to true if you don't want to display it inside inventory
     injectID: false
 ```
+
+| Setting | Description |
+|---------|-------------|
+| `enable_configs_updater` | Automatically update config files when new options are added |
+| `disable_automatic_model_data` | Prevent Oraxen from auto-assigning `custom_model_data` values |
+| `disable_automatic_glyph_code` | Prevent Oraxen from auto-assigning unicode characters to glyphs |
+
+import { Callout } from 'nextra/components'
+
+<Callout type="warning">
+**Grid Glyphs Warning:** If you enable `disable_automatic_glyph_code`, you **must** manually define the `chars` list for any [grid-based glyphs](/configuration/glyphs#multi-character-grid-glyphs). Without manual character assignment, grid glyphs will receive new unicode characters on every server restart, breaking saved references. Single-character glyphs will reuse their existing `char` value, but grid glyphs have no such fallback.
+</Callout>
 
 ## CustomArmor
 
