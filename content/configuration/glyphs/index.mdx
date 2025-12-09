@@ -4,6 +4,8 @@ cover: https://i.imgur.com/T76ianD.png
 coverY: 0
 ---
 
+import { Callout } from 'nextra/components'
+
 ## What is a glyph?
 
 A glyph is a textured unicode symbol. It can be used in any texts (chat, item name, lore and more). They can be used to do very, very powerful things (custom inventories, extra bars) but their simplest use is to be emoji.
@@ -21,103 +23,6 @@ heart:
   texture: default/chat/heart
   ascent: 8
   height: 8
-```
-
-## Multi-Character Grid Glyphs
-
-For large textures or sprite sheets, you can use grid-based glyphs that span multiple unicode characters. This is useful for:
-- Large UI elements that exceed Minecraft's single-character size limit
-- Sprite sheets containing multiple related images
-- Progressive animations or multi-part displays
-
-### Grid Configuration
-
-```yaml
-large_banner:
-  texture: ui/large_banner
-  ascent: 8
-  height: 128
-  grid:
-    rows: 2
-    columns: 4
-```
-
-This creates a 2×4 grid (8 total characters). Oraxen automatically assigns unicode characters to each cell and saves them to your config as a `chars` list.
-
-### Manual Character Assignment
-
-If you need precise control over which unicode characters are used, you can define them manually:
-
-```yaml
-sprite_sheet:
-  texture: ui/sprite_sheet
-  ascent: 8
-  height: 64
-  chars:
-    - "䀀䀁䀂䀃"  # Row 1: 4 characters
-    - "䀄䀅䀆䀇"  # Row 2: 4 characters
-  grid:
-    rows: 2
-    columns: 4
-```
-
-import { Callout } from 'nextra/components'
-
-<Callout type="warning">
-**Important:** If you have `ConfigsTools.disable_automatic_glyph_code: true` in your settings, you **must** manually define the `chars` list for grid glyphs. Otherwise, characters will be regenerated on every server restart, breaking any saved references to those characters.
-</Callout>
-
-### Using Grid Glyphs
-
-Grid glyphs can be used with index or range selectors in the `<glyph>` tag:
-
-```
-<glyph:large_banner>         <!-- All characters with newlines between rows -->
-<glyph:large_banner:1>       <!-- First character only -->
-<glyph:large_banner:3>       <!-- Third character -->
-<glyph:large_banner:1..4>    <!-- Characters 1-4 (first row) -->
-```
-
-Indices are 1-based and count left-to-right, top-to-bottom across the grid.
-
-## Appearance Configuration
-
-You can customize how glyphs are rendered with the `appearance` section:
-
-```yaml
-styled_icon:
-  texture: icons/special
-  ascent: 8
-  height: 8
-  appearance:
-    font: "minecraft:default"     # Which font to use (default: minecraft:default)
-    shadow_color: "#80000000"     # Shadow color in ARGB hex (1.21.4+ only)
-```
-
-### Shadow Colors
-
-Shadow colors use ARGB hex format:
-- `#AARRGGBB` - Full format with alpha
-- `#RRGGBB` - Assumes full opacity (FF alpha)
-- `#RGB` - Shorthand, expands to RRGGBB
-
-Examples:
-- `#80000000` - 50% transparent black shadow
-- `#FF0000` - Red shadow (full opacity)
-- `#00000000` - No shadow (fully transparent)
-
-<Callout type="info">
-Shadow colors require Minecraft 1.21.4 or newer. On older versions, this setting is ignored.
-</Callout>
-
-### Overriding Shadow in Tags
-
-You can override the default shadow color per-use:
-
-```
-<glyph:my_icon:shadow:#FF0000>    <!-- Red shadow -->
-<glyph:my_icon:s:#80FFFFFF>       <!-- 50% white shadow (short form) -->
-<glyph:my_icon:colorable:shadow:#000000>  <!-- Colorable with black shadow -->
 ```
 
 ## My glyphs don't work?
@@ -199,6 +104,87 @@ chat:
   placeholders:
     - "<3"
   permission: "oraxen.emoji.heart"
+```
+
+
+## Grid-Based Glyphs
+
+<Callout type="info">
+Grid-based glyphs allow you to use a single large texture that spans multiple unicode characters, perfect for large images, detailed icons, or sprite sheets.
+</Callout>
+
+If you have a texture larger than 256x256 pixels, or want to display a large image in chat/lore, you can use the `grid` configuration to split it across multiple characters.
+
+```yaml
+large_banner:
+  texture: custom/large_banner
+  ascent: 8
+  height: 128
+  grid:
+    rows: 2      # Image spans 2 rows
+    columns: 3   # Image spans 3 columns
+```
+
+The plugin will automatically allocate the required unicode characters (rows × columns) for the glyph. In the example above, 6 characters would be allocated to display the full image.
+
+When using a grid glyph in MiniMessage tags, you can select specific portions:
+- `<glyph:large_banner>` - Displays all characters with newlines between rows
+- `<glyph:large_banner:1>` - Displays only the 1st character
+- `<glyph:large_banner:1..4>` - Displays characters 1 through 4
+
+## Appearance Configuration
+
+Glyphs support an `appearance` section for advanced styling options:
+
+```yaml
+custom_icon:
+  texture: icons/custom
+  ascent: 8
+  height: 8
+  appearance:
+    font: "minecraft:default"   # Custom font (default: minecraft:default)
+    shadow_color: "#80000000"   # Shadow color in ARGB hex format (1.21.4+)
+```
+
+### Shadow Colors (1.21.4+)
+
+On Minecraft 1.21.4 and above, you can customize the text shadow color for glyphs. The shadow color uses ARGB hex format:
+- `#AARRGGBB` - Full format with alpha, red, green, blue
+- `#RRGGBB` - RGB format (assumes FF alpha)
+- `#RGB` - Short format (expands to #FFRRGGBB)
+
+Example: `#80000000` creates a semi-transparent black shadow.
+
+<Callout type="info">
+If a glyph has `shadow_color` configured, the shadow is **automatically applied** when using the glyph tag - no extra flags needed. You only need the `:s:#color` syntax to override with a different color.
+</Callout>
+
+## Glyph Tag Options
+
+When using glyphs in MiniMessage format, you can add modifiers:
+
+```
+<glyph:heart>              Basic usage (auto-applies configured shadow_color)
+<g:heart>                  Shorthand syntax
+<glyph:heart:c>            Colorable - inherits surrounding text color
+<glyph:heart:colorable>    Same as above (full name)
+<glyph:heart:s:#FF0000>    Override shadow with custom color (red)
+<glyph:heart:shadow:#FF0000>  Same as above (full name)
+<glyph:grid_icon:2>        Select specific character index (1-based)
+<glyph:grid_icon:1..4>     Select range of characters
+```
+
+Multiple options can be combined:
+```
+<glyph:heart:c:s:#80FF0000>  Colorable with custom semi-transparent red shadow
+```
+
+### Colorable Glyphs
+
+By default, glyphs render in white to display their original texture colors. Using the `:c` or `:colorable` modifier allows the glyph to inherit color from surrounding text:
+
+```
+<red>I <glyph:heart:c> Oraxen</red>  // Heart will be red
 ```
 
 ## Do not remove shifts.yml
