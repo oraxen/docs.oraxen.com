@@ -10,6 +10,88 @@ import { Callout } from 'nextra/components'
 All spell-based combat mechanics (Thor, EnergyBlast, WitherSkull, Fireball) support a `charges` option that limits the number of uses before the item is consumed. Set to `-1` or omit for unlimited uses.
 </Callout>
 
+### Spear Lunge
+
+<Callout type="info">
+Requires Minecraft 1.21.4+ for model swapping during charge animation.
+</Callout>
+
+A charged attack mechanic that transforms your weapon into a devastating lunge. Hold right-click to charge, then release or left-click to thrust forward, dealing damage to enemies in your path.
+
+#### Features
+
+- **Model Animation**: The weapon model visually transitions during charging (requires 1.21.4+)
+- **Smooth Animation**: Optional intermediate frames for fluid charging animations
+- **Multi-Target**: Can hit multiple enemies in a cone with configurable piercing
+- **Movement Slowdown**: Configurable speed reduction while charging
+- **Full Customization**: Particles, sounds, damage, range, and knockback are all configurable
+
+#### Per item configuration
+
+```yaml
+my_spear:
+  material: IRON_SWORD
+  displayname: "<gradient:#gold:#yellow>Battle Spear"
+  Pack:
+    generate_model: false
+    model: default/spear_inactive  # Base model (resting position)
+  Mechanics:
+    spear_lunge:
+      active_model: default/spear_active  # Model when fully charged (thrust position)
+      intermediate_models:                 # Optional animation frames during charge
+        - default/spear_frame0
+        - default/spear_frame1
+      smooth_frames: 2          # Number of intermediate frames to use
+      charge_ticks: 20          # Ticks to fully charge (20 = 1 second)
+      lunge_velocity: 0.8       # Forward velocity on lunge release
+      max_range: 5.0            # Hit detection range in blocks
+      damage: 10.0              # Damage at full charge
+      knockback: 0.8            # Knockback applied to targets
+      min_charge_percent: 0.25  # Minimum charge needed to attack (25%)
+      charge_slowdown: 0.5      # Movement slowdown while charging (0.0-1.0)
+      max_hold_ticks: 60        # Max hold time before auto-cancel (ticks)
+      max_targets: 3            # Maximum enemies hit per lunge
+      particles:
+        enabled: true
+        charge: CRIT            # Particle during charging
+        lunge: SWEEP_ATTACK     # Particle on lunge
+        hit: DAMAGE_INDICATOR   # Particle on enemy hit
+      sounds:
+        enabled: true
+        charge: ITEM_TRIDENT_RIPTIDE_1
+        lunge: ENTITY_PLAYER_ATTACK_SWEEP
+        hit: ENTITY_PLAYER_ATTACK_STRONG
+```
+
+#### Configuration Options
+
+| Option | Default | Description |
+|--------|---------|-------------|
+| `active_model` | - | Model path when fully charged (required for animation) |
+| `intermediate_models` | - | List of model paths for smooth charge animation |
+| `smooth_frames` | 0 | Number of animation frames to use during charge |
+| `charge_ticks` | 12 | Ticks to reach full charge (20 ticks = 1 second) |
+| `lunge_velocity` | 0.6 | Forward velocity multiplier on lunge |
+| `max_range` | 3.5 | Maximum hit detection range in blocks |
+| `damage` | 6.0 | Base damage at full charge |
+| `knockback` | 0.5 | Knockback strength applied to targets |
+| `min_charge_percent` | 0.3 | Minimum charge (0.0-1.0) needed to attack |
+| `charge_slowdown` | 0.4 | Movement speed reduction while charging (0.0 = none, 1.0 = frozen) |
+| `max_hold_ticks` | 60 | Maximum ticks to hold charge before auto-cancel |
+| `max_targets` | 1 | Maximum number of enemies hit per lunge |
+
+#### How It Works
+
+1. **Start Charging**: Hold right-click with the spear to begin charging
+2. **Visual Feedback**: The weapon model animates through frames, particles spawn, and your movement slows
+3. **Attack**: Release right-click or left-click when charged to lunge forward
+4. **Damage**: Enemies in a cone in front of you take damage scaled by charge percentage
+5. **Cooldown**: After attacking, there's a brief cooldown before you can charge again
+
+<Callout type="warning">
+If you hold the charge too long (past `max_hold_ticks`), the attack will auto-cancel and revert to the inactive model without dealing damage. This prevents players from walking around indefinitely with a charged weapon.
+</Callout>
+
 ### Thor
 
 Have you ever dreamed of being able to throw lightning bolts? This is for you.
