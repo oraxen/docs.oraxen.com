@@ -313,6 +313,31 @@ Mechanics:
     lose_chance: 0  # 0-1, chance to lose the item on death (0 = never lose, 1 = always lose)
 ```
 
+### Toggle-Light
+
+With this mechanic, you can create interactive lighting for furniture, noteblocks, and stringblocks. Players can right-click these items to toggle their light level between a base level and a toggle level, allowing them to turn lights on and off.
+
+- Interactive lighting control for custom items
+- Support for both static base lighting and toggleable lighting
+- State persistence across server restarts
+- Seamless integration with existing furniture mechanics (barriers, storage, seats, rotation)
+
+**Important notes**
+- For furniture with barriers: the light toggles across all barrier blocks in the furniture structure
+- Light state is automatically refreshed on server load/reload
+
+#### Per item configuration
+
+```yaml
+Mechanics:
+  toggle_light:
+    light: 5          # Base light level (0-15), always active
+    toggle_light: 15  # Toggle light level (0-15), activated on interaction
+```
+
+- `light`: The base light level (0-15) that is always active. This is the default state.
+- `toggle_light`: The toggle light level (0-15) that activates when players interact with the item. Set this to enable toggleable lighting.
+
 ### Custom mechanic
 
 This mechanic allows you to customize events, conditions and actions. Since it is a quite special mechanic, it has its [dedicated tutorial page](/mechanics/all-mechanics/custom-mechanic).
