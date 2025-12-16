@@ -29,7 +29,8 @@ Pack:
     appearance:
       item_properties: true        # Use item_model component (default)
       model_data_ids: false        # Use custom_model_data.strings with select
-      model_data_float_legacy: false  # Use custom_model_data.floats with range_dispatch
+      model_data_float: false      # Use custom_model_data.floats with range_dispatch
+      generate_predicates: false   # Generate legacy predicates (not needed on 1.21.4+)
 ```
 
 **Available systems:**
@@ -38,13 +39,14 @@ Pack:
 |---------|-------------|----------------|----------|
 | `item_properties` | `assets/oraxen/items/<id>.json` | `item_model` component | **Default.** Clean 1.21.4+ setup using item model definitions. |
 | `model_data_ids` | `assets/minecraft/items/<material>.json` | `custom_model_data.strings[0]` | Uses `minecraft:select` with string keys (`oraxen:<item_id>`). Good for CMD-based workflows with stable identifiers. |
-| `model_data_float_legacy` | `assets/minecraft/items/<material>.json` | `custom_model_data.floats[0]` | Uses `minecraft:range_dispatch` with numeric thresholds. Also generates legacy predicate overrides automatically. |
+| `model_data_float` | `assets/minecraft/items/<material>.json` | `custom_model_data.floats[0]` | Uses `minecraft:range_dispatch` with numeric thresholds. Sets integer CMD on items. |
+| `generate_predicates` | `assets/minecraft/models/item/*.json` | — | Generates legacy predicate overrides. **Not needed on 1.21.4+.** |
 
 <Callout type="info">
 **Which systems should I enable?**
 - **`item_properties` only** — Best for new setups. Clean, modern, no collision with other plugins.
 - **`item_properties` + `model_data_ids`** — Hybrid setup. Items have both `item_model` component AND `custom_model_data.strings[0]` set.
-- **`model_data_float_legacy`** — Full legacy compatibility. Automatically generates predicate overrides and sets integer CMD.
+- **`model_data_float` + `generate_predicates`** — Full legacy compatibility with predicate overrides and integer CMD.
 </Callout>
 
 ### Combining Systems
@@ -60,18 +62,29 @@ appearance:
 This gives you the best of both worlds: native 1.21.4+ rendering via `item_model`, plus `custom_model_data` strings for plugins that read them.
 
 <Callout type="warning">
-**Note:** `model_data_ids` and `model_data_float_legacy` cannot both be enabled—they write to the same pack file path (`assets/minecraft/items/*.json`). If both are enabled, `model_data_ids` takes priority for pack generation.
+**Note:** `model_data_ids` and `model_data_float` cannot both be enabled—they write to the same pack file path (`assets/minecraft/items/*.json`). If both are enabled, `model_data_ids` takes priority for pack generation.
 </Callout>
 
-### Legacy Compatibility (model_data_float_legacy)
+### Legacy Predicate Generation
 
-When `model_data_float_legacy` is enabled, Oraxen automatically:
-1. Sets `custom_model_data.floats[0]` on items
-2. Sets integer `CustomModelData` on items (for legacy plugins)
-3. Generates legacy predicate overrides (`assets/minecraft/models/item/*.json`)
-4. Generates `minecraft:range_dispatch` item definitions
+The `generate_predicates` option generates legacy predicate overrides (`assets/minecraft/models/item/*.json`):
 
-This provides full backward compatibility with pre-1.21.4 workflows and plugins that expect integer CMD values.
+```yaml
+appearance:
+  model_data_float: true       # Use float-based CMD
+  generate_predicates: true    # Also generate legacy predicates
+```
+
+<Callout type="info">
+**When do I need `generate_predicates`?**
+
+On 1.21.4+, Minecraft uses the new item definition system (`assets/minecraft/items/*.json`), so legacy predicate overrides are **not required** for the game client to display custom models.
+
+Only enable `generate_predicates` if:
+- External tools need to read legacy predicate JSON files
+- You're using pack analysis tools that don't support 1.21.4+ item definitions
+- You need backward compatibility with older resource pack formats
+</Callout>
 
 ### Per-Item System Exclusions
 
@@ -314,4 +327,4 @@ my_item:
     custom_model_data: 452
 ```
 
-On 1.21.4+, this value is used when `model_data_float_legacy` is enabled (see [Appearance Systems](#appearance-systems-1214) above). This lets you control which CMD value your item uses for compatibility with other plugins.
+On 1.21.4+, this value is used when `model_data_float` is enabled (see [Appearance Systems](#appearance-systems-1214) above). This lets you control which CMD value your item uses for compatibility with other plugins.
