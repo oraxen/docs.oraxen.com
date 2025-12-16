@@ -22,7 +22,7 @@ A charged attack mechanic that transforms your weapon into a devastating lunge. 
 
 - **Model Animation**: The weapon model visually transitions during charging (requires 1.21.4+)
 - **Smooth Animation**: Optional intermediate frames for fluid charging animations
-- **Multi-Target**: Can hit multiple enemies in a cone with configurable piercing
+- **Multi-Target**: Can hit multiple enemies along the lunge path with configurable piercing
 - **Movement Slowdown**: Configurable speed reduction while charging
 - **Full Customization**: Particles, sounds, damage, range, and knockback are all configurable
 
@@ -46,7 +46,9 @@ my_spear:
       lunge_velocity: 0.8       # Forward velocity on lunge release
       max_range: 5.0            # Hit detection range in blocks
       damage: 10.0              # Damage at full charge
+      min_damage: 2.0           # Minimum damage at lowest charge
       knockback: 0.8            # Knockback applied to targets
+      hitbox_radius: 0.5        # Ray trace width for hit detection
       min_charge_percent: 0.25  # Minimum charge needed to attack (25%)
       charge_slowdown: 0.5      # Movement slowdown while charging (0.0-1.0)
       max_hold_ticks: 60        # Max hold time before auto-cancel (ticks)
@@ -74,7 +76,9 @@ my_spear:
 | `lunge_velocity` | 0.6 | Forward velocity multiplier on lunge |
 | `max_range` | 3.5 | Maximum hit detection range in blocks |
 | `damage` | 6.0 | Base damage at full charge |
+| `min_damage` | 0.0 | Minimum damage at lowest valid charge (scales to `damage` at full charge) |
 | `knockback` | 0.5 | Knockback strength applied to targets |
+| `hitbox_radius` | 0.5 | Ray trace width for hit detection (higher = easier to hit off-center targets, max 5.0) |
 | `min_charge_percent` | 0.3 | Minimum charge (0.0-1.0) needed to attack |
 | `charge_slowdown` | 0.4 | Movement speed reduction while charging (0.0 = none, 1.0 = frozen) |
 | `max_hold_ticks` | 60 | Maximum ticks to hold charge before auto-cancel |
@@ -85,7 +89,7 @@ my_spear:
 1. **Start Charging**: Hold right-click with the spear to begin charging
 2. **Visual Feedback**: The weapon model animates through frames, particles spawn, and your movement slows
 3. **Attack**: Release right-click or left-click when charged to lunge forward
-4. **Damage**: Enemies in a cone in front of you take damage scaled by charge percentage
+4. **Damage**: Enemies along the ray in front of you take damage scaled by charge percentage (from `min_damage` to `damage`)
 5. **Cooldown**: After attacking, there's a brief cooldown before you can charge again
 
 <Callout type="warning">
