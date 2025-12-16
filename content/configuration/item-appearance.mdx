@@ -11,41 +11,58 @@ Unlike most other plugins that allow you to create custom items, Oraxen supports
 
 ### How Oraxen handles item models
 
-Oraxen supports two systems for item appearance, which can be used independently or together:
-
-| System | Pack Output | Item Component | Versions |
-|--------|-------------|----------------|----------|
-| **Item Model Definitions** | `assets/oraxen/items/<id>.json` | `item_model` component | 1.21.4+ only |
-| **Predicates** | `assets/minecraft/models/item/<material>.json` | `custom_model_data` | All versions |
+Oraxen supports multiple systems for item appearance on 1.21.4+. Pre-1.21.4 servers always use legacy predicate overrides.
 
 <Callout type="info">
 **Default behavior:**
-- **Pre-1.21.4**: Only predicates (forced)
-- **1.21.4+**: Only item_model (default, configurable)
+- **Pre-1.21.4**: Legacy predicates (forced, regardless of settings)
+- **1.21.4+**: Item Model Definitions (`ITEM_PROPERTIES` mode)
 </Callout>
 
-### Appearance System Settings (1.21.4+)
+### Appearance Mode (1.21.4+)
 
-On 1.21.4+, you can configure which systems to use in `settings.yml`:
+On 1.21.4+, you can configure which appearance system to use in `settings.yml`:
 
 ```yaml
 Pack:
   generation:
     appearance:
-      item_model: true    # Generate item model definitions
-      predicates: false   # Generate predicate overrides
+      mode: ITEM_PROPERTIES    # ITEM_PROPERTIES, MODEL_DATA_IDS, or MODEL_DATA_FLOAT_LEGACY
+      force_predicates: false  # Force legacy predicates alongside selected mode
 ```
 
 **Available modes:**
 
-| Mode | item_model | predicates | Use Case |
-|------|------------|------------|----------|
-| **Modern** (default) | `true` | `false` | Clean 1.21.4+ setup |
-| **Hybrid** | `true` | `true` | Compatibility with plugins using CMD |
-| **Legacy** | `false` | `true` | Full backwards compatibility |
+| Mode | Pack Output | Item Component | Use Case |
+|------|-------------|----------------|----------|
+| `ITEM_PROPERTIES` | `assets/oraxen/items/<id>.json` | `item_model` component | **Default.** Clean 1.21.4+ setup using item model definitions. |
+| `MODEL_DATA_IDS` | `assets/minecraft/items/<material>.json` | `custom_model_data.strings[0]` | Uses `minecraft:select` with string keys (`oraxen:<item_id>`). Good for CMD-based workflows with stable identifiers. |
+| `MODEL_DATA_FLOAT_LEGACY` | `assets/minecraft/items/<material>.json` | `custom_model_data.floats[0]` | Uses `minecraft:range_dispatch` with numeric thresholds. Legacy compatibility for plugins expecting integer CMD values. |
+
+<Callout type="info">
+**Which mode should I use?**
+- **`ITEM_PROPERTIES`** — Best for new setups. Clean, modern, no collision with other plugins.
+- **`MODEL_DATA_IDS`** — If you need custom_model_data but want stable string identifiers instead of integers.
+- **`MODEL_DATA_FLOAT_LEGACY`** — If you have existing setups relying on specific integer CMD values, or plugins that read integer CMD.
+</Callout>
+
+### Force Predicates
+
+The `force_predicates` option generates legacy predicate overrides (`assets/minecraft/models/item/*.json`) **in addition to** the selected mode:
+
+```yaml
+appearance:
+  mode: ITEM_PROPERTIES
+  force_predicates: true  # Also generate legacy predicates + set integer CMD on items
+```
+
+This is useful when:
+- External tools need to inspect legacy JSON predicate files
+- Other plugins check integer `custom_model_data` on items
+- You need maximum compatibility with the ecosystem
 
 <Callout type="warning">
-**Hybrid mode** generates both systems, making your items work with native 1.21.4+ features AND plugins that rely on custom_model_data. This increases pack size slightly but maximizes compatibility.
+**Note:** `force_predicates` increases pack size and adds integer `custom_model_data` to items alongside the primary mode's component. Only enable if you specifically need legacy compatibility.
 </Callout>
 
 ### Per-Item System Exclusions
@@ -289,4 +306,4 @@ my_item:
     custom_model_data: 452
 ```
 
-On 1.21.4+, this value is used when the predicates system is enabled (see [Appearance System Settings](#appearance-system-settings-1214) above). If you're using hybrid or legacy mode, this lets you control which CMD value your item uses for compatibility with other plugins.
+On 1.21.4+, this value is used when the `MODEL_DATA_FLOAT_LEGACY` mode is enabled or when `force_predicates` is true (see [Appearance Mode](#appearance-mode-1214) above). This lets you control which CMD value your item uses for compatibility with other plugins.
