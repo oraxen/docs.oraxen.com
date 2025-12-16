@@ -63,7 +63,8 @@ First, Oraxen has several folders and 3 of these are to configure things, the fi
     appearance:
       item_properties: true        # Use item_model component
       model_data_ids: false        # Use custom_model_data.strings with select
-      model_data_float_legacy: false  # Use custom_model_data.floats with range_dispatch
+      model_data_float: false      # Use custom_model_data.floats with range_dispatch
+      generate_predicates: false   # Generate legacy predicates (not needed on 1.21.4+)
 ```
 
 This section allows you to configure the **generation** of the pack. The **compression** is configured to make the smallest zip possible by default. You can change the **comment** which is basically a watermark inside your zip.
@@ -76,7 +77,8 @@ The `appearance` section controls how item textures are applied. **Multiple syst
 |---------|-------------|----------------|-------------|
 | `item_properties` | `assets/oraxen/items/<id>.json` | `item_model` component | **Default.** Uses item model definitions with Oraxen ids (`oraxen:<item_id>`). |
 | `model_data_ids` | `assets/minecraft/items/<material>.json` | `custom_model_data.strings[0]` | Uses `minecraft:select` dispatcher with string ids (`oraxen:<item_id>`). |
-| `model_data_float_legacy` | `assets/minecraft/items/<material>.json` | `custom_model_data.floats[0]` | Uses `minecraft:range_dispatch` with numeric thresholds. Also generates legacy predicate overrides. |
+| `model_data_float` | `assets/minecraft/items/<material>.json` | `custom_model_data.floats[0]` | Uses `minecraft:range_dispatch` with numeric thresholds. |
+| `generate_predicates` | `assets/minecraft/models/item/<material>.json` | — | Generates legacy predicate overrides. **Not needed on 1.21.4+.** |
 
 **Version behavior:**
 - **Pre-1.21.4**: Always uses legacy predicate overrides (regardless of settings)
@@ -85,10 +87,14 @@ The `appearance` section controls how item textures are applied. **Multiple syst
 **Common configurations:**
 - `item_properties: true` only — Modern 1.21.4+ setup (default)
 - `item_properties: true` + `model_data_ids: true` — Hybrid for plugins that read CMD strings
-- `model_data_float_legacy: true` — Full legacy compatibility (auto-generates predicates)
+- `model_data_float: true` + `generate_predicates: true` — Full legacy compatibility
 
 <Callout type="warning">
-`model_data_ids` and `model_data_float_legacy` cannot both be enabled—they write to the same pack file path. If both are enabled, `model_data_ids` takes priority.
+`model_data_ids` and `model_data_float` cannot both be enabled—they write to the same pack file path. If both are enabled, `model_data_ids` takes priority.
+</Callout>
+
+<Callout type="info">
+**generate_predicates** is only needed if external tools read legacy predicate JSON files. On 1.21.4+, Minecraft uses the new item definition system, so predicates are not required for the game client.
 </Callout>
 
 See [Item Appearance](/configuration/item-appearance#appearance-systems-1214) for detailed documentation and per-item options.
