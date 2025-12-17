@@ -1,4 +1,5 @@
 export default {
+  'packlayer': 'PackLayer - Proxy Optimization',
   'bossshoppro-shop': 'BossShopPro - shop',
   'cratereloaded-crates': 'CrateReloaded - crates',
   crucible: 'MythicCrucible',
