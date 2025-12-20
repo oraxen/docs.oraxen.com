@@ -1,4 +1,5 @@
 export default {
+  'folia': 'Folia - Multithreaded Server',
   'packlayer': 'PackLayer - Proxy Optimization',
   'bossshoppro-shop': 'BossShopPro - shop',
   'cratereloaded-crates': 'CrateReloaded - crates',
