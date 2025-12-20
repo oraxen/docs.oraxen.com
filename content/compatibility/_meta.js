@@ -7,6 +7,7 @@ export default {
   mmoitems: 'MMoItems',
   'modelengine-custom-mobs': 'ModelEngine - custom mobs',
   'mythicmobs-custom-mobs': 'MythicMobs - custom mobs',
+  skript: 'Skript',
   'trmenu-custom-inventories': 'TrMenu - custom inventories',
   'world-generators': 'World Generators'
 }
