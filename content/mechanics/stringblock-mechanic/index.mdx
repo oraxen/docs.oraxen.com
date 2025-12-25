@@ -56,12 +56,28 @@ To use this mechanic you need to tell oraxen which model to use (to use the gene
           - { oraxen_item: jasmine_flower, probability: 1.0 }
 ```
 
+## Blast Resistant
+Make blocks survive explosions (TNT, creepers, etc.).
+```yaml
+Mechanics:
+  stringblock:
+    blast_resistant: true # Default: false
+```
+
+## Immovable
+Prevent pistons from pushing or pulling the block.
+```yaml
+Mechanics:
+  stringblock:
+    immovable: true # Default: false
+```
+
 ## BlockLocker
 You can use this to allow protection via [BlockLocker](https://www.spigotmc.org/resources/blocklocker.3268/)
 Valid protectionTypes are CONTAINER, DOOR, ATTACHABLE
 ```yaml
 Mechanics:
-  furniture:
+  stringblock:
     blocklocker:
       can_protect: true
       protection_type: CONTAINER
