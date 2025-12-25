@@ -1,13 +1,11 @@
 export default {
   'packlayer': 'PackLayer - Proxy Optimization',
-  'bossshoppro-shop': 'BossShopPro - shop',
-  'cratereloaded-crates': 'CrateReloaded - crates',
   crucible: 'MythicCrucible',
-  happyhud: 'HappyHUD',
+  mythichud: 'MythicHUD',
   mmoitems: 'MMoItems',
   'modelengine-custom-mobs': 'ModelEngine - custom mobs',
   'mythicmobs-custom-mobs': 'MythicMobs - custom mobs',
   skript: 'Skript',
-  'trmenu-custom-inventories': 'TrMenu - custom inventories',
-  'world-generators': 'World Generators'
+  'world-generators': 'World Generators',
+  archives: 'Archives'
 }
