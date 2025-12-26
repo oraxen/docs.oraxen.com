@@ -8,6 +8,5 @@ export default {
   'item-appearance': 'Item Appearance',
   'pack-hosting': 'Pack Hosting',
   'pack-merging': 'Pack Merging',
-  glyphs: 'Glyphs',
-  emoji: 'Emoji'
+  glyphs: 'Glyphs'
 }
