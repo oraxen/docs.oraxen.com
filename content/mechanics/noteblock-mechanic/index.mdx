@@ -9,7 +9,11 @@ import { Callout } from 'nextra/components'
 
 # NoteBlock Mechanic
 
-The NoteBlock mechanic allows you to create custom blocks using Minecraft's note block states. This provides up to **~800 unique block variations**.
+The NoteBlock mechanic allows you to create custom blocks using Minecraft's note block states. This provides up to **~800 unique block variations**, making it the best choice for most custom blocks.
+
+<Callout type="info">
+Not sure which block mechanic to use? See the [Custom Blocks Overview](/mechanics/block-mechanics) for a comparison.
+</Callout>
 
 <Callout type="warning">
 **Paper Server Recommended**
@@ -21,15 +25,20 @@ block-updates:
 ```
 </Callout>
 
-## How to create a simple block?
+## Creating Your First Block
 
 ### Parent Models
 
-The oraxen item root configuration is the same as for any item (you can use any material like a diamond for example) and set a displayname, etc.\
-For the pack section you can use your own model or generated one.\
-To generate a block model just specify the parent model your block should use.\
-Supported parent_models for block are:\
-`block/cube_all`, `block/cross`, `block/orientable`, `block/orientable_vertical` and `block/cube_column`.
+The item configuration is the same as for any Oraxen item. To generate a block model, specify the `parent_model` your block should use.
+
+**Supported parent models:**
+| Model | Textures | Use Case |
+|-------|----------|----------|
+| `block/cube_all` | 1 | Same texture on all sides |
+| `block/cube_column` | 2 | Logs, pillars (top/bottom + sides) |
+| `block/cross` | 1 | Plants, flowers |
+| `block/orientable` | 3 | Furnaces, observers |
+| `block/orientable_vertical` | 2 | Vertical orientation |
 
 ```yaml
 my_block:
