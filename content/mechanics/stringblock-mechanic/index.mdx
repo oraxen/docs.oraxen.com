@@ -1,4 +1,5 @@
 ---
+description: How to create plants and decorative blocks
 cover: >-
   https://cdn.discordapp.com/attachments/896841738621177896/966830020419014666/unknown.png
 coverY: 0
@@ -10,6 +11,10 @@ import { Callout } from 'nextra/components'
 
 The StringBlock mechanic allows you to create custom blocks using Minecraft's tripwire states. This provides up to **127 unique block variations** and is ideal for plants, flowers, and other decorative elements.
 
+<Callout type="info">
+Not sure which block mechanic to use? See the [Custom Blocks Overview](/mechanics/block-mechanics) for a comparison.
+</Callout>
+
 <Callout type="warning">
 **Paper Server Recommended**
 
@@ -20,13 +25,14 @@ block-updates:
 ```
 </Callout>
 
-<Callout type="info">
-Variations 65-127 have smaller hitboxes than 1-64.
-</Callout>
-
-## How does it work?
+## How Does It Work?
 
 StringBlocks use tripwire-based hitboxes, allowing you to make small decorative objects that players can walk through. They are more optimized than furniture for simple decorations.
+
+**Key features:**
+- Players can walk through StringBlocks
+- Waterloggable (can be placed underwater)
+- Variations 65-127 have smaller hitboxes than 1-64
 
 ### Global Configuration
 
@@ -134,9 +140,9 @@ Mechanics:
       protection_type: CONTAINER
 ```
 
-The other mechanics are almost the same as the custom blocks, please read their category for more information and not all of them should work correctly, just use the ones on this page.
+## Custom Models
 
-### How do I create a decoration with my own model?
+You can use your own 3D models instead of generated ones:
 
 ```yaml
 oak_log_mini:
