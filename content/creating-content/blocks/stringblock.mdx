@@ -134,6 +134,52 @@ Mechanics:
       protection_type: CONTAINER  # CONTAINER, DOOR, or ATTACHABLE
 ```
 
+### Falling Blocks
+
+Create blocks that fall like sand or gravel:
+```yaml
+Mechanics:
+  stringblock:
+    custom_variation: 8
+    is_falling: true
+```
+
+### Storage
+
+Turn your block into a container:
+```yaml
+Mechanics:
+  stringblock:
+    custom_variation: 9
+    storage:
+      type: STORAGE       # STORAGE, SHULKER, PERSONAL, DISPOSAL, or ENDERCHEST
+      rows: 3             # Number of rows (1-6)
+      title: "My Storage" # Container title
+      open_sound: block.chest.open
+      close_sound: block.chest.close
+```
+
+Storage types:
+- `STORAGE` - Standard shared container
+- `SHULKER` - Items stay in block when broken
+- `PERSONAL` - Per-player storage
+- `DISPOSAL` - Items are deleted when closed
+- `ENDERCHEST` - Opens player's ender chest
+
+### Click Actions
+
+Run commands or play sounds when clicked. See [clickAction mechanic](/creating-content/items/abilities/clickaction) for details.
+```yaml
+Mechanics:
+  stringblock:
+    custom_variation: 10
+    clickActions:
+      - conditions:
+          - "has_permission{perm=my.permission}"
+        actions:
+          - "[console] say %player% clicked the block!"
+```
+
 ## Custom Models
 
 Use your own 3D models:

@@ -63,6 +63,8 @@ my_chorus_block:
 | `limited_placing` | object | Placement restrictions |
 | `blocklocker` | object | BlockLocker protection |
 | `clickActions` | list | Actions on click |
+| `storage` | object | Container configuration |
+| `seat` | object | Seating configuration |
 
 ## Custom Variation
 
@@ -229,6 +231,46 @@ Mechanics:
           - "[console] say %player% clicked the block!"
 ```
 
+## Storage
+
+Turn your block into a container:
+
+```yaml
+Mechanics:
+  chorusblock:
+    custom_variation: 1
+    storage:
+      type: STORAGE       # STORAGE, SHULKER, PERSONAL, DISPOSAL, or ENDERCHEST
+      rows: 3             # Number of rows (1-6)
+      title: "My Storage" # Container title
+      open_sound: block.chest.open
+      close_sound: block.chest.close
+```
+
+Storage types:
+- `STORAGE` - Standard shared container
+- `SHULKER` - Items stay in block when broken
+- `PERSONAL` - Per-player storage
+- `DISPOSAL` - Items are deleted when closed
+- `ENDERCHEST` - Opens player's ender chest
+
+## Seats
+
+Let players sit on your block (great for chairs and benches):
+
+```yaml
+Mechanics:
+  chorusblock:
+    custom_variation: 1
+    seat:
+      height: 0.5  # Height offset from block top
+      yaw: 0       # Optional: fixed rotation when seated
+```
+
+<Callout type="info">
+When a player right-clicks a block with a seat, they will sit on it. The seat uses an invisible armor stand entity.
+</Callout>
+
 ## Complete Example
 
 Here's a full example of a custom ore block:
@@ -280,6 +322,10 @@ chorus_ruby_ore:
 | Falling blocks | Yes | Yes | Yes |
 | Blast resistant | Yes | Yes | Yes |
 | Immovable | Yes | Yes | Yes |
+| Storage | Yes | Yes | Yes |
+| Click actions | Yes | Yes | Yes |
+| Seats | No | No | Yes |
+| Directional | Yes | No | No |
 | Waterloggable | No | Yes | No |
 
-Choose ChorusBlock for **transparent blocks** where see-through rendering matters (leaves, glass-like blocks, simple transparent furniture). For opaque blocks, prefer NoteBlock which has more available slots (~800 vs 63).
+Choose ChorusBlock for **transparent blocks** where see-through rendering matters (leaves, glass-like blocks, simple transparent furniture), or when you need **seats** on blocks. For opaque blocks, prefer NoteBlock which has more available slots (~800 vs 63).
