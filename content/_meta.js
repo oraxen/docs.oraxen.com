@@ -1,10 +1,10 @@
 export default {
-  index: "Getting started",
-  faq: "Frequently Asked Questions",
-  usage: "Usage",
-  configuration: "Configuration",
-  mechanics: "Mechanics",
+  index: "Getting Started",
+  faq: "FAQ",
+  "creating-content": "Creating Content",
+  "plugin-setup": "Plugin Setup",
+  usage: "Commands & Recipes",
   compatibility: "Compatibility",
-  vendors: "Vendors",
   developers: "Developers",
+  vendors: "Vendors",
 };

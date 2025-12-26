@@ -6,6 +6,8 @@ cover: >-
 coverY: 0
 ---
 
+# Frequently Asked Questions
+
 ### Is Oraxen A Mod?
 
 No, Oraxen is not a mod in the usual sense of the word. It's a minecraft plugin that allows you to add items, blocks and similar kinds of cool stuff to the game - all with an automatically installed resource pack.
@@ -16,18 +18,18 @@ Yes! Oraxen has native support for [Folia](https://papermc.io/software/folia), P
 
 ### Oraxen Is Using Its Own Resource Pack, Can I Still Use Mine?
 
-Yes. More information about how to do this can be found [here](https://docs.oraxen.com/configuration/pack-merging)
+Yes. More information about how to do this can be found [here](https://docs.oraxen.com/plugin-setup/pack-merging)
 
 ### I Use Bungee/Velocity But The Pack Keeps Reloading When Players Switch Servers?
 
-This is because the player technically leaves one server and joins another. Therefore, Minecraft removes and sends the resourcepack.\
-If you want to prevent this you can get [BungeePackLayer](https://www.spigotmc.org/resources/%E2%9C%82%EF%B8%8F-bungee-pack-layer-optimize-resource-pack-sending.94978/).\
-This is a Bungee/Velocity plugin which will prevent the pack from being resent (unless it is different).\
+This is because the player technically leaves one server and joins another. Therefore, Minecraft removes and sends the resourcepack.
+If you want to prevent this you can get [BungeePackLayer](https://www.spigotmc.org/resources/%E2%9C%82%EF%B8%8F-bungee-pack-layer-optimize-resource-pack-sending.94978/).
+This is a Bungee/Velocity plugin which will prevent the pack from being resent (unless it is different).
 A pack will be different if the config files on all servers are not identical.
 
 ### Can I Disable The Default Assets And Configs Oraxen Comes With?
 
-Absolutely. Your `settings.yml` file contains options to disable both of these.\
+Absolutely. Your `settings.yml` file contains options to disable both of these.
 Note: Required configs and assets will still be generated, but most will be disabled.
 
 ### How Do I Disable Or Change The Welcome Sound?
@@ -50,12 +52,12 @@ Of course, `settings.yml` contains configurable actions to perform when the pack
 
 ### Does Oraxen Replace Any Vanilla Items?
 
-The goal of Oraxen is to add things to the game without losing features, so the short answer is no. However, Minecraft has some limitations (you can't really add new blocks or armors for example) so we had to make a choice (a choice that can be undone by disabling the related mechanics):\
+The goal of Oraxen is to add things to the game without losing features, so the short answer is no. However, Minecraft has some limitations (you can't really add new blocks or armors for example) so we had to make a choice (a choice that can be undone by disabling the related mechanics):
 \- new blocks will use vanilla unused noteblock variations: this can create issues in constructions made using those unusual variations.
 
 ### When I Add An Item, Why Does It Break The Textures Of Others Already Created?
 
-By default (pre 1.21.4), Oraxen automatically picks custom model data values for your items and generates them in the most optimized way.\
+By default (pre 1.21.4), Oraxen automatically picks custom model data values for your items and generates them in the most optimized way.
 Every item, which does not use the exact same model, needs to have a different custom model data value. When adding a new item to Oraxen and setting it's custom model data value manually, you can break other items by accidentally setting the same value on two or more different items.
 
 
