@@ -52,7 +52,7 @@ Oraxen has several methods it handles this.
    1. Meaning any pack that adds 128x64 armor will not work with 64x32 armor
    2. The user should also be informed that they need to change the `armor_resolution` setting to match the pack they are using
    3. This should be set to the height-pixel count of the armor\_layer files / 2. (128x64 = 32, 64x32 = 16 (default))
-   4. Armor is very strict on formatting, and you are adviced to make sure you follow the guidelines in the [Armor](/configuration/custom-armors) section.
+   4. Armor is very strict on formatting, and you are adviced to make sure you follow the guidelines in the [Armor](/creating-content/armors) section.
 
 ## Custom Items
 
@@ -133,7 +133,7 @@ Perhaps in the future it will be assigned automatically. If you include a README
 The `model`-property is the same as the one in the `Pack`-section, and follows the same rules.\
 If had `generate_model` enabled as you specified textures, the model would be your item-id, so `my_example_block`.\
 There are also additional sub-mechanics, like custom sounds, hardness and more.\
-You can read more about them in the [NoteBlock Mechanics](/mechanics/noteblock-mechanic) and its other pages.
+You can read more about them in the [NoteBlock Mechanics](/creating-content/blocks/noteblock) and its other pages.
 
 ### StringBlock
 
@@ -157,7 +157,7 @@ my_example_block:
 ```
 
 As you can see it is very similar to the `noteblock`-mechanic.\
-The sub-mechanics can be found in the [StringBlock Mechanics](/mechanics/stringblock-mechanic) and its other pages.
+The sub-mechanics can be found in the [StringBlock Mechanics](/creating-content/blocks/stringblock) and its other pages.
 
 ## Custom Furniture
 
@@ -200,7 +200,7 @@ The options are `FIXED`, `HEAD`, `BODY`, `LEFT_ARM`, `RIGHT_ARM`, `LEFT_LEG`, `R
 Essentially this is all the options in BlockBenches `Display`-tab.\
 If you want compatibility between ITEM\_FRAME and DISPLAY\_ENTITY, you should use `FIXED`.\
 ItemsAdder would be the same as using `HEAD` due to ArmorStands being its preferred entity-type.\
-You can find the rest of the [Display-Entity Properties](/mechanics/furniture-mechanic/display_entity_furniture).
+You can find the rest of the [Display-Entity Properties](/creating-content/furniture/display_entity_furniture).
 
 The `barrier`-property is used to specify if the furniture should have collision or not.\
 This will place a normal barrier block at the furniture origin.\
