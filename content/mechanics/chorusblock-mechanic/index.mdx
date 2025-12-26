@@ -6,7 +6,9 @@ import { Callout } from 'nextra/components'
 
 # ChorusBlock Mechanic
 
-The ChorusBlock mechanic allows you to create custom blocks using Minecraft's chorus plant block states. This provides up to **63 unique block variations**. Use this when you need additional block slots beyond NoteBlock or StringBlock.
+The ChorusBlock mechanic allows you to create custom blocks using Minecraft's chorus plant block states. This provides up to **63 unique block variations**.
+
+**Best used for transparent blocks** like custom leaves, glass variants, or single-block furniture that needs see-through rendering. ChorusBlock is more performant than display entities for simple transparent blocks.
 
 <Callout type="info">
 Not sure which block mechanic to use? See the [Custom Blocks Overview](/mechanics/block-mechanics) for a comparison.
@@ -280,4 +282,4 @@ chorus_ruby_ore:
 | Immovable | Yes | Yes | Yes |
 | Waterloggable | No | Yes | No |
 
-Choose ChorusBlock when you need additional block slots beyond NoteBlock/StringBlock, or when chorus plants fit your use case better.
+Choose ChorusBlock for **transparent blocks** where see-through rendering matters (leaves, glass-like blocks, simple transparent furniture). For opaque blocks, prefer NoteBlock which has more available slots (~800 vs 63).
