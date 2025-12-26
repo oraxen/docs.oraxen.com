@@ -1,13 +1,67 @@
 ---
-description: How to create your first custom item easily
+description: How to create custom items with unique textures and abilities
 cover: >-
   https://cdn.discordapp.com/attachments/896841738621177896/966825011857981471/unknown.png
 coverY: 0
 ---
 
-# Create Your First Item
+import { Callout } from 'nextra/components'
 
-Today I want to create a new super rare object. By the way, it's funny how players love having super rare items, so to make them happy they all end up having a super rare item (having a rare item is no longer very rare lol). No more jokes, let's get to work! This tutorial will explain how to create an onyx axe but you can do absolutely anything you want with it.
+# Custom Items
+
+Oraxen lets you create custom items with unique textures, models, and abilities. Items are the foundation of all custom content in Oraxen.
+
+## What You Can Create
+
+| Item Type | Examples | Key Features |
+|-----------|----------|--------------|
+| Weapons | Swords, axes, bows | Custom damage, abilities, durability |
+| Tools | Pickaxes, shovels, hoes | Mining abilities, custom efficiency |
+| Food | Custom consumables | Hunger, effects, custom eating |
+| Materials | Gems, ingots, components | For crafting recipes |
+| Equipment | Armor pieces | See [Custom Armors](/creating-content/armors) |
+
+## Configuration Overview
+
+| Section | Purpose | Documentation |
+|---------|---------|---------------|
+| `displayname` | Item name with colors | Use MiniMessage format |
+| `material` | Base Minecraft item | Any valid material |
+| `Pack` | Textures and models | [Item Appearance](/creating-content/items/appearance) |
+| `Components` | Vanilla data components | [Components](/creating-content/items/components) |
+| `Mechanics` | Special abilities | [Abilities](/creating-content/items/abilities) |
+
+## Basic Item Structure
+
+```yaml
+my_item:
+  displayname: "<gradient:#4B36B1:#6699FF>My Item"
+  material: DIAMOND_SWORD
+  Pack:
+    generate_model: true
+    parent_model: "item/handheld"
+    textures:
+      - my_item.png
+  Mechanics:
+    durability:
+      value: 2000
+```
+
+<Callout type="info">
+Place your texture files in the `plugins/Oraxen/pack/textures/` folder. Oraxen automatically generates the resource pack.
+</Callout>
+
+## Next Steps
+
+- [Item Appearance](/creating-content/items/appearance) - Textures, models, and custom visuals
+- [Components](/creating-content/items/components) - Enchantments, attributes, lore
+- [Abilities](/creating-content/items/abilities) - Special powers and mechanics
+
+---
+
+## Tutorial: Create Your First Item
+
+Let's create a custom Onyx Axe step by step.
 
 ## 1. Let's start by creating textures
 

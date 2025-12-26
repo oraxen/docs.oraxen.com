@@ -1,15 +1,46 @@
 ---
-description: How to add non cubic blocs to the game
+description: How to add non-cubic decorative objects to the game
 cover: >-
   https://cdn.discordapp.com/attachments/896841738621177896/966828778028417125/unknown.png
 coverY: 0
 ---
 
-# Furniture Mechanic
+import { Callout } from 'nextra/components'
+
+# Furniture
+
+Oraxen lets you create custom 3D furniture like chairs, tables, lamps, and decorations. Furniture uses entity-based rendering for complex shapes that blocks can't achieve.
 
 ![Example furniture](/assets/image%20(3).png)
 
-## Example configuration per item
+## When to Use Furniture
+
+| Use Case | Furniture | Blocks |
+|----------|-----------|--------|
+| Complex 3D models | ✅ Best choice | ❌ Limited |
+| Sittable chairs | ✅ Built-in | ❌ Not possible |
+| Rotatable objects | ✅ Any angle | ⚠️ 4 directions |
+| Large decorations | ✅ Multi-block hitbox | ⚠️ Complex |
+| Mining/breaking | ⚠️ Instant | ✅ Natural |
+| Performance at scale | ⚠️ Entity-based | ✅ Better |
+
+<Callout type="info">
+Use furniture for decorative objects, chairs, tables, and anything requiring complex 3D models. Use [custom blocks](/creating-content/blocks) for ores, building materials, and things players mine frequently.
+</Callout>
+
+## Key Features
+
+| Feature | Description |
+|---------|-------------|
+| [Display Entities](/creating-content/furniture/display-entities) | Modern rendering with transforms and animations |
+| [Barriers & Hitboxes](/creating-content/furniture/display-entities#hitbox) | Collision and interaction areas |
+| [Seats](#seats) | Let players sit on furniture |
+| [Storage](#storage) | Custom containers and chests |
+| [Light Emission](#light) | Furniture that glows |
+| [Evolution](#evolution) | Crops and plants that grow over time |
+| [ModelEngine](/compatibility/modelengine-custom-mobs) | Animated models with Blockbench |
+
+## Basic Configuration
 
 ```yaml
 table:
@@ -20,13 +51,7 @@ table:
     model: default/table
   Mechanics:
     furniture:
-      type: DISPLAY_ENTITY #Valid types are ITEM_FRAME, DISPLAY_ENTITY & GLOWING_ITEM_FRAME
-      block_sounds:
-        place_sound: block.stone.place
-        break_sound: block.stone.break
-        hit_sound: my.custom.hitsound     # Custom sound as defined in Oraxen/sound.yml
-        step_sound: my.custom.stepsound   # Requires a sound-file in the Oraxen/pack-folder aswell
-        fall_sound: my.custom.fallsound
+      type: DISPLAY_ENTITY
       barrier: true
       drop:
         silktouch: false
@@ -283,3 +308,9 @@ Mechanics:
 ## Click Actions
 Run commands, play sounds, or send messages when a player clicks the furniture.
 See the [clickAction mechanic](/creating-content/items/abilities/clickaction) for detailed configuration.
+
+## Next Steps
+
+- [Display Entities](/creating-content/furniture/display-entities) - Modern furniture rendering and hitboxes
+- [Farming Mechanic](/creating-content/furniture/farming) - Custom crops and plants
+- [Create Your First Item](/creating-content/items) - Learn item basics first
