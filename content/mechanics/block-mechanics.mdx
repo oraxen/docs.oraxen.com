@@ -14,7 +14,7 @@ Oraxen provides several mechanics for creating custom blocks, each with differen
 |----------|------------|------------|----------|
 | [NoteBlock](/mechanics/noteblock-mechanic) | ~800 | Note Block | Most custom blocks (ores, stone, wood) |
 | [StringBlock](/mechanics/stringblock-mechanic) | 127 | Tripwire | Plants, flowers, decorations |
-| [ChorusBlock](/mechanics/chorusblock-mechanic) | 63 | Chorus Plant | Additional blocks when others are full |
+| [ChorusBlock](/mechanics/chorusblock-mechanic) | 63 | Chorus Plant | Transparent blocks (leaves, glass-like) |
 | [Furniture](/mechanics/furniture-mechanic) | Unlimited | Display Entity | Complex models, interactable objects |
 
 ## Choosing the Right Mechanic
@@ -31,9 +31,9 @@ Oraxen provides several mechanics for creating custom blocks, each with differen
 - **Tall plants** (2-block height)
 
 ### Use ChorusBlock for:
-- **Additional blocks** when NoteBlock slots are full
-- **Transparent blocks** like leaves
-- Similar use cases to NoteBlock but with fewer slots
+- **Transparent blocks** like custom leaves or glass variants
+- **Single-block furniture** that needs transparency (more performant than display entities)
+- Blocks where **see-through rendering** is important
 
 ### Use Furniture for:
 - **Complex 3D models** (chairs, tables, machines)
