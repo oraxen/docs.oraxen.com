@@ -46,9 +46,9 @@ Mechanics:
       step_sound: my.custom.stepsound   # Requires a sound-file in the Oraxen/pack-folder aswell
       fall_sound: my.custom.fallsound
 ```
-All the volume and pitch values are set to be what Minecraft uses for blocks normally.\
-If you want to change the volume or pitch, you can do so by using the format below.\
-Keep in mind these two formats are compatible with eachother.\
+All the volume and pitch values are set to be what Minecraft uses for blocks normally.
+If you want to change the volume or pitch, you can do so by using the format below.
+Keep in mind these two formats are compatible with eachother.
 We recommend just use the default one, but the option is there if you want to change it.
 ```yaml
 Mechanics:
@@ -81,9 +81,9 @@ Mechanics:
 ```
 
 ## Jukebox
-Lets this furniture accept music discs and custom music discs which will be played.\
-You can tweak the `volume` and `pitch` of the music from the jukebox.\
-There is also a `permission` field, which can be used if you only want certain players to be able to play music from the jukebox.\
+Lets this furniture accept music discs and custom music discs which will be played.
+You can tweak the `volume` and `pitch` of the music from the jukebox.
+There is also a `permission` field, which can be used if you only want certain players to be able to play music from the jukebox.
 By default permission is blank, which means anyone can play music from the jukebox.
 ```yaml
 Mechanics:
@@ -142,8 +142,8 @@ Mechanics:
 ```
 
 # Restrict Rotation
-You can restrict the amount of rotation-facings a furniture has with `restricted_rotation`.\
-It can be set to STRICT or VERY_STRICT, with 8 and 4 facings respectively.\
+You can restrict the amount of rotation-facings a furniture has with `restricted_rotation`.
+It can be set to STRICT or VERY_STRICT, with 8 and 4 facings respectively.
 ```yaml
 chair:
   Mechanics:
@@ -153,10 +153,10 @@ chair:
 
 # Limited placing
 You can customize what blocks a custom block/furniture can be placed on with `limited_placing` subsection.
-You can use the `roof`, `floor` and `wall` options to dictate where a block can be placed. By default, all are set to `true`.\
-The `type` specifies if it should only be allowed on or denied on specific blocks.\
-If type is `ALLOW` the block can only be placed on the given blocks.\
-If the type is `DENY` can be placed on all blocks not matching the given blocks.\
+You can use the `roof`, `floor` and `wall` options to dictate where a block can be placed. By default, all are set to `true`.
+The `type` specifies if it should only be allowed on or denied on specific blocks.
+If type is `ALLOW` the block can only be placed on the given blocks.
+If the type is `DENY` can be placed on all blocks not matching the given blocks.
 There is also a `radius_limitation` option, which allows you to limit the amount of a certain furniture within a radius.
 ```yaml
 chair:
@@ -186,14 +186,14 @@ The `oraxen_blocks` are blocks defined in the oraxen configuration.
 This allows all custom blocks and furniture in here, but furniture requires a barrier-hitbox.
 
 # Storage
-This is a sub-mechanic for furniture and noteblock mechanics, that let you make a custom storage container.\
+This is a sub-mechanic for furniture and noteblock mechanics, that let you make a custom storage container.
 Essentially a chest, closet or whatever you might want.
 
-There's a few different types: _STORAGE, PERSONAL, ENDERCHEST & DISPOSAL_.\
-**STORAGE** is similar to a normal chest. Anyone can open it and view the content of it.\
-**PERSONAL** is essentially a custom enderchest, letting you edit the row-count and so on.\
-**ENDERCHEST** is literally just the enderchest inventory, but letting you make a custom block/furniture to access it.\
-**DISPOSAL** is a custom trashcan, letting you throw items in it, and they will be deleted when closed.\
+There's a few different types: _STORAGE, PERSONAL, ENDERCHEST & DISPOSAL_.
+**STORAGE** is similar to a normal chest. Anyone can open it and view the content of it.
+**PERSONAL** is essentially a custom enderchest, letting you edit the row-count and so on.
+**ENDERCHEST** is literally just the enderchest inventory, but letting you make a custom block/furniture to access it.
+**DISPOSAL** is a custom trashcan, letting you throw items in it, and they will be deleted when closed.
 
 ```yaml
 Mechanics:
@@ -226,7 +226,7 @@ Mechanics:
 ```
 
 ## BlockLocker
-You can use this to allow protection via [BlockLocker](https://www.spigotmc.org/resources/blocklocker.3268/)\
+You can use this to allow protection via [BlockLocker](https://www.spigotmc.org/resources/blocklocker.3268/)
 Valid protectionTypes are CONTAINER, DOOR, ATTACHABLE
 ```yaml
 Mechanics:
@@ -281,5 +281,5 @@ Mechanics:
 ```
 
 ## Click Actions
-Run commands, play sounds, or send messages when a player clicks the furniture.\
+Run commands, play sounds, or send messages when a player clicks the furniture.
 See the [clickAction mechanic](/creating-content/items/abilities/clickaction) for detailed configuration.

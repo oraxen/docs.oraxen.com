@@ -11,7 +11,7 @@ coverY: 0
 
 ## How does it work?
 
-This mechanic is for items only and does not work with blocks/furniture.\
+This mechanic is for items only and does not work with blocks/furniture.
 For that check the [clickAction mechanic](/creating-content/items/abilities/clickaction). The mechanics let you create subsections composed of 3 parts:
 
 * **Event**: when is this mechanic triggered? e.g. when you right-click on a block
@@ -36,18 +36,18 @@ Mechanics:
         - "[console] give <player> cooked_beef 1"
 ```
 
-In this example, the subsection `test` defines a custom mechanic triggered when someone right click (on a block or in the air).\
-If this player has the permission `example.permission`, the console will perform the give command and replace \<player> by the player name.\
+In this example, the subsection `test` defines a custom mechanic triggered when someone right click (on a block or in the air).
+If this player has the permission `example.permission`, the console will perform the give command and replace \<player> by the player name.
 The item won't be consumed (oneUsage: false).
 
 ## Available events
 
-### CLICK:mouse\_click\_type:target\_type
+### CLICK:mouse_click_type:target_type
 
 Called when you click with the item.
 
-**mouse\_click\_type**: `[ right, left, all ]`\
-**target\_type**: `[ block, air, all ]`
+**mouse_click_type**: `[ right, left, all ]`
+**target_type**: `[ block, air, all ]`
 
 ### DROP
 
@@ -69,7 +69,7 @@ Called when a player equips an item.
 
 Called when a player unequips an item.
 
-### INV\_CLICK
+### INV_CLICK
 
 Called when a player clicks an item in an inventory.
 
@@ -79,7 +79,7 @@ Called when a player dies and would normally drop the given item.
 
 ## Available conditions
 
-### HAS\_PERMISSION:the.permission
+### HAS_PERMISSION:the.permission
 
 **the.permission**: `The permission required by the player using the item`
 
@@ -87,7 +87,7 @@ Called when a player dies and would normally drop the given item.
 
 ### COMMAND:sender:command
 
-**sender**: `[ console, player ]`\
+**sender**: `[ console, player ]`
 **command**: `The command to perform. The placeholder <player> can be used.`
 
 ### MESSAGE:content

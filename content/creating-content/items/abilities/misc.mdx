@@ -35,15 +35,15 @@ Mechanics:
 ```
 
 ### Backpack
-This allows you to turn any item into a backpack.\
+This allows you to turn any item into a backpack.
 
 
-This mechanic might cause duplication issues!\
-If you find any please open a [bug-report](https://github.com/oraxen/oraxen/issues/new?assignees=&labels=bug&template=bug-report.yml&title=%5BBUG%5D+%3Cname+for+bug%3E) and we will fix them as soon as possible!\
+This mechanic might cause duplication issues!
+If you find any please open a [bug-report](https://github.com/oraxen/oraxen/issues/new?assignees=&labels=bug&template=bug-report.yml&title=%5BBUG%5D+%3Cname+for+bug%3E) and we will fix them as soon as possible!
 
 
-There is currently a known dupe, if your backpack is using a stackable material like paper.\
-Make sure to specify that the item should be unstackable, like shown below.\
+There is currently a known dupe, if your backpack is using a stackable material like paper.
+Make sure to specify that the item should be unstackable, like shown below.
 
 #### Per item configuration
 ```yml
@@ -60,10 +60,10 @@ backpack:
 ```
 
 ### Music Disc
-This allows you to make custom music discs with custom sounds.\
-To add a sound simply follow the default example by adding it into `Oraxen/sound.yml`\
+This allows you to make custom music discs with custom sounds.
+To add a sound simply follow the default example by adding it into `Oraxen/sound.yml`
 
-Any stereo sounds will not play at a specific position or following an entity.\
+Any stereo sounds will not play at a specific position or following an entity.
 If you want this you need to make sure your .ogg sound-file is in mono sound format.
 
 
@@ -71,7 +71,7 @@ If you want this you need to make sure your .ogg sound-file is in mono sound for
 On 1.21+ use the new [JukeboxPlayable-Component](/creating-content/items/components) instead
 
 
-`song` is the namespace:sound.name as you defined it in `sound.yml`.\
+`song` is the namespace:sound.name as you defined it in `sound.yml`.
 If your sound.yml entry looks like this:
 ```yml
 sounds:
@@ -80,7 +80,7 @@ sounds:
     sound: mysong.ogg
 ```
 This means your .ogg file is in the path `Oraxen/sounds/mysong.ogg`,
-and your sound-ID is `my_music_disc_song.mysong` with the namespace minecraft.\
+and your sound-ID is `my_music_disc_song.mysong` with the namespace minecraft.
 If you are importing sounds.json into another namespace, the namespace would naturally not be minecraft
 ```yml
 Mechanics:
@@ -98,7 +98,7 @@ On 1.20.5+ use the new [Durability-Component](/creating-content/items/components
 
 #### Per item configuration
 
-There are two options available : ratio and fixed\_amount. You can put only one of these two options on the same item. Ratio allows you to repair a percentage of your item (0.15 will repair 15% of maximum durability while 1.0 will repair it to 100%). Fixe amount repairs a fixed amount of your item durability (put 10 if you want to add 10 durability points to your item for example).
+There are two options available : ratio and fixed_amount. You can put only one of these two options on the same item. Ratio allows you to repair a percentage of your item (0.15 will repair 15% of maximum durability while 1.0 will repair it to 100%). Fixe amount repairs a fixed amount of your item durability (put 10 if you want to add 10 durability points to your item for example).
 
 ```yaml
 Mechanics:
@@ -150,7 +150,7 @@ Mechanics:
 ```
 
 ### Misc Mechanic
-This mechanic has a bunch of small changes you can make to your item.\
+This mechanic has a bunch of small changes you can make to your item.
 What they each do should be pretty self-explanatory.
 
 

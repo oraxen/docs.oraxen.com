@@ -12,13 +12,13 @@ coverY: 0
 
 ## Configuration
 
-Below is an example of a "balance" hud defined in `hud.yml`.\
-Keep in mind, this implementation of `shift` is a bit different from the normal one Oraxen provides.\
+Below is an example of a "balance" hud defined in `hud.yml`.
+Keep in mind, this implementation of `shift` is a bit different from the normal one Oraxen provides.
 `<shift:-10>` moves your hud elements 10 pixels to the left, whilst `<shift:10>` moves it 10 pixels to the right.
 
-`font` is useful for adjusting the height of your text elements.\
-Essentially this is the same as glyphs work, but will let you use normal text and placeholders.\
-In the example below, we used a font that had its ascent set to -12.\
+`font` is useful for adjusting the height of your text elements.
+Essentially this is the same as glyphs work, but will let you use normal text and placeholders.
+In the example below, we used a font that had its ascent set to -12.
 Below is an example of what a font-file should look like:
 
 ```json
@@ -52,7 +52,7 @@ Below is an example of what a font-file should look like:
 }
 ```
 
-Just like with Glyphs, editing the ascent property adjusts the y-position of the text.\
+Just like with Glyphs, editing the ascent property adjusts the y-position of the text.
 This will offset the text roughly to where the hud is in the image example below.
 
 To add in glyphs you can use both the normal placeholder via `%oraxen_glyphid%` or `<glyph:glyphid>`
@@ -61,7 +61,7 @@ If you do not wish to use custom huds, you can easily disable it by setting `upd
 
 In case your HUD doesn't display despite being properly configured, try toggling it with: `/oraxen hud toggle` followed by your HUD's name (`/oraxen hud toggle balance`).
 
-\
+
 \#### Example hud.yml:
 
 ```yaml
