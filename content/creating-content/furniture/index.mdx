@@ -59,7 +59,7 @@ table:
           - { oraxen_item: table, probability: 1.0 }
 ```
 ## Custom Sounds
-Furniture, like custom blocks, can have custom sounds.  
+Furniture, like custom blocks, can have custom sounds.
 Currently the options are place/break/hit/step/fall.
 ```yaml
 Mechanics:
@@ -110,14 +110,24 @@ Lets this furniture accept music discs and custom music discs which will be play
 You can tweak the `volume` and `pitch` of the music from the jukebox.
 There is also a `permission` field, which can be used if you only want certain players to be able to play music from the jukebox.
 By default permission is blank, which means anyone can play music from the jukebox.
+
+You can also specify an `active_model` to change the furniture's appearance when a disc is playing:
 ```yaml
-Mechanics:
-  furniture:
-    jukebox:
-      volume: 1.0
-      pitch: 1.0
-      permission: "oraxen.jukebox.play"
+turntable:
+  Mechanics:
+    furniture:
+      jukebox:
+        active_model: opened  # References a key from Pack.models
+        volume: 1.0
+        pitch: 1.0
+        permission: "oraxen.jukebox.play"
+  Pack:
+    model: default/turntable_closed
+    models:
+      opened: default/turntable_opened  # Model shown when playing
 ```
+
+The `active_model` references a key defined in `Pack.models`. See [Pack.models](#packmodels) for more details.
 
 ## Barriers
 
@@ -149,16 +159,16 @@ Mechanics:
 ```
 
 # Seats
-<b>Seats are only available when barriers are enabled.</b>  
-Currently it will also spawn a seat for every barrier, if there is multiple ones.  
-You can alter the height-offset of seats with the following configuration:  
+<b>Seats are only available when barriers are enabled.</b>
+Currently it will also spawn a seat for every barrier, if there is multiple ones.
+You can alter the height-offset of seats with the following configuration:
 
 ```yaml
 Mechanics:
   furniture:
     seat: { height: 0.5 }
 ```
-You can also adjust the rotation if desired by adding a yaw section.  
+You can also adjust the rotation if desired by adding a yaw section.
 Keep in mind it is recommended to leave this off
 ```yaml
 Mechanics:
@@ -205,9 +215,9 @@ chair:
           - ruby_ore
 ```
 
-The `block_tags` can be found at [this page](https://minecraft.fandom.com/wiki/Tag#Block_tags). Useful if you want to allow/deny a group of blocks.  
-The `block_types` are materials. Useful if you want to allow/deny a specific list block.  
-The `oraxen_blocks` are blocks defined in the oraxen configuration.  
+The `block_tags` can be found at [this page](https://minecraft.fandom.com/wiki/Tag#Block_tags). Useful if you want to allow/deny a group of blocks.
+The `block_types` are materials. Useful if you want to allow/deny a specific list block.
+The `oraxen_blocks` are blocks defined in the oraxen configuration.
 This allows all custom blocks and furniture in here, but furniture requires a barrier-hitbox.
 
 # Storage
@@ -308,6 +318,57 @@ Mechanics:
 ## Click Actions
 Run commands, play sounds, or send messages when a player clicks the furniture.
 See the [clickAction mechanic](/creating-content/items/abilities/clickaction) for detailed configuration.
+
+## Pack.models
+
+Define multiple models for a single item using `Pack.models`. This eliminates the need for fake helper items when you need different visual states.
+
+```yaml
+my_furniture:
+  Pack:
+    model: default/my_furniture        # Base model
+    models:
+      active: default/my_furniture_active    # Additional model
+      broken: default/my_furniture_broken    # Another model
+```
+
+These models are auto-registered as:
+- `oraxen:my_furniture` → base model
+- `oraxen:my_furniture/active` → active variant
+- `oraxen:my_furniture/broken` → broken variant
+
+### Use Cases
+
+**Jukebox with playing state:**
+```yaml
+turntable:
+  Mechanics:
+    furniture:
+      jukebox:
+        active_model: opened  # Swap to this model when playing
+  Pack:
+    model: default/turntable_closed
+    models:
+      opened: default/turntable_opened
+```
+
+**Plant with growth stages:**
+```yaml
+seed:
+  Mechanics:
+    furniture:
+      stages:
+        - model: stage0
+          evolution: { delay: 10000 }
+        - model: stage1
+          # ...
+  Pack:
+    models:
+      stage0: default/plant/stage0
+      stage1: default/plant/stage1
+```
+
+See [farming mechanic](/creating-content/furniture/farming) for detailed plant/evolution configuration.
 
 ## Next Steps
 
