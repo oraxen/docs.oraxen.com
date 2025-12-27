@@ -23,6 +23,7 @@ The plugin related options. Here you can configure how some things work. Should 
 ```yaml
 Plugin:
   language: english # Language file to use
+  debug: false # Enable verbose logging (NMS detection, pack generation, HUD loading, etc.)
   generation:
     default_assets: true # Generate default textures/models on first run
     default_configs: true # Generate default item configs on first run
@@ -36,6 +37,17 @@ Plugin:
     chat: false
     books: false
 ```
+
+### Debug Mode
+
+When `debug: true` is enabled, Oraxen outputs additional informational messages to the console, including:
+- NMS version detection
+- Packet adapter selection
+- Resource pack generation progress
+- HUD loading details
+- Shift font generation messages
+
+These messages are hidden by default to keep console output clean.
 
 ## Item configurations
 
