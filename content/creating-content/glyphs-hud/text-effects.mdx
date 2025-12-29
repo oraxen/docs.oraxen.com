@@ -1,0 +1,202 @@
+# Text Effects
+
+import { Callout, Tabs } from 'nextra/components'
+import TextEffectGenerator from '../../../components/TextEffectGenerator'
+
+Text effects are shader-based visual effects that can be applied to any text in Minecraft. Unlike animated glyphs which swap between sprite frames, text effects modify how existing characters render (color, position, opacity) using GLSL shaders.
+
+<Callout type="info">
+Text effects require Minecraft 1.21.11+ and Oraxen's resource pack with shaders enabled.
+</Callout>
+
+## Configuration
+
+Text effects are configured in `settings.yml` under the `TextEffects` section:
+
+```yaml filename="settings.yml"
+TextEffects:
+  enabled: true                    # Master toggle for all text effects
+  shader:
+    template: auto                 # auto, effects_only, animated_only
+    encoding: alpha_lsb            # Encoding strategy (alpha_lsb recommended)
+  effects:
+    rainbow:
+      enabled: true                # Cycles through rainbow colors over time
+    wave:
+      enabled: true                # Text moves up and down in a wave pattern
+    shake:
+      enabled: true                # Text randomly shakes/jitters
+    pulse:
+      enabled: true                # Text fades in and out
+    gradient:
+      enabled: true                # Static color gradient across text
+    typewriter:
+      enabled: true                # Characters appear sequentially
+    wobble:
+      enabled: true                # Text rotates back and forth
+    obfuscate:
+      enabled: true                # Rapidly cycling random characters
+```
+
+### Configuration Options
+
+| Option | Description | Values |
+|--------|-------------|--------|
+| `enabled` | Master toggle for all text effects | `true` / `false` |
+| `shader.template` | Which shaders to generate | `auto`, `effects_only`, `animated_only` |
+| `shader.encoding` | Color encoding strategy | `alpha_lsb` (recommended) |
+
+### Shader Templates
+
+- **`auto`**: Generates shaders for both text effects and animated glyphs (recommended)
+- **`effects_only`**: Only generates text effect shaders
+- **`animated_only`**: Only generates animated glyph shaders
+
+## Available Effects
+
+| Effect | ID | Description | Speed | Param |
+|--------|-----|-------------|-------|-------|
+| Rainbow | 0 | Cycles through hue colors over time | Animation speed | - |
+| Wave | 1 | Vertical sine wave motion | Wave speed | Amplitude |
+| Shake | 2 | Random jitter/shake | Update frequency | Intensity |
+| Pulse | 3 | Opacity fades in and out | Pulse speed | - |
+| Gradient | 4 | Static color gradient across text | - | - |
+| Typewriter | 5 | Characters appear sequentially | Character reveal speed | - |
+| Wobble | 6 | Circular oscillation/rotation | Rotation speed | Amplitude |
+| Obfuscate | 7 | Rapidly cycling random colors | Cycle speed | - |
+
+### Effect Parameters
+
+- **Speed** (1-7): Controls how fast the effect animates. Default: 3
+- **Param** (0-7): Effect-specific parameter (amplitude, intensity). Default: 3
+
+## Commands
+
+Oraxen provides commands to test text effects in-game:
+
+```
+/oraxen texteffects              # List all available effects with demos
+/oraxen texteffect basic <effect> <text>
+/oraxen texteffect speed <effect> <speed> <text>
+/oraxen texteffect full <effect> <speed> <param> <text>
+```
+
+### Examples
+
+```
+/oraxen texteffect basic rainbow Hello World!
+/oraxen texteffect speed wave 5 Wavy Text
+/oraxen texteffect full shake 4 6 Very Shaky!
+```
+
+<Callout>
+Permission required: `oraxen.command.texteffect`
+</Callout>
+
+## Color Encoding
+
+Text effects work by encoding effect parameters into the color of each character. The shader then reads this encoded color and applies the appropriate visual effect.
+
+### Alpha LSB Encoding (Default)
+
+The `alpha_lsb` encoding preserves your base text color while embedding effect data in the low 4 bits of each RGB channel:
+
+- **R low bits**: Effect type (0-7)
+- **G low bits**: Speed (1-7)
+- **B low bits**: Parameter (0-7)
+
+This means you can apply effects to colored text and the base color is preserved.
+
+### Color Code Generator
+
+Use this tool to generate the hex color codes for applying text effects programmatically:
+
+<TextEffectGenerator />
+
+## Using Text Effects in Plugins
+
+### With Oraxen API
+
+```java
+import io.th0rgal.oraxen.font.TextEffect;
+import net.kyori.adventure.text.Component;
+
+// Apply rainbow effect
+Component rainbow = TextEffect.rainbow("Hello World!");
+
+// Apply wave effect with custom speed and amplitude
+Component wave = TextEffect.wave("Wavy Text", 5, 4);
+
+// Apply shake effect
+Component shake = TextEffect.shake("Shaky!", 3, 2);
+
+// Generic apply method
+Component custom = TextEffect.apply("Custom", TextEffect.Type.PULSE, 4, 0);
+
+// Apply effect while preserving base color
+TextColor baseColor = TextColor.color(0xFF5555); // Red
+Component coloredEffect = TextEffect.apply("Colored", TextEffect.Type.RAINBOW, 3, 0, baseColor);
+```
+
+### Available Methods
+
+| Method | Description |
+|--------|-------------|
+| `TextEffect.rainbow(text)` | Apply rainbow with default speed |
+| `TextEffect.rainbow(text, speed)` | Apply rainbow with custom speed |
+| `TextEffect.wave(text)` | Apply wave with defaults |
+| `TextEffect.wave(text, speed, amplitude)` | Apply wave with custom params |
+| `TextEffect.shake(text)` | Apply shake with defaults |
+| `TextEffect.shake(text, speed, intensity)` | Apply shake with custom params |
+| `TextEffect.pulse(text)` | Apply pulse with default speed |
+| `TextEffect.pulse(text, speed)` | Apply pulse with custom speed |
+| `TextEffect.gradient(text)` | Apply static gradient |
+| `TextEffect.typewriter(text)` | Apply typewriter with default speed |
+| `TextEffect.typewriter(text, speed)` | Apply typewriter with custom speed |
+| `TextEffect.wobble(text)` | Apply wobble with defaults |
+| `TextEffect.wobble(text, speed, amplitude)` | Apply wobble with custom params |
+| `TextEffect.obfuscate(text)` | Apply obfuscate with default speed |
+| `TextEffect.obfuscate(text, speed)` | Apply obfuscate with custom speed |
+
+### Manual Color Encoding
+
+If you need to create the encoded colors manually (e.g., for external plugins):
+
+```java
+import io.th0rgal.oraxen.font.TextEffect;
+import net.kyori.adventure.text.format.TextColor;
+
+// Get magic color for a specific character
+TextColor magicColor = TextEffect.getMagicColor(
+    TextEffect.Type.RAINBOW,  // Effect type
+    3,                        // Speed (1-7)
+    0,                        // Character index (used for phase offset)
+    0                         // Param (0-7)
+);
+
+// With base color preservation
+TextColor baseColor = TextColor.color(0xFFFFFF);
+TextColor encoded = TextEffect.getMagicColor(baseColor, TextEffect.Type.WAVE, 4, 0, 5);
+```
+
+## Compatibility Notes
+
+<Callout type="warning">
+Text effects may conflict with other resource packs that modify Minecraft's text shaders (`rendertype_text.vsh`, `rendertype_text.fsh`). If you use multiple packs that edit shaders, use the pack merge system and ensure shader files are merged correctly.
+</Callout>
+
+### Known Limitations
+
+- Effects are rendered client-side via shaders
+- Shadows are hidden for text with effects to avoid visual artifacts
+- Maximum 8 effect types supported by the encoding
+- Speed and param values are limited to 1-7 and 0-7 respectively
+- Character index wraps for text longer than 8 characters (phase offset cycles)
+
+### Minecraft Version Support
+
+| Version | Support |
+|---------|---------|
+| 1.21.11+ | Full support |
+| 1.21.4 - 1.21.10 | Partial (may require shader adjustments) |
+| Below 1.21.4 | Not supported |
