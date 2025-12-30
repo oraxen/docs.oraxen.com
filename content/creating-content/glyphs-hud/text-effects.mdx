@@ -11,7 +11,11 @@ Text effects require Minecraft 1.21.11+ and Oraxen's resource pack with shaders 
 
 ## Configuration
 
-Text effects are configured in `settings.yml` under the `TextEffects` section:
+Text effects are configured in two files:
+- **`settings.yml`** - Master toggle and shader settings
+- **`text_effects.yml`** - Effect definitions and GLSL snippets
+
+### settings.yml
 
 ```yaml filename="settings.yml"
 TextEffects:
@@ -19,23 +23,32 @@ TextEffects:
   shader:
     template: auto                 # auto, effects_only, animated_only
     encoding: alpha_lsb            # Encoding strategy (alpha_lsb recommended)
-  effects:
-    rainbow:
-      enabled: true                # Cycles through rainbow colors over time
-    wave:
-      enabled: true                # Text moves up and down in a wave pattern
-    shake:
-      enabled: true                # Text randomly shakes/jitters
-    pulse:
-      enabled: true                # Text fades in and out
-    gradient:
-      enabled: true                # Static color gradient across text
-    typewriter:
-      enabled: true                # Characters appear sequentially
-    wobble:
-      enabled: true                # Text rotates back and forth
-    obfuscate:
-      enabled: true                # Rapidly cycling random characters
+```
+
+### text_effects.yml
+
+```yaml filename="text_effects.yml"
+version: 1
+
+# Shared GLSL code available to all effects
+shared:
+  fragment_prelude: |
+    vec3 hsv2rgb(vec3 c) {
+        vec4 K = vec4(1.0, 2.0/3.0, 1.0/3.0, 3.0);
+        vec3 p = abs(fract(c.xxx + K.xyz) * 6.0 - K.www);
+        return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);
+    }
+
+effects:
+  rainbow:
+    id: 0
+    enabled: true
+    description: Cycles through rainbow colors over time
+    snippets:
+      - fragment: |
+          float hue = fract(charIndex * 0.03 + timeSeconds * speed * 0.03);
+          vec3 rgb = hsv2rgb(vec3(hue, 0.9, 1.0));
+          texColor.rgb = rgb;
 ```
 
 ### Configuration Options
@@ -62,8 +75,6 @@ TextEffects:
 | Pulse | 3 | Opacity fades in and out | Pulse speed | - |
 | Gradient | 4 | Static color gradient across text | - | - |
 | Typewriter | 5 | Characters appear sequentially | Character reveal speed | - |
-| Wobble | 6 | Circular oscillation/rotation | Rotation speed | Amplitude |
-| Obfuscate | 7 | Rapidly cycling random colors | Cycle speed | - |
 
 ### Effect Parameters
 
@@ -113,6 +124,226 @@ Use this tool to generate the hex color codes for applying text effects programm
 
 <TextEffectGenerator />
 
+## Customizing Effects with GLSL
+
+One of the most powerful features of Oraxen's text effects system is the ability to customize or create new effects using GLSL (OpenGL Shading Language). The `text_effects.yml` file contains the GLSL snippets that define how each effect works.
+
+### GLSL Snippet Structure
+
+Each effect can define snippets for vertex and/or fragment shaders:
+
+```yaml filename="text_effects.yml"
+effects:
+  my_effect:
+    id: 0              # Effect ID (0-7)
+    enabled: true      # Enable/disable this effect
+    description: My custom effect
+    snippets:
+      - targets:                     # Optional: version constraints
+          min_pack_format: 34
+          max_pack_format: 46
+          min_version: "1.21"
+          max_version: "1.21.5"
+        vertex: |
+          // Vertex shader code (position effects)
+          pos.y += sin(timeSeconds) * 0.5;
+        fragment: |
+          // Fragment shader code (color effects)
+          texColor.rgb = vec3(1.0, 0.0, 0.0);
+```
+
+### Available Variables
+
+These variables are available in your GLSL snippets:
+
+| Variable | Type | Description |
+|----------|------|-------------|
+| `timeSeconds` | `float` | Game time in seconds (for animation) |
+| `speed` | `float` | Speed parameter (1-7) decoded from color |
+| `param` | `float` | Extra parameter (0-7) decoded from color |
+| `charIndex` | `float` | Character index in the string |
+| `effectType` | `int` | The effect type ID |
+| `pos` | `vec3` | Vertex position (vertex shader only) |
+| `texColor` | `vec4` | Texture color RGBA (fragment shader only) |
+
+### Shared Code
+
+The `shared` section defines reusable GLSL functions:
+
+```yaml filename="text_effects.yml"
+shared:
+  fragment_prelude: |
+    // HSV to RGB conversion - useful for color effects
+    vec3 hsv2rgb(vec3 c) {
+        vec4 K = vec4(1.0, 2.0/3.0, 1.0/3.0, 3.0);
+        vec3 p = abs(fract(c.xxx + K.xyz) * 6.0 - K.www);
+        return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);
+    }
+
+  vertex_prelude: |
+    // Add any vertex shader helper functions here
+```
+
+### Complete Effect Examples
+
+<Tabs items={['Rainbow', 'Wave', 'Shake', 'Pulse', 'Gradient', 'Typewriter']}>
+<Tabs.Tab>
+**Rainbow Effect** - Cycles through hue colors over time
+
+```glsl
+// Fragment shader
+float hue = fract(charIndex * 0.03 + timeSeconds * speed * 0.03);
+vec3 rgb = hsv2rgb(vec3(hue, 0.9, 1.0));
+texColor.rgb = rgb;
+```
+
+**How it works:**
+- Uses `charIndex` to offset each character's hue for a gradient effect
+- Multiplies by `timeSeconds * speed` to animate the color cycling
+- `hsv2rgb()` converts the hue value to RGB colors
+- Saturation is fixed at 0.9, brightness at 1.0
+
+</Tabs.Tab>
+<Tabs.Tab>
+**Wave Effect** - Vertical sine wave motion
+
+```glsl
+// Vertex shader
+float phase = charIndex * 0.6 + timeSeconds * speed * 2.0;
+float amplitude = max(1.0, param) * 0.15;
+pos.y += sin(phase) * amplitude;
+```
+
+**How it works:**
+- Each character has a phase offset based on its index
+- `sin(phase)` creates the wave motion
+- `param` controls the wave amplitude (height)
+- `speed` controls how fast the wave moves
+
+</Tabs.Tab>
+<Tabs.Tab>
+**Shake Effect** - Random jitter
+
+```glsl
+// Vertex shader
+float seed = charIndex + floor(timeSeconds * speed * 8.0);
+float amplitude = max(1.0, param) * 0.15;
+pos.x += (fract(sin(seed * 12.9898) * 43758.5453) - 0.5) * amplitude;
+pos.y += (fract(sin(seed * 78.233) * 43758.5453) - 0.5) * amplitude;
+```
+
+**How it works:**
+- Uses a pseudo-random number generator based on `sin()`
+- `floor(timeSeconds * speed * 8.0)` creates discrete shake "frames"
+- Random offset is applied to both X and Y positions
+- `param` controls shake intensity
+
+</Tabs.Tab>
+<Tabs.Tab>
+**Pulse Effect** - Opacity fades in/out
+
+```glsl
+// Fragment shader
+float pulse = (sin(timeSeconds * speed * 0.5 + charIndex * 0.3) + 1.0) * 0.5;
+texColor.a *= 0.3 + pulse * 0.7;
+```
+
+**How it works:**
+- Uses `sin()` to oscillate between 0 and 1
+- Adds `charIndex * 0.3` to offset each character's phase
+- Multiplies the alpha channel to fade opacity
+- Minimum opacity is 0.3 (30%)
+
+</Tabs.Tab>
+<Tabs.Tab>
+**Gradient Effect** - Static color gradient
+
+```glsl
+// Fragment shader
+float t = charIndex / 15.0;
+vec3 startColor = vec3(1.0, 0.3, 0.3);  // Red
+vec3 endColor = vec3(0.3, 0.3, 1.0);    // Blue
+texColor.rgb = mix(startColor, endColor, t);
+```
+
+**How it works:**
+- `charIndex / 15.0` normalizes character position to 0-1 range
+- `mix()` interpolates between start and end colors
+- This is a static effect (not animated)
+
+**Customization tip:** Change `startColor` and `endColor` to create different gradients!
+
+</Tabs.Tab>
+<Tabs.Tab>
+**Typewriter Effect** - Characters appear sequentially
+
+```glsl
+// Fragment shader
+float reveal = mod(timeSeconds * speed * 2.0, 256.0);
+float alpha = clamp(reveal - charIndex, 0.0, 1.0);
+texColor.a *= alpha;
+```
+
+**How it works:**
+- `reveal` is a counter that increases over time
+- When `reveal > charIndex`, that character becomes visible
+- `clamp()` ensures alpha stays between 0 and 1
+- `mod(..., 256.0)` makes it loop for long text
+
+</Tabs.Tab>
+</Tabs>
+
+### Creating Custom Effects
+
+To create your own effect:
+
+1. Choose an effect ID (0-7) - you can replace an existing effect or use an unused ID
+2. Add your effect to `text_effects.yml`:
+
+```yaml filename="text_effects.yml"
+effects:
+  # Custom: Glowing text that pulses brighter and darker
+  glow:
+    id: 3  # Replaces pulse
+    enabled: true
+    description: Glowing brightness pulse
+    snippets:
+      - fragment: |
+          float glow = (sin(timeSeconds * speed) + 1.0) * 0.5;
+          float brightness = 0.7 + glow * 0.6;  // 0.7 to 1.3
+          texColor.rgb *= brightness;
+```
+
+3. Reload Oraxen with `/oraxen reload all`
+4. Test with `/oraxen texteffect basic glow Your glowing text!`
+
+### GLSL Tips and Tricks
+
+**Common functions:**
+```glsl
+sin(x), cos(x)       // Smooth oscillation (-1 to 1)
+fract(x)             // Fractional part (0 to 1)
+floor(x)             // Round down (for discrete steps)
+clamp(x, min, max)   // Constrain value to range
+mix(a, b, t)         // Linear interpolation
+mod(x, y)            // Remainder (for looping)
+```
+
+**Useful patterns:**
+```glsl
+// Smooth oscillation between 0 and 1
+float wave = (sin(timeSeconds) + 1.0) * 0.5;
+
+// Discrete steps (for frame-like animation)
+float frame = floor(timeSeconds * 10.0);  // 10 FPS
+
+// Per-character phase offset
+float phase = charIndex * 0.5 + timeSeconds;
+
+// Pseudo-random based on seed
+float rand = fract(sin(seed * 12.9898) * 43758.5453);
+```
+
 ## Using Text Effects in Plugins
 
 ### With Oraxen API
@@ -121,62 +352,61 @@ Use this tool to generate the hex color codes for applying text effects programm
 import io.th0rgal.oraxen.font.TextEffect;
 import net.kyori.adventure.text.Component;
 
-// Apply rainbow effect
-Component rainbow = TextEffect.rainbow("Hello World!");
+// Get a specific effect definition
+TextEffect.Definition rainbow = TextEffect.getEffect("rainbow");
 
-// Apply wave effect with custom speed and amplitude
-Component wave = TextEffect.wave("Wavy Text", 5, 4);
+// Apply with default speed and param
+Component text = TextEffect.apply("Hello World!", rainbow);
 
-// Apply shake effect
-Component shake = TextEffect.shake("Shaky!", 3, 2);
+// Apply with custom speed (1-7) and param (0-7)
+Component wave = TextEffect.apply("Wavy!", TextEffect.getEffect("wave"), 5, 4);
 
-// Generic apply method
-Component custom = TextEffect.apply("Custom", TextEffect.Type.PULSE, 4, 0);
-
-// Apply effect while preserving base color
-TextColor baseColor = TextColor.color(0xFF5555); // Red
-Component coloredEffect = TextEffect.apply("Colored", TextEffect.Type.RAINBOW, 3, 0, baseColor);
+// Check if effects are enabled
+boolean enabled = TextEffect.isEnabled();
+boolean rainbowEnabled = TextEffect.isEffectEnabled(rainbow);
 ```
 
 ### Available Methods
 
 | Method | Description |
 |--------|-------------|
-| `TextEffect.rainbow(text)` | Apply rainbow with default speed |
-| `TextEffect.rainbow(text, speed)` | Apply rainbow with custom speed |
-| `TextEffect.wave(text)` | Apply wave with defaults |
-| `TextEffect.wave(text, speed, amplitude)` | Apply wave with custom params |
-| `TextEffect.shake(text)` | Apply shake with defaults |
-| `TextEffect.shake(text, speed, intensity)` | Apply shake with custom params |
-| `TextEffect.pulse(text)` | Apply pulse with default speed |
-| `TextEffect.pulse(text, speed)` | Apply pulse with custom speed |
-| `TextEffect.gradient(text)` | Apply static gradient |
-| `TextEffect.typewriter(text)` | Apply typewriter with default speed |
-| `TextEffect.typewriter(text, speed)` | Apply typewriter with custom speed |
-| `TextEffect.wobble(text)` | Apply wobble with defaults |
-| `TextEffect.wobble(text, speed, amplitude)` | Apply wobble with custom params |
-| `TextEffect.obfuscate(text)` | Apply obfuscate with default speed |
-| `TextEffect.obfuscate(text, speed)` | Apply obfuscate with custom speed |
+| `TextEffect.getEffect(name)` | Get effect definition by name |
+| `TextEffect.getEffects()` | Get all available effect definitions |
+| `TextEffect.apply(text, definition)` | Apply effect with defaults |
+| `TextEffect.apply(text, definition, speed, param)` | Apply with custom params |
+| `TextEffect.isEnabled()` | Check if text effects are enabled globally |
+| `TextEffect.isEffectEnabled(definition)` | Check if a specific effect is enabled |
 
 ### Manual Color Encoding
 
 If you need to create the encoded colors manually (e.g., for external plugins):
 
 ```java
-import io.th0rgal.oraxen.font.TextEffect;
+import io.th0rgal.oraxen.font.AlphaLsbEncoding;
 import net.kyori.adventure.text.format.TextColor;
 
-// Get magic color for a specific character
-TextColor magicColor = TextEffect.getMagicColor(
-    TextEffect.Type.RAINBOW,  // Effect type
-    3,                        // Speed (1-7)
-    0,                        // Character index (used for phase offset)
-    0                         // Param (0-7)
+AlphaLsbEncoding encoding = new AlphaLsbEncoding();
+
+// Encode effect into a color
+TextColor baseColor = TextColor.color(0xFFFFFF); // White
+TextColor encoded = encoding.encode(
+    baseColor,
+    0,    // Effect ID (0 = rainbow)
+    3,    // Speed (1-7)
+    0,    // Param (0-7)
+    0     // Character index
 );
 
-// With base color preservation
-TextColor baseColor = TextColor.color(0xFFFFFF);
-TextColor encoded = TextEffect.getMagicColor(baseColor, TextEffect.Type.WAVE, 4, 0, 5);
+// Check if a color has encoded effect data
+boolean hasEffect = encoding.matches(0xFF1234);
+
+// Decode effect data from a color
+AlphaLsbEncoding.Decoded data = encoding.decode(0xFF1234);
+if (data != null) {
+    int effectType = data.effectType();
+    int speed = data.speed();
+    int param = data.param();
+}
 ```
 
 ## Compatibility Notes
@@ -189,9 +419,9 @@ Text effects may conflict with other resource packs that modify Minecraft's text
 
 - Effects are rendered client-side via shaders
 - Shadows are hidden for text with effects to avoid visual artifacts
-- Maximum 8 effect types supported by the encoding
+- Maximum 6 effect types (IDs 0-5) are built-in; custom effects can use IDs 0-7
 - Speed and param values are limited to 1-7 and 0-7 respectively
-- Character index wraps for text longer than 8 characters (phase offset cycles)
+- Character index is derived from `gl_VertexID` in the shader
 
 ### Minecraft Version Support
 
@@ -200,3 +430,30 @@ Text effects may conflict with other resource packs that modify Minecraft's text
 | 1.21.11+ | Full support |
 | 1.21.4 - 1.21.10 | Partial (may require shader adjustments) |
 | Below 1.21.4 | Not supported |
+
+### Version-Specific Snippets
+
+You can define different GLSL code for different Minecraft versions:
+
+```yaml filename="text_effects.yml"
+effects:
+  custom:
+    id: 0
+    enabled: true
+    snippets:
+      # Snippet for 1.21.6+
+      - targets:
+          min_version: "1.21.6"
+        fragment: |
+          // Modern shader code
+          texColor.rgb = modernEffect();
+
+      # Fallback for older versions
+      - targets:
+          max_version: "1.21.5"
+        fragment: |
+          // Legacy shader code
+          texColor.rgb = legacyEffect();
+```
+
+The first matching snippet (based on `targets`) is used. Snippets without targets always match.
