@@ -9,8 +9,6 @@ const EFFECTS = [
   { id: 3, name: 'pulse', label: 'Pulse', description: 'Opacity fades in/out' },
   { id: 4, name: 'gradient', label: 'Gradient', description: 'Static color gradient' },
   { id: 5, name: 'typewriter', label: 'Typewriter', description: 'Characters appear sequentially' },
-  { id: 6, name: 'wobble', label: 'Wobble', description: 'Circular oscillation' },
-  { id: 7, name: 'obfuscate', label: 'Obfuscate', description: 'Rapidly cycling colors' },
 ]
 
 // Alpha LSB encoding constants (matching AlphaLsbEncoding.java)
