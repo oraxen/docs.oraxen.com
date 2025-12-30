@@ -3,10 +3,12 @@
 import { useState, useMemo, useEffect, useRef, useCallback } from 'react'
 
 const PRESET_EFFECTS = [
-  { id: 0, name: 'rainbow', label: 'Rainbow' },
-  { id: 1, name: 'wave', label: 'Wave' },
-  { id: 2, name: 'shake', label: 'Shake' },
-  { id: 3, name: 'pulse', label: 'Pulse' },
+  { id: 0, name: 'rainbow', label: 'Rainbow', desc: 'Cycles through hue colors' },
+  { id: 1, name: 'wave', label: 'Wave', desc: 'Vertical sine wave motion' },
+  { id: 2, name: 'shake', label: 'Shake', desc: 'Random jitter' },
+  { id: 3, name: 'pulse', label: 'Pulse', desc: 'Opacity fades in/out' },
+  { id: 4, name: 'gradient', label: 'Gradient', desc: 'Static color gradient' },
+  { id: 5, name: 'typewriter', label: 'Typewriter', desc: 'Characters appear sequentially' },
 ]
 
 // Effect rendering functions (matching ShaderPreview)
@@ -36,6 +38,19 @@ const EFFECT_RENDERS: Record<number, (ctx: CanvasRenderingContext2D, char: strin
     ctx.fillStyle = color
     ctx.fillText(char, x, y)
     ctx.globalAlpha = 1
+  },
+  4: (ctx, char, x, y, i, time, speed, param, color, total) => { // Gradient
+    const t = total > 1 ? i / (total - 1) : 0
+    const hue = t * 360
+    ctx.fillStyle = `hsl(${hue}, 70%, 60%)`
+    ctx.fillText(char, x, y)
+  },
+  5: (ctx, char, x, y, i, time, speed, param, color, total) => { // Typewriter
+    const charsVisible = Math.floor(time * speed * 2) % (total + 3)
+    if (i < charsVisible) {
+      ctx.fillStyle = color
+      ctx.fillText(char, x, y)
+    }
   },
 }
 
@@ -181,13 +196,12 @@ export default function TextEffectGenerator() {
     <div
       ref={containerRef}
       style={{
-        border: '2px solid var(--nextra-primary)',
-        borderRadius: '12px',
+        border: '1px solid var(--nextra-border)',
+        borderRadius: '8px',
         overflow: 'hidden',
         marginTop: '24px',
         marginBottom: '24px',
-        backgroundColor: isFullscreen ? '#1a1a2e' : 'var(--nextra-bg)',
-        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)',
+        backgroundColor: isFullscreen ? '#1a1a2e' : 'var(--nextra-code-bg)',
         ...(isFullscreen ? {
           position: 'fixed',
           inset: 0,
@@ -200,11 +214,11 @@ export default function TextEffectGenerator() {
         } : {}),
       }}
     >
-      {/* Header with effect selector */}
+      {/* Header */}
       <div style={{
         padding: '10px 14px',
         borderBottom: '1px solid var(--nextra-border)',
-        background: 'linear-gradient(to right, var(--nextra-primary-alpha), transparent)',
+        backgroundColor: 'var(--nextra-bg)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',

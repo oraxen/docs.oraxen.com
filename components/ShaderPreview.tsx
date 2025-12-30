@@ -206,6 +206,16 @@ float amplitude = max(1.0, param) * 0.15;
 pos.y += sin(phase) * amplitude;`,
     fragmentGlsl: null,
   },
+  shake: {
+    name: 'Shake',
+    description: 'Random jitter effect (vertex only)',
+    vertexGlsl: `// Vertex shader - shake/jitter
+float seed = charIndex + timeSeconds * speed * 8.0;
+float intensity = max(1.0, param) * 0.1;
+pos.x += sin(seed * 12.9898) * intensity;
+pos.y += sin(seed * 78.233) * intensity;`,
+    fragmentGlsl: null,
+  },
   rainbowWave: {
     name: 'Rainbow Wave',
     description: 'Rainbow colors with wave motion (both shaders)',
