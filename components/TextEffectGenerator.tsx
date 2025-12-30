@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react'
 
-const EFFECTS = [
+const PRESET_EFFECTS = [
   { id: 0, name: 'rainbow', label: 'Rainbow', description: 'Cycles through rainbow colors' },
   { id: 1, name: 'wave', label: 'Wave', description: 'Vertical sine wave motion' },
   { id: 2, name: 'shake', label: 'Shake', description: 'Random jitter' },
@@ -31,7 +31,6 @@ function encodeChannel(base: number, data: number): number {
 }
 
 function avoidAnimationSentinels(red: number): number {
-  // Avoid R=254 and shadow range (62-64) which are reserved for animated glyphs
   if (red === 254) return red - 16
   if (red >= 62 && red <= 64) return red + 16
   return red
@@ -71,286 +70,386 @@ function hexToRgb(hex: string): { r: number; g: number; b: number } {
     : { r: 255, g: 255, b: 255 }
 }
 
+const inputStyle = {
+  width: '100%',
+  padding: '10px 12px',
+  borderRadius: '6px',
+  border: '1px solid var(--nextra-border)',
+  backgroundColor: 'var(--nextra-bg)',
+  color: 'var(--nextra-fg)',
+  fontSize: '14px',
+}
+
+const labelStyle = {
+  display: 'block',
+  marginBottom: '6px',
+  fontWeight: 600,
+  fontSize: '13px',
+  color: 'var(--nextra-fg)',
+  textTransform: 'uppercase' as const,
+  letterSpacing: '0.5px',
+}
+
+const cardStyle = {
+  backgroundColor: 'var(--nextra-code-bg)',
+  padding: '16px',
+  borderRadius: '8px',
+  marginBottom: '12px',
+}
+
 export default function TextEffectGenerator() {
+  const [useCustomId, setUseCustomId] = useState(false)
   const [effectId, setEffectId] = useState(0)
   const [speed, setSpeed] = useState(3)
   const [param, setParam] = useState(3)
   const [baseColorHex, setBaseColorHex] = useState('#FFFFFF')
   const [sampleText, setSampleText] = useState('Hello World!')
+  const [copied, setCopied] = useState<string | null>(null)
 
   const baseColor = useMemo(() => hexToRgb(baseColorHex), [baseColorHex])
-  const effect = EFFECTS.find((e) => e.id === effectId) || EFFECTS[0]
+  const presetEffect = PRESET_EFFECTS.find((e) => e.id === effectId)
+  const effectName = presetEffect?.name ?? `custom_${effectId}`
 
-  // All characters use the same encoded color - the shader derives
-  // character index from gl_VertexID for per-character phase offsets
   const encodedColor = useMemo(
     () => encodeTextEffect(baseColor, effectId, speed, param),
     [baseColor, effectId, speed, param]
   )
 
+  const miniMessage = `<${encodedColor.hex}>${sampleText}`
+
+  const copyToClipboard = (text: string, label: string) => {
+    navigator.clipboard.writeText(text)
+    setCopied(label)
+    setTimeout(() => setCopied(null), 2000)
+  }
+
   return (
     <div
       style={{
         border: '1px solid var(--nextra-border)',
-        borderRadius: '8px',
-        padding: '20px',
-        marginTop: '16px',
-        marginBottom: '16px',
+        borderRadius: '12px',
+        padding: '24px',
+        marginTop: '20px',
+        marginBottom: '20px',
         backgroundColor: 'var(--nextra-bg)',
       }}
     >
-      <h3 style={{ marginTop: 0, marginBottom: '16px' }}>Text Effect Color Generator</h3>
+      {/* Header */}
+      <div style={{ marginBottom: '24px' }}>
+        <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 600 }}>Color Code Generator</h3>
+        <p style={{ margin: '4px 0 0', fontSize: '14px', opacity: 0.7 }}>
+          Generate hex color codes for applying text effects programmatically
+        </p>
+      </div>
 
+      {/* Effect Selection */}
+      <div style={cardStyle}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '16px' }}>
+          <label style={{ ...labelStyle, marginBottom: 0, flex: 'none' }}>Effect Type</label>
+          <label
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              fontSize: '13px',
+              cursor: 'pointer',
+              marginLeft: 'auto',
+            }}
+          >
+            <input
+              type="checkbox"
+              checked={useCustomId}
+              onChange={(e) => setUseCustomId(e.target.checked)}
+              style={{ cursor: 'pointer' }}
+            />
+            Use custom ID
+          </label>
+        </div>
+
+        {useCustomId ? (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <input
+              type="number"
+              min="0"
+              max="7"
+              value={effectId}
+              onChange={(e) => setEffectId(clamp(parseInt(e.target.value) || 0, 0, 7))}
+              style={{ ...inputStyle, width: '80px', textAlign: 'center', fontFamily: 'monospace' }}
+            />
+            <span style={{ fontSize: '13px', opacity: 0.6 }}>
+              Enter effect ID (0-7) for custom effects defined in text_effects.yml
+            </span>
+          </div>
+        ) : (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
+            {PRESET_EFFECTS.map((e) => (
+              <button
+                key={e.id}
+                onClick={() => setEffectId(e.id)}
+                style={{
+                  padding: '10px 12px',
+                  borderRadius: '6px',
+                  border:
+                    effectId === e.id
+                      ? '2px solid var(--nextra-primary)'
+                      : '1px solid var(--nextra-border)',
+                  backgroundColor: effectId === e.id ? 'var(--nextra-primary-alpha)' : 'transparent',
+                  color: 'var(--nextra-fg)',
+                  cursor: 'pointer',
+                  textAlign: 'left',
+                  transition: 'all 0.15s',
+                }}
+              >
+                <div style={{ fontWeight: 600, fontSize: '13px' }}>{e.label}</div>
+                <div style={{ fontSize: '11px', opacity: 0.6, marginTop: '2px' }}>{e.description}</div>
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Parameters Grid */}
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
           gap: '16px',
-          marginBottom: '20px',
+          marginBottom: '16px',
         }}
       >
-        <div>
-          <label
-            style={{ display: 'block', marginBottom: '4px', fontWeight: 500, fontSize: '14px' }}
-          >
-            Effect Type
-          </label>
-          <select
-            value={effectId}
-            onChange={(e) => setEffectId(parseInt(e.target.value))}
-            style={{
-              width: '100%',
-              padding: '8px',
-              borderRadius: '4px',
-              border: '1px solid var(--nextra-border)',
-              backgroundColor: 'var(--nextra-bg)',
-              color: 'var(--nextra-fg)',
-            }}
-          >
-            {EFFECTS.map((e) => (
-              <option key={e.id} value={e.id}>
-                {e.label} - {e.description}
-              </option>
-            ))}
-          </select>
+        {/* Speed */}
+        <div style={cardStyle}>
+          <label style={labelStyle}>Speed</label>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <input
+              type="range"
+              min="1"
+              max="7"
+              value={speed}
+              onChange={(e) => setSpeed(parseInt(e.target.value))}
+              style={{ flex: 1 }}
+            />
+            <span
+              style={{
+                fontFamily: 'monospace',
+                fontWeight: 600,
+                fontSize: '16px',
+                minWidth: '20px',
+                textAlign: 'center',
+              }}
+            >
+              {speed}
+            </span>
+          </div>
         </div>
 
-        <div>
-          <label
-            style={{ display: 'block', marginBottom: '4px', fontWeight: 500, fontSize: '14px' }}
-          >
-            Speed (1-7): {speed}
-          </label>
-          <input
-            type="range"
-            min="1"
-            max="7"
-            value={speed}
-            onChange={(e) => setSpeed(parseInt(e.target.value))}
-            style={{ width: '100%' }}
-          />
+        {/* Param */}
+        <div style={cardStyle}>
+          <label style={labelStyle}>Param</label>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <input
+              type="range"
+              min="0"
+              max="7"
+              value={param}
+              onChange={(e) => setParam(parseInt(e.target.value))}
+              style={{ flex: 1 }}
+            />
+            <span
+              style={{
+                fontFamily: 'monospace',
+                fontWeight: 600,
+                fontSize: '16px',
+                minWidth: '20px',
+                textAlign: 'center',
+              }}
+            >
+              {param}
+            </span>
+          </div>
         </div>
 
-        <div>
-          <label
-            style={{ display: 'block', marginBottom: '4px', fontWeight: 500, fontSize: '14px' }}
-          >
-            Param (0-7): {param}
-          </label>
-          <input
-            type="range"
-            min="0"
-            max="7"
-            value={param}
-            onChange={(e) => setParam(parseInt(e.target.value))}
-            style={{ width: '100%' }}
-          />
-        </div>
-
-        <div>
-          <label
-            style={{ display: 'block', marginBottom: '4px', fontWeight: 500, fontSize: '14px' }}
-          >
-            Base Color
-          </label>
-          <div style={{ display: 'flex', gap: '8px' }}>
+        {/* Base Color */}
+        <div style={cardStyle}>
+          <label style={labelStyle}>Base Color</label>
+          <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
             <input
               type="color"
               value={baseColorHex}
               onChange={(e) => setBaseColorHex(e.target.value)}
-              style={{ width: '50px', height: '36px', padding: 0, border: 'none' }}
+              style={{
+                width: '42px',
+                height: '42px',
+                padding: 0,
+                border: '2px solid var(--nextra-border)',
+                borderRadius: '6px',
+                cursor: 'pointer',
+              }}
             />
             <input
               type="text"
               value={baseColorHex}
               onChange={(e) => setBaseColorHex(e.target.value)}
-              style={{
-                flex: 1,
-                padding: '8px',
-                borderRadius: '4px',
-                border: '1px solid var(--nextra-border)',
-                backgroundColor: 'var(--nextra-bg)',
-                color: 'var(--nextra-fg)',
-                fontFamily: 'monospace',
-              }}
+              style={{ ...inputStyle, fontFamily: 'monospace', flex: 1 }}
             />
           </div>
         </div>
       </div>
 
-      <div style={{ marginBottom: '20px' }}>
-        <label style={{ display: 'block', marginBottom: '4px', fontWeight: 500, fontSize: '14px' }}>
-          Sample Text
-        </label>
+      {/* Sample Text */}
+      <div style={{ ...cardStyle, marginBottom: '20px' }}>
+        <label style={labelStyle}>Sample Text</label>
         <input
           type="text"
           value={sampleText}
           onChange={(e) => setSampleText(e.target.value)}
-          style={{
-            width: '100%',
-            padding: '8px',
-            borderRadius: '4px',
-            border: '1px solid var(--nextra-border)',
-            backgroundColor: 'var(--nextra-bg)',
-            color: 'var(--nextra-fg)',
-          }}
+          style={inputStyle}
         />
       </div>
 
+      {/* Output Section */}
       <div
         style={{
-          backgroundColor: 'var(--nextra-code-bg)',
-          padding: '16px',
-          borderRadius: '8px',
-          marginBottom: '16px',
+          background: 'linear-gradient(135deg, var(--nextra-code-bg) 0%, var(--nextra-bg) 100%)',
+          border: '2px solid var(--nextra-border)',
+          borderRadius: '12px',
+          padding: '20px',
         }}
       >
-        <h4 style={{ marginTop: 0, marginBottom: '12px' }}>Encoded Color</h4>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
-          <div
-            style={{
-              width: '60px',
-              height: '60px',
-              backgroundColor: encodedColor.hex,
-              borderRadius: '8px',
-              border: '2px solid var(--nextra-border)',
-            }}
-          />
-          <div>
-            <div style={{ fontFamily: 'monospace', fontSize: '24px', fontWeight: 'bold' }}>
+        <div style={{ display: 'flex', alignItems: 'flex-start', gap: '20px', flexWrap: 'wrap' }}>
+          {/* Color Preview */}
+          <div style={{ textAlign: 'center' }}>
+            <div
+              style={{
+                width: '80px',
+                height: '80px',
+                backgroundColor: encodedColor.hex,
+                borderRadius: '12px',
+                border: '3px solid var(--nextra-border)',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+              }}
+            />
+            <div
+              style={{
+                marginTop: '8px',
+                fontFamily: 'monospace',
+                fontSize: '18px',
+                fontWeight: 700,
+                cursor: 'pointer',
+              }}
+              onClick={() => copyToClipboard(encodedColor.hex, 'hex')}
+              title="Click to copy"
+            >
               {encodedColor.hex}
+              {copied === 'hex' && (
+                <span style={{ fontSize: '11px', marginLeft: '6px', opacity: 0.7 }}>copied!</span>
+              )}
             </div>
-            <div style={{ fontSize: '14px', opacity: 0.7 }}>
+            <div style={{ fontSize: '12px', opacity: 0.6 }}>
               RGB({encodedColor.r}, {encodedColor.g}, {encodedColor.b})
             </div>
           </div>
-        </div>
-      </div>
 
-      <div
-        style={{
-          backgroundColor: 'var(--nextra-code-bg)',
-          padding: '16px',
-          borderRadius: '8px',
-          marginBottom: '16px',
-        }}
-      >
-        <h4 style={{ marginTop: 0, marginBottom: '12px' }}>Preview</h4>
-        <div
-          style={{
-            fontFamily: 'monospace',
-            fontSize: '18px',
-            color: encodedColor.hex,
-            textShadow: '0 0 2px rgba(0,0,0,0.5)',
-          }}
-        >
-          {sampleText}
-        </div>
-        <div style={{ fontSize: '12px', opacity: 0.6, marginTop: '8px' }}>
-          Note: All characters use the same color. The shader derives per-character index from{' '}
-          <code>gl_VertexID</code> for phase offsets in the {effect.name} effect.
-        </div>
-      </div>
+          {/* Text Preview & MiniMessage */}
+          <div style={{ flex: 1, minWidth: '200px' }}>
+            <div style={{ marginBottom: '16px' }}>
+              <div style={{ fontSize: '11px', fontWeight: 600, opacity: 0.5, marginBottom: '6px' }}>
+                PREVIEW
+              </div>
+              <div
+                style={{
+                  fontFamily: 'monospace',
+                  fontSize: '20px',
+                  color: encodedColor.hex,
+                  textShadow: '0 2px 4px rgba(0,0,0,0.3)',
+                  padding: '8px 0',
+                }}
+              >
+                {sampleText}
+              </div>
+            </div>
 
-      <div
-        style={{
-          backgroundColor: 'var(--nextra-code-bg)',
-          padding: '16px',
-          borderRadius: '8px',
-        }}
-      >
-        <h4 style={{ marginTop: 0, marginBottom: '12px' }}>MiniMessage Format</h4>
-        <code
-          style={{
-            display: 'block',
-            padding: '12px',
-            backgroundColor: 'rgba(0,0,0,0.2)',
-            borderRadius: '4px',
-            overflowX: 'auto',
-            fontSize: '13px',
-          }}
-        >
-          {`<${encodedColor.hex}>${sampleText}`}
-        </code>
-        <div style={{ fontSize: '12px', opacity: 0.6, marginTop: '8px' }}>
-          Use this in any plugin that supports MiniMessage formatting.
+            <div>
+              <div style={{ fontSize: '11px', fontWeight: 600, opacity: 0.5, marginBottom: '6px' }}>
+                MINIMESSAGE
+              </div>
+              <div
+                onClick={() => copyToClipboard(miniMessage, 'mini')}
+                style={{
+                  padding: '10px 12px',
+                  backgroundColor: 'rgba(0,0,0,0.2)',
+                  borderRadius: '6px',
+                  fontFamily: 'monospace',
+                  fontSize: '13px',
+                  cursor: 'pointer',
+                  wordBreak: 'break-all',
+                }}
+                title="Click to copy"
+              >
+                {miniMessage}
+                {copied === 'mini' && (
+                  <span
+                    style={{ fontSize: '11px', marginLeft: '8px', opacity: 0.7, fontWeight: 600 }}
+                  >
+                    copied!
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
 
-      <div
-        style={{
-          backgroundColor: 'var(--nextra-code-bg)',
-          padding: '16px',
-          borderRadius: '8px',
-          marginTop: '16px',
-        }}
-      >
-        <h4 style={{ marginTop: 0, marginBottom: '12px' }}>Encoding Details</h4>
-        <table style={{ width: '100%', fontSize: '14px', borderCollapse: 'collapse' }}>
-          <tbody>
-            <tr>
-              <td style={{ padding: '4px 8px', fontWeight: 500 }}>Effect Type</td>
-              <td style={{ padding: '4px 8px', fontFamily: 'monospace' }}>
-                {effect.name} (ID: {effectId})
-              </td>
-            </tr>
-            <tr>
-              <td style={{ padding: '4px 8px', fontWeight: 500 }}>Speed</td>
-              <td style={{ padding: '4px 8px', fontFamily: 'monospace' }}>{speed}</td>
-            </tr>
-            <tr>
-              <td style={{ padding: '4px 8px', fontWeight: 500 }}>Param</td>
-              <td style={{ padding: '4px 8px', fontFamily: 'monospace' }}>{param}</td>
-            </tr>
-            <tr>
-              <td style={{ padding: '4px 8px', fontWeight: 500 }}>Base Color</td>
-              <td style={{ padding: '4px 8px', fontFamily: 'monospace' }}>
-                {baseColorHex} (R:{baseColor.r}, G:{baseColor.g}, B:{baseColor.b})
-              </td>
-            </tr>
-            <tr>
-              <td style={{ padding: '4px 8px', fontWeight: 500 }}>R Channel</td>
-              <td style={{ padding: '4px 8px', fontFamily: 'monospace' }}>
-                Base high bits + effect type in low bits = {encodedColor.r} (0x
-                {encodedColor.r.toString(16).padStart(2, '0')})
-              </td>
-            </tr>
-            <tr>
-              <td style={{ padding: '4px 8px', fontWeight: 500 }}>G Channel</td>
-              <td style={{ padding: '4px 8px', fontFamily: 'monospace' }}>
-                Base high bits + speed in low bits = {encodedColor.g} (0x
-                {encodedColor.g.toString(16).padStart(2, '0')})
-              </td>
-            </tr>
-            <tr>
-              <td style={{ padding: '4px 8px', fontWeight: 500 }}>B Channel</td>
-              <td style={{ padding: '4px 8px', fontFamily: 'monospace' }}>
-                Base high bits + param in low bits = {encodedColor.b} (0x
-                {encodedColor.b.toString(16).padStart(2, '0')})
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        {/* Encoding Details - Collapsible */}
+        <details style={{ marginTop: '16px' }}>
+          <summary
+            style={{
+              cursor: 'pointer',
+              fontSize: '12px',
+              fontWeight: 600,
+              opacity: 0.6,
+              padding: '4px 0',
+            }}
+          >
+            Encoding Details
+          </summary>
+          <div
+            style={{
+              marginTop: '12px',
+              padding: '12px',
+              backgroundColor: 'rgba(0,0,0,0.15)',
+              borderRadius: '6px',
+              fontSize: '12px',
+              fontFamily: 'monospace',
+            }}
+          >
+            <div style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gap: '4px 16px' }}>
+              <span style={{ opacity: 0.6 }}>Effect:</span>
+              <span>
+                {effectName} (ID: {effectId})
+              </span>
+              <span style={{ opacity: 0.6 }}>Speed:</span>
+              <span>{speed}</span>
+              <span style={{ opacity: 0.6 }}>Param:</span>
+              <span>{param}</span>
+              <span style={{ opacity: 0.6 }}>R channel:</span>
+              <span>
+                {baseColor.r} → {encodedColor.r} (effect in low bits)
+              </span>
+              <span style={{ opacity: 0.6 }}>G channel:</span>
+              <span>
+                {baseColor.g} → {encodedColor.g} (speed in low bits)
+              </span>
+              <span style={{ opacity: 0.6 }}>B channel:</span>
+              <span>
+                {baseColor.b} → {encodedColor.b} (param in low bits)
+              </span>
+            </div>
+          </div>
+        </details>
+
+        <div style={{ fontSize: '11px', opacity: 0.5, marginTop: '12px' }}>
+          All characters use the same color. The shader derives per-character index from gl_VertexID.
+        </div>
       </div>
     </div>
   )
