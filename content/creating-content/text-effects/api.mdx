@@ -1,0 +1,195 @@
+# Plugin API
+
+import { Callout } from 'nextra/components'
+
+Oraxen provides a Java API for applying text effects programmatically in your plugins.
+
+## Basic Usage
+
+```java
+import io.th0rgal.oraxen.font.TextEffect;
+import net.kyori.adventure.text.Component;
+
+// Get a specific effect definition
+TextEffect.Definition rainbow = TextEffect.getEffect("rainbow");
+
+// Apply with default speed and param
+Component text = TextEffect.apply("Hello World!", rainbow);
+
+// Apply with custom speed (1-7) and param (0-7)
+Component wave = TextEffect.apply("Wavy!", TextEffect.getEffect("wave"), 5, 4);
+
+// Check if effects are enabled
+boolean enabled = TextEffect.isEnabled();
+boolean rainbowEnabled = TextEffect.isEffectEnabled(rainbow);
+```
+
+## Available Methods
+
+| Method | Description |
+|--------|-------------|
+| `TextEffect.getEffect(name)` | Get effect definition by name |
+| `TextEffect.getEffects()` | Get all available effect definitions |
+| `TextEffect.apply(text, definition)` | Apply effect with defaults |
+| `TextEffect.apply(text, definition, speed, param)` | Apply with custom params |
+| `TextEffect.isEnabled()` | Check if text effects are enabled globally |
+| `TextEffect.isEffectEnabled(definition)` | Check if a specific effect is enabled |
+
+## Manual Color Encoding
+
+If you need to create the encoded colors manually (e.g., for external plugins that don't depend on Oraxen):
+
+```java
+import io.th0rgal.oraxen.font.AlphaLsbEncoding;
+import net.kyori.adventure.text.format.TextColor;
+
+AlphaLsbEncoding encoding = new AlphaLsbEncoding();
+
+// Encode effect into a color
+TextColor baseColor = TextColor.color(0xFFFFFF); // White
+TextColor encoded = encoding.encode(
+    baseColor,
+    0,    // Effect ID (0 = rainbow)
+    3,    // Speed (1-7)
+    0,    // Param (0-7)
+    0     // Character index
+);
+
+// Check if a color has encoded effect data
+boolean hasEffect = encoding.matches(0xFF1234);
+
+// Decode effect data from a color
+AlphaLsbEncoding.Decoded data = encoding.decode(0xFF1234);
+if (data != null) {
+    int effectType = data.effectType();
+    int speed = data.speed();
+    int param = data.param();
+}
+```
+
+## Encoding Algorithm
+
+The Alpha LSB encoding embeds effect data in the low 4 bits of each RGB channel:
+
+```
+R channel: [base R high 4 bits][effect ID low 4 bits]
+G channel: [base G high 4 bits][speed low 4 bits]
+B channel: [base B high 4 bits][param low 4 bits]
+```
+
+This preserves the approximate base color while encoding the effect parameters.
+
+### Implementation Details
+
+```java
+// Constants
+int LSB_BITS = 4;
+int LOW_MASK = 0x0F;  // Lower 4 bits
+int DATA_MASK = 0x07; // Effect data uses 3 bits (0-7)
+int DATA_MIN = 1;     // Minimum encoded value
+int DATA_GAP = 5;     // Skip value 5 to avoid conflicts
+
+// Encode a single channel
+int encodeChannel(int base, int data) {
+    int encoded = (data & DATA_MASK) + DATA_MIN;
+    if (encoded >= DATA_GAP) {
+        encoded += 1;  // Skip over gap
+    }
+    return (base & ~LOW_MASK) | encoded;
+}
+
+// Avoid animation sentinel values in red channel
+int avoidAnimationSentinels(int red) {
+    if (red == 254) return red - 16;
+    if (red >= 62 && red <= 64) return red + 16;
+    return red;
+}
+```
+
+## External Integration
+
+For plugins that don't have Oraxen as a dependency, you can implement the encoding yourself:
+
+```java
+public class TextEffectEncoder {
+    private static final int LOW_MASK = 0x0F;
+    private static final int DATA_MASK = 0x07;
+    private static final int DATA_MIN = 1;
+    private static final int DATA_GAP = 5;
+
+    public static int encodeColor(int baseColor, int effectId, int speed, int param) {
+        int r = (baseColor >> 16) & 0xFF;
+        int g = (baseColor >> 8) & 0xFF;
+        int b = baseColor & 0xFF;
+
+        int rEnc = avoidSentinels(encodeChannel(r, effectId & DATA_MASK));
+        int gEnc = encodeChannel(g, Math.max(1, Math.min(speed, DATA_MASK)));
+        int bEnc = encodeChannel(b, Math.max(0, Math.min(param, DATA_MASK)));
+
+        return (rEnc << 16) | (gEnc << 8) | bEnc;
+    }
+
+    private static int encodeChannel(int base, int data) {
+        int encoded = (data & DATA_MASK) + DATA_MIN;
+        if (encoded >= DATA_GAP) encoded++;
+        return (base & ~LOW_MASK) | encoded;
+    }
+
+    private static int avoidSentinels(int red) {
+        if (red == 254) return red - 16;
+        if (red >= 62 && red <= 64) return red + 16;
+        return red;
+    }
+}
+```
+
+### Usage Example
+
+```java
+// Encode rainbow effect (ID 0) with speed 3 on white text
+int encodedColor = TextEffectEncoder.encodeColor(0xFFFFFF, 0, 3, 0);
+String hex = String.format("#%06X", encodedColor);
+
+// Use in MiniMessage
+String miniMessage = "<" + hex + ">Your text here";
+```
+
+## MiniMessage Integration
+
+Text effects work with MiniMessage formatting. Simply apply the encoded color:
+
+```java
+import net.kyori.adventure.text.minimessage.MiniMessage;
+
+// Using Oraxen API
+TextEffect.Definition effect = TextEffect.getEffect("rainbow");
+Component component = TextEffect.apply("Hello!", effect, 3, 0);
+
+// Or manually with MiniMessage
+String hex = "#F1F4F4"; // Encoded color from generator
+Component manual = MiniMessage.miniMessage().deserialize(
+    "<" + hex + ">Hello!"
+);
+```
+
+<Callout type="info">
+Use the [Color Code Generator](/creating-content/text-effects#color-code-generator) to quickly get the encoded hex color for any effect configuration.
+</Callout>
+
+## PlaceholderAPI
+
+Text effects can be combined with PlaceholderAPI. However, since the color encoding needs to be applied at render time, you'll need to handle this in your plugin:
+
+```java
+// Example: Apply effect to a placeholder result
+String placeholderResult = PlaceholderAPI.setPlaceholders(player, "%player_name%");
+TextEffect.Definition effect = TextEffect.getEffect("rainbow");
+Component effectComponent = TextEffect.apply(placeholderResult, effect);
+```
+
+## Performance Considerations
+
+- Text effects are rendered client-side via shaders, so there's minimal server impact
+- The encoding is computed once when the text is created
+- Avoid creating many unique effect configurations in tight loops
+- Cache `TextEffect.Definition` objects rather than calling `getEffect()` repeatedly

@@ -255,7 +255,7 @@ Example:
 loading:
   texture: animations/loading # Path under plugins/Oraxen/pack/textures (png extension optional)
   animation:
-    frames: 24                # Number of frames in the sprite sheet
+    frames: 12                # Number of frames in the sprite sheet (max: 16)
     fps: 12                   # 1-127 (default: 10)
     loop: true                # default: true
     offset: 0                 # optional horizontal offset, in pixels
@@ -265,8 +265,16 @@ loading:
     placeholders: [":loading:"]
 ```
 
+<Callout type="info">
+**Limits:** Animated glyphs support a maximum of **16 frames** per animation. Non-looping animations (`loop: false`) play synchronized to server time, meaning all instances of the same animation will be in sync.
+</Callout>
+
 <Callout type="warning">
-Animated glyphs require Oraxen’s pack generation to be enabled and may conflict with other packs that replace Minecraft’s text shaders. If you use multiple packs that edit shaders, use the pack merge system and ensure shader files are merged intentionally.
+Animated glyphs require Oraxen's pack generation to be enabled and may conflict with other packs that replace Minecraft's text shaders. If you use multiple packs that edit shaders, use the pack merge system and ensure shader files are merged intentionally.
+</Callout>
+
+<Callout type="info">
+Looking for text effects like rainbow, wave, shake, or pulse? See the [Text Effects](/creating-content/text-effects) documentation.
 </Callout>
 
 ## PlaceholderAPI
