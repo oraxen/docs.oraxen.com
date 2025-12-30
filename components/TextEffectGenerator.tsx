@@ -81,14 +81,12 @@ export default function TextEffectGenerator() {
   const baseColor = useMemo(() => hexToRgb(baseColorHex), [baseColorHex])
   const effect = EFFECTS.find((e) => e.id === effectId) || EFFECTS[0]
 
-  const encodedColors = useMemo(() => {
-    return sampleText.split('').map((char, index) => {
-      const encoded = encodeTextEffect(baseColor, effectId, speed, param)
-      return { char, ...encoded, index }
-    })
-  }, [sampleText, baseColor, effectId, speed, param])
-
-  const firstEncoded = encodedColors[0] || encodeTextEffect(baseColor, effectId, speed, param)
+  // All characters use the same encoded color - the shader derives
+  // character index from gl_VertexID for per-character phase offsets
+  const encodedColor = useMemo(
+    () => encodeTextEffect(baseColor, effectId, speed, param),
+    [baseColor, effectId, speed, param]
+  )
 
   return (
     <div
@@ -233,17 +231,17 @@ export default function TextEffectGenerator() {
             style={{
               width: '60px',
               height: '60px',
-              backgroundColor: firstEncoded.hex,
+              backgroundColor: encodedColor.hex,
               borderRadius: '8px',
               border: '2px solid var(--nextra-border)',
             }}
           />
           <div>
             <div style={{ fontFamily: 'monospace', fontSize: '24px', fontWeight: 'bold' }}>
-              {firstEncoded.hex}
+              {encodedColor.hex}
             </div>
             <div style={{ fontSize: '14px', opacity: 0.7 }}>
-              RGB({firstEncoded.r}, {firstEncoded.g}, {firstEncoded.b})
+              RGB({encodedColor.r}, {encodedColor.g}, {encodedColor.b})
             </div>
           </div>
         </div>
@@ -257,29 +255,20 @@ export default function TextEffectGenerator() {
           marginBottom: '16px',
         }}
       >
-        <h4 style={{ marginTop: 0, marginBottom: '12px' }}>Preview (with per-character colors)</h4>
+        <h4 style={{ marginTop: 0, marginBottom: '12px' }}>Preview</h4>
         <div
           style={{
             fontFamily: 'monospace',
             fontSize: '18px',
-            display: 'flex',
-            flexWrap: 'wrap',
+            color: encodedColor.hex,
+            textShadow: '0 0 2px rgba(0,0,0,0.5)',
           }}
         >
-          {encodedColors.map((c, i) => (
-            <span
-              key={i}
-              style={{
-                color: c.hex,
-                textShadow: '0 0 2px rgba(0,0,0,0.5)',
-              }}
-            >
-              {c.char}
-            </span>
-          ))}
+          {sampleText}
         </div>
         <div style={{ fontSize: '12px', opacity: 0.6, marginTop: '8px' }}>
-          Note: In-game, the shader will animate this text with the {effect.name} effect.
+          Note: All characters use the same color. The shader derives per-character index from{' '}
+          <code>gl_VertexID</code> for phase offsets in the {effect.name} effect.
         </div>
       </div>
 
@@ -301,7 +290,7 @@ export default function TextEffectGenerator() {
             fontSize: '13px',
           }}
         >
-          {encodedColors.map((c) => `<${c.hex}>${c.char}`).join('')}
+          {`<${encodedColor.hex}>${sampleText}`}
         </code>
         <div style={{ fontSize: '12px', opacity: 0.6, marginTop: '8px' }}>
           Use this in any plugin that supports MiniMessage formatting.
@@ -342,22 +331,22 @@ export default function TextEffectGenerator() {
             <tr>
               <td style={{ padding: '4px 8px', fontWeight: 500 }}>R Channel</td>
               <td style={{ padding: '4px 8px', fontFamily: 'monospace' }}>
-                Base high bits + effect type in low bits = {firstEncoded.r} (0x
-                {firstEncoded.r.toString(16).padStart(2, '0')})
+                Base high bits + effect type in low bits = {encodedColor.r} (0x
+                {encodedColor.r.toString(16).padStart(2, '0')})
               </td>
             </tr>
             <tr>
               <td style={{ padding: '4px 8px', fontWeight: 500 }}>G Channel</td>
               <td style={{ padding: '4px 8px', fontFamily: 'monospace' }}>
-                Base high bits + speed in low bits = {firstEncoded.g} (0x
-                {firstEncoded.g.toString(16).padStart(2, '0')})
+                Base high bits + speed in low bits = {encodedColor.g} (0x
+                {encodedColor.g.toString(16).padStart(2, '0')})
               </td>
             </tr>
             <tr>
               <td style={{ padding: '4px 8px', fontWeight: 500 }}>B Channel</td>
               <td style={{ padding: '4px 8px', fontFamily: 'monospace' }}>
-                Base high bits + param in low bits = {firstEncoded.b} (0x
-                {firstEncoded.b.toString(16).padStart(2, '0')})
+                Base high bits + param in low bits = {encodedColor.b} (0x
+                {encodedColor.b.toString(16).padStart(2, '0')})
               </td>
             </tr>
           </tbody>
