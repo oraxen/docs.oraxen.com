@@ -69,7 +69,7 @@ shared:
 
 ## Built-in Effect Examples
 
-<Tabs items={['Rainbow', 'Wave', 'Shake', 'Pulse', 'Gradient', 'Typewriter']}>
+<Tabs items={['Rainbow', 'Wave', 'Shake', 'Pulse']}>
 <Tabs.Tab>
 **Rainbow Effect** - Cycles through hue colors over time
 
@@ -136,42 +136,6 @@ texColor.a *= 0.3 + pulse * 0.7;
 - Adds `charIndex * 0.3` to offset each character's phase
 - Multiplies the alpha channel to fade opacity
 - Minimum opacity is 0.3 (30%)
-
-</Tabs.Tab>
-<Tabs.Tab>
-**Gradient Effect** - Static color gradient
-
-```glsl
-// Fragment shader
-float t = charIndex / 15.0;
-vec3 startColor = vec3(1.0, 0.3, 0.3);  // Red
-vec3 endColor = vec3(0.3, 0.3, 1.0);    // Blue
-texColor.rgb = mix(startColor, endColor, t);
-```
-
-**How it works:**
-- `charIndex / 15.0` normalizes character position to 0-1 range
-- `mix()` interpolates between start and end colors
-- This is a static effect (not animated)
-
-**Customization tip:** Change `startColor` and `endColor` to create different gradients!
-
-</Tabs.Tab>
-<Tabs.Tab>
-**Typewriter Effect** - Characters appear sequentially
-
-```glsl
-// Fragment shader
-float reveal = floor(timeSeconds * speed * 4.0);
-float alpha = step(charIndex, reveal);
-texColor.a *= alpha;
-```
-
-**How it works:**
-- `reveal` counts up in discrete steps as time progresses
-- `step(charIndex, reveal)` returns 1.0 when `reveal >= charIndex`, 0.0 otherwise
-- Characters appear one-by-one from left to right
-- This is a one-way reveal (doesn't loop)
 
 </Tabs.Tab>
 </Tabs>
