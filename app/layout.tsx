@@ -112,19 +112,6 @@ export default async function RootLayout({
         {/* Preconnect to external resources for faster loading */}
         <link rel="preconnect" href="https://cdn.discordapp.com" />
         <link rel="dns-prefetch" href="https://cdn.discordapp.com" />
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              document.addEventListener('DOMContentLoaded', function() {
-                const logoLink = document.querySelector('nav a[href="https://oraxen.com"]');
-                if (logoLink) {
-                  logoLink.setAttribute('target', '_blank');
-                  logoLink.setAttribute('rel', 'noopener noreferrer');
-                }
-              });
-            `,
-          }}
-        />
       </Head>
       <body>
         <Layout

@@ -18,13 +18,13 @@ const EFFECT_RENDERS: Record<number, (ctx: CanvasRenderingContext2D, char: strin
   },
   1: (ctx, char, x, y, i, time, speed, param, color) => { // Wave
     const phase = i * 0.6 + time * speed * 2.0
-    const offsetY = Math.sin(phase) * Math.max(1, param) * 5
+    const offsetY = Math.sin(phase) * Math.max(1, param) * 1
     ctx.fillStyle = color
     ctx.fillText(char, x, y + offsetY)
   },
   2: (ctx, char, x, y, i, time, speed, param, color) => { // Shake
     const seed = i + Math.floor(time * speed * 8.0)
-    const amp = Math.max(1, param) * 4
+    const amp = Math.max(1, param) * 1
     const randX = (Math.abs(Math.sin(seed * 12.9898) * 43758.5453) % 1 - 0.5) * amp
     const randY = (Math.abs(Math.sin(seed * 78.233) * 43758.5453) % 1 - 0.5) * amp
     ctx.fillStyle = color
@@ -81,6 +81,7 @@ function hexToRgb(hex: string): { r: number; g: number; b: number } {
 
 export default function TextEffectGenerator() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
   const animationRef = useRef<number>(0)
   const startTimeRef = useRef<number>(Date.now())
 
@@ -92,6 +93,7 @@ export default function TextEffectGenerator() {
   const [sampleText, setSampleText] = useState('Hello World!')
   const [copied, setCopied] = useState<string | null>(null)
   const [fontLoaded, setFontLoaded] = useState(false)
+  const [isFullscreen, setIsFullscreen] = useState(false)
 
   const baseColor = useMemo(() => hexToRgb(baseColorHex), [baseColorHex])
   const presetEffect = PRESET_EFFECTS.find((e) => e.id === effectId)
@@ -105,6 +107,25 @@ export default function TextEffectGenerator() {
     font.load().then((f) => { document.fonts.add(f); setFontLoaded(true) }).catch(() => setFontLoaded(true))
   }, [])
 
+  // Handle fullscreen
+  const toggleFullscreen = useCallback(() => {
+    if (!isFullscreen) {
+      containerRef.current?.requestFullscreen?.()
+      setIsFullscreen(true)
+    } else {
+      document.exitFullscreen?.()
+      setIsFullscreen(false)
+    }
+  }, [isFullscreen])
+
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!document.fullscreenElement)
+    }
+    document.addEventListener('fullscreenchange', handleFullscreenChange)
+    return () => document.removeEventListener('fullscreenchange', handleFullscreenChange)
+  }, [])
+
   // Render preview
   const render = useCallback(() => {
     const canvas = canvasRef.current
@@ -113,7 +134,7 @@ export default function TextEffectGenerator() {
     if (!ctx) return
 
     const time = (Date.now() - startTimeRef.current) / 1000
-    const fontSize = 20
+    const fontSize = isFullscreen ? 48 : 20
     ctx.font = `${fontSize}px Minecraft, monospace`
 
     const chars = sampleText.split('')
@@ -121,8 +142,8 @@ export default function TextEffectGenerator() {
     const totalWidth = charWidths.reduce((a, b) => a + b, 0)
     const padding = 12
 
-    canvas.width = Math.max(180, totalWidth + padding * 2)
-    canvas.height = fontSize * 1.6 + padding * 2
+    canvas.width = isFullscreen ? window.innerWidth : Math.max(180, totalWidth + padding * 2)
+    canvas.height = isFullscreen ? 150 : fontSize * 1.6 + padding * 2
 
     ctx.fillStyle = '#1a1a2e'
     ctx.fillRect(0, 0, canvas.width, canvas.height)
@@ -131,7 +152,8 @@ export default function TextEffectGenerator() {
     ctx.textBaseline = 'middle'
     ctx.imageSmoothingEnabled = false
 
-    let x = padding
+    const startX = isFullscreen ? (canvas.width - totalWidth) / 2 : padding
+    let x = startX
     const y = canvas.height / 2
     const renderFn = EFFECT_RENDERS[effectId] || EFFECT_RENDERS[0]
 
@@ -141,7 +163,7 @@ export default function TextEffectGenerator() {
     }
 
     animationRef.current = requestAnimationFrame(render)
-  }, [effectId, speed, param, baseColorHex, sampleText])
+  }, [effectId, speed, param, baseColorHex, sampleText, isFullscreen])
 
   useEffect(() => {
     if (!fontLoaded) return
@@ -156,22 +178,69 @@ export default function TextEffectGenerator() {
   }
 
   return (
-    <div style={{
-      border: '1px solid var(--nextra-border)',
-      borderRadius: '10px',
-      overflow: 'hidden',
-      marginTop: '16px',
-      marginBottom: '16px',
-      backgroundColor: 'var(--nextra-bg)',
-    }}>
+    <div
+      ref={containerRef}
+      style={{
+        border: '2px solid var(--nextra-primary)',
+        borderRadius: '12px',
+        overflow: 'hidden',
+        marginTop: '24px',
+        marginBottom: '24px',
+        backgroundColor: isFullscreen ? '#1a1a2e' : 'var(--nextra-bg)',
+        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)',
+        ...(isFullscreen ? {
+          position: 'fixed',
+          inset: 0,
+          zIndex: 9999,
+          margin: 0,
+          borderRadius: 0,
+          border: 'none',
+          display: 'flex',
+          flexDirection: 'column',
+        } : {}),
+      }}
+    >
       {/* Header with effect selector */}
+      <div style={{
+        padding: '10px 14px',
+        borderBottom: '1px solid var(--nextra-border)',
+        background: 'linear-gradient(to right, var(--nextra-primary-alpha), transparent)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        flexWrap: 'wrap',
+        gap: '8px',
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+          <span style={{ fontSize: '14px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <span>🎨</span> Color Code Generator
+          </span>
+        </div>
+        <button
+          onClick={toggleFullscreen}
+          style={{
+            padding: '4px 10px',
+            borderRadius: '4px',
+            border: '1px solid var(--nextra-border)',
+            backgroundColor: isFullscreen ? 'var(--nextra-primary-alpha)' : 'transparent',
+            color: 'var(--nextra-fg)',
+            fontSize: '11px',
+            cursor: 'pointer',
+          }}
+          title={isFullscreen ? 'Exit fullscreen (Esc)' : 'Fullscreen'}
+        >
+          {isFullscreen ? '⤓ Exit' : '⤢ Fullscreen'}
+        </button>
+      </div>
+
+      {/* Effect selector */}
       <div style={{
         padding: '10px 14px',
         borderBottom: '1px solid var(--nextra-border)',
         backgroundColor: 'var(--nextra-code-bg)',
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-          <span style={{ fontSize: '12px', fontWeight: 600 }}>Effect:</span>
+          <span style={{ fontSize: '11px', fontWeight: 600, opacity: 0.6 }}>Effect:</span>
           {!useCustomId ? (
             <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
               {PRESET_EFFECTS.map((e) => (
@@ -181,11 +250,12 @@ export default function TextEffectGenerator() {
                   style={{
                     padding: '4px 10px',
                     borderRadius: '4px',
-                    border: effectId === e.id ? '1px solid var(--nextra-primary)' : '1px solid var(--nextra-border)',
+                    border: effectId === e.id ? '2px solid var(--nextra-primary)' : '1px solid var(--nextra-border)',
                     backgroundColor: effectId === e.id ? 'var(--nextra-primary-alpha)' : 'transparent',
                     color: 'var(--nextra-fg)',
                     fontSize: '11px',
                     cursor: 'pointer',
+                    fontWeight: effectId === e.id ? 600 : 400,
                   }}
                 >
                   {e.label}
@@ -219,72 +289,75 @@ export default function TextEffectGenerator() {
       </div>
 
       {/* Preview + Controls row */}
-      <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+      <div style={{ display: 'flex', flexWrap: 'wrap', flex: isFullscreen ? 1 : undefined }}>
         {/* Preview */}
         <div style={{
-          flex: '1 1 200px',
-          padding: '14px',
+          flex: isFullscreen ? 1 : '1 1 200px',
+          padding: isFullscreen ? '32px' : '14px',
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
           backgroundColor: '#1a1a2e',
-          minHeight: '70px',
+          minHeight: isFullscreen ? undefined : '70px',
         }}>
           <canvas ref={canvasRef} style={{ maxWidth: '100%', imageRendering: 'pixelated' }} />
         </div>
 
         {/* Output */}
-        <div style={{
-          flex: '1 1 200px',
-          padding: '12px 14px',
-          borderLeft: '1px solid var(--nextra-border)',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '8px',
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <div
-              style={{
-                width: '40px',
-                height: '40px',
-                backgroundColor: encodedColor.hex,
-                borderRadius: '6px',
-                border: '2px solid var(--nextra-border)',
-                cursor: 'pointer',
-              }}
-              onClick={() => copyToClipboard(encodedColor.hex, 'hex')}
-              title="Click to copy hex"
-            />
-            <div>
+        {!isFullscreen && (
+          <div style={{
+            flex: '1 1 200px',
+            padding: '12px 14px',
+            borderLeft: '1px solid var(--nextra-border)',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '8px',
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
               <div
-                style={{ fontFamily: 'monospace', fontSize: '14px', fontWeight: 600, cursor: 'pointer' }}
+                style={{
+                  width: '40px',
+                  height: '40px',
+                  backgroundColor: encodedColor.hex,
+                  borderRadius: '6px',
+                  border: '2px solid var(--nextra-border)',
+                  cursor: 'pointer',
+                }}
                 onClick={() => copyToClipboard(encodedColor.hex, 'hex')}
-              >
-                {encodedColor.hex}
-                {copied === 'hex' && <span style={{ fontSize: '10px', marginLeft: '6px', opacity: 0.6 }}>copied!</span>}
-              </div>
-              <div style={{ fontSize: '10px', opacity: 0.5 }}>
-                RGB({encodedColor.r}, {encodedColor.g}, {encodedColor.b})
+                title="Click to copy hex"
+              />
+              <div>
+                <div
+                  style={{ fontFamily: 'monospace', fontSize: '14px', fontWeight: 600, cursor: 'pointer' }}
+                  onClick={() => copyToClipboard(encodedColor.hex, 'hex')}
+                >
+                  {encodedColor.hex}
+                  {copied === 'hex' && <span style={{ fontSize: '10px', marginLeft: '6px', color: 'var(--nextra-primary)' }}>✓ copied!</span>}
+                </div>
+                <div style={{ fontSize: '10px', opacity: 0.5 }}>
+                  RGB({encodedColor.r}, {encodedColor.g}, {encodedColor.b})
+                </div>
               </div>
             </div>
+            <div
+              onClick={() => copyToClipboard(miniMessage, 'mini')}
+              style={{
+                padding: '6px 10px',
+                backgroundColor: 'var(--nextra-code-bg)',
+                borderRadius: '4px',
+                fontFamily: 'monospace',
+                fontSize: '11px',
+                cursor: 'pointer',
+                wordBreak: 'break-all',
+                border: '1px solid var(--nextra-border)',
+              }}
+              title="Click to copy MiniMessage"
+            >
+              {miniMessage}
+              {copied === 'mini' && <span style={{ fontSize: '10px', marginLeft: '6px', color: 'var(--nextra-primary)' }}>✓ copied!</span>}
+            </div>
           </div>
-          <div
-            onClick={() => copyToClipboard(miniMessage, 'mini')}
-            style={{
-              padding: '6px 10px',
-              backgroundColor: 'var(--nextra-code-bg)',
-              borderRadius: '4px',
-              fontFamily: 'monospace',
-              fontSize: '11px',
-              cursor: 'pointer',
-              wordBreak: 'break-all',
-            }}
-            title="Click to copy"
-          >
-            {miniMessage}
-            {copied === 'mini' && <span style={{ fontSize: '10px', marginLeft: '6px', opacity: 0.6 }}>copied!</span>}
-          </div>
-        </div>
+        )}
       </div>
 
       {/* Compact controls */}
@@ -295,6 +368,7 @@ export default function TextEffectGenerator() {
         gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
         gap: '10px',
         fontSize: '11px',
+        backgroundColor: 'var(--nextra-bg)',
       }}>
         <div>
           <label style={{ display: 'block', fontWeight: 600, opacity: 0.6, marginBottom: '3px', textTransform: 'uppercase', fontSize: '9px' }}>Text</label>
@@ -341,32 +415,34 @@ export default function TextEffectGenerator() {
       </div>
 
       {/* Encoding info (collapsed by default) */}
-      <details style={{ borderTop: '1px solid var(--nextra-border)' }}>
-        <summary style={{
-          padding: '8px 14px',
-          cursor: 'pointer',
-          fontSize: '10px',
-          fontWeight: 600,
-          opacity: 0.5,
-          backgroundColor: 'var(--nextra-code-bg)',
-        }}>
-          Encoding Details
-        </summary>
-        <div style={{
-          padding: '10px 14px',
-          backgroundColor: 'var(--nextra-code-bg)',
-          fontSize: '10px',
-          fontFamily: 'monospace',
-          display: 'grid',
-          gridTemplateColumns: 'auto 1fr',
-          gap: '2px 12px',
-        }}>
-          <span style={{ opacity: 0.5 }}>Effect:</span><span>{effectName} (ID: {effectId})</span>
-          <span style={{ opacity: 0.5 }}>R channel:</span><span>{baseColor.r} → {encodedColor.r}</span>
-          <span style={{ opacity: 0.5 }}>G channel:</span><span>{baseColor.g} → {encodedColor.g}</span>
-          <span style={{ opacity: 0.5 }}>B channel:</span><span>{baseColor.b} → {encodedColor.b}</span>
-        </div>
-      </details>
+      {!isFullscreen && (
+        <details style={{ borderTop: '1px solid var(--nextra-border)' }}>
+          <summary style={{
+            padding: '8px 14px',
+            cursor: 'pointer',
+            fontSize: '10px',
+            fontWeight: 600,
+            opacity: 0.5,
+            backgroundColor: 'var(--nextra-code-bg)',
+          }}>
+            Encoding Details
+          </summary>
+          <div style={{
+            padding: '10px 14px',
+            backgroundColor: 'var(--nextra-code-bg)',
+            fontSize: '10px',
+            fontFamily: 'monospace',
+            display: 'grid',
+            gridTemplateColumns: 'auto 1fr',
+            gap: '2px 12px',
+          }}>
+            <span style={{ opacity: 0.5 }}>Effect:</span><span>{effectName} (ID: {effectId})</span>
+            <span style={{ opacity: 0.5 }}>R channel:</span><span>{baseColor.r} → {encodedColor.r}</span>
+            <span style={{ opacity: 0.5 }}>G channel:</span><span>{baseColor.g} → {encodedColor.g}</span>
+            <span style={{ opacity: 0.5 }}>B channel:</span><span>{baseColor.b} → {encodedColor.b}</span>
+          </div>
+        </details>
+      )}
     </div>
   )
 }
