@@ -1,8 +1,15 @@
 # GLSL Customization
 
 import { Callout, Tabs } from 'nextra/components'
+import ShaderPreview from '../../../components/ShaderPreview'
 
 One of the most powerful features of Oraxen's text effects system is the ability to customize or create new effects using GLSL (OpenGL Shading Language). The `text_effects.yml` file contains the GLSL snippets that define how each effect works.
+
+## Interactive Shader Preview
+
+Try out text effects directly in your browser! Select a template to start with, then modify the GLSL code to create your own effects. The preview uses the Minecraft font and simulates how effects will look in-game.
+
+<ShaderPreview />
 
 ## GLSL Snippet Structure
 
@@ -341,4 +348,4 @@ When developing custom effects, you can quickly test changes by using `/oraxen r
 5. **Wrong timing**: Remember `speed` is 1-7, multiply appropriately
 
 **Test your GLSL locally:**
-You can use online GLSL editors like [Shadertoy](https://www.shadertoy.com/) to prototype effects before adding them to Oraxen.
+Use the [Interactive Shader Preview](#interactive-shader-preview) at the top of this page to prototype effects before adding them to Oraxen. It uses the same Minecraft font and simulates the shader environment.
