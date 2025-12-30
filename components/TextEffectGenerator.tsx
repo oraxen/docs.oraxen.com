@@ -7,8 +7,6 @@ const PRESET_EFFECTS = [
   { id: 1, name: 'wave', label: 'Wave' },
   { id: 2, name: 'shake', label: 'Shake' },
   { id: 3, name: 'pulse', label: 'Pulse' },
-  { id: 4, name: 'gradient', label: 'Gradient' },
-  { id: 5, name: 'typewriter', label: 'Typewriter' },
 ]
 
 // Effect rendering functions (matching ShaderPreview)
@@ -20,13 +18,13 @@ const EFFECT_RENDERS: Record<number, (ctx: CanvasRenderingContext2D, char: strin
   },
   1: (ctx, char, x, y, i, time, speed, param, color) => { // Wave
     const phase = i * 0.6 + time * speed * 2.0
-    const offsetY = Math.sin(phase) * Math.max(1, param) * 3
+    const offsetY = Math.sin(phase) * Math.max(1, param) * 5
     ctx.fillStyle = color
     ctx.fillText(char, x, y + offsetY)
   },
   2: (ctx, char, x, y, i, time, speed, param, color) => { // Shake
     const seed = i + Math.floor(time * speed * 8.0)
-    const amp = Math.max(1, param) * 2.5
+    const amp = Math.max(1, param) * 4
     const randX = (Math.abs(Math.sin(seed * 12.9898) * 43758.5453) % 1 - 0.5) * amp
     const randY = (Math.abs(Math.sin(seed * 78.233) * 43758.5453) % 1 - 0.5) * amp
     ctx.fillStyle = color
@@ -38,17 +36,6 @@ const EFFECT_RENDERS: Record<number, (ctx: CanvasRenderingContext2D, char: strin
     ctx.fillStyle = color
     ctx.fillText(char, x, y)
     ctx.globalAlpha = 1
-  },
-  4: (ctx, char, x, y, i, time, speed, param, color, total) => { // Gradient
-    const t = i / Math.max(1, total - 1)
-    ctx.fillStyle = `rgb(${Math.round(255 * (1 - t) + 77 * t)}, 77, ${Math.round(77 * (1 - t) + 255 * t)})`
-    ctx.fillText(char, x, y)
-  },
-  5: (ctx, char, x, y, i, time, speed, param, color) => { // Typewriter
-    if (i <= Math.floor(time * speed * 4.0)) {
-      ctx.fillStyle = color
-      ctx.fillText(char, x, y)
-    }
   },
 }
 

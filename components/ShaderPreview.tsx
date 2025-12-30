@@ -28,7 +28,7 @@ float amplitude = max(1.0, param) * 0.15;
 pos.y += sin(phase) * amplitude;`,
     apply: (ctx: CanvasRenderingContext2D, char: string, x: number, y: number, charIndex: number, time: number, speed: number, param: number, baseColor: string) => {
       const phase = charIndex * 0.6 + time * speed * 2.0
-      const amplitude = Math.max(1, param) * 4
+      const amplitude = Math.max(1, param) * 8
       const offsetY = Math.sin(phase) * amplitude
       ctx.fillStyle = baseColor
       ctx.fillText(char, x, y + offsetY)
@@ -45,7 +45,7 @@ pos.x += (fract(sin(seed * 12.9898) * 43758.5453) - 0.5) * amplitude;
 pos.y += (fract(sin(seed * 78.233) * 43758.5453) - 0.5) * amplitude;`,
     apply: (ctx: CanvasRenderingContext2D, char: string, x: number, y: number, charIndex: number, time: number, speed: number, param: number, baseColor: string) => {
       const seed = charIndex + Math.floor(time * speed * 8.0)
-      const amplitude = Math.max(1, param) * 3
+      const amplitude = Math.max(1, param) * 6
       const randX = (Math.abs(Math.sin(seed * 12.9898) * 43758.5453) % 1 - 0.5) * amplitude
       const randY = (Math.abs(Math.sin(seed * 78.233) * 43758.5453) % 1 - 0.5) * amplitude
       ctx.fillStyle = baseColor
@@ -68,40 +68,6 @@ texColor.a *= 0.3 + pulse * 0.7;`,
       ctx.globalAlpha = 1
     }
   },
-  gradient: {
-    name: 'Gradient',
-    description: 'Static color gradient across text',
-    type: 'fragment',
-    glsl: `// Fragment shader - horizontal gradient
-float t = charIndex / 15.0;
-vec3 startColor = vec3(1.0, 0.3, 0.3);  // Red
-vec3 endColor = vec3(0.3, 0.3, 1.0);    // Blue
-texColor.rgb = mix(startColor, endColor, t);`,
-    apply: (ctx: CanvasRenderingContext2D, char: string, x: number, y: number, charIndex: number, time: number, speed: number, param: number, baseColor: string, totalChars: number) => {
-      const t = charIndex / Math.max(1, totalChars - 1)
-      const r = Math.round(255 * (1 - t) + 77 * t)
-      const g = Math.round(77)
-      const b = Math.round(77 * (1 - t) + 255 * t)
-      ctx.fillStyle = `rgb(${r}, ${g}, ${b})`
-      ctx.fillText(char, x, y)
-    }
-  },
-  typewriter: {
-    name: 'Typewriter',
-    description: 'Characters appear sequentially',
-    type: 'fragment',
-    glsl: `// Fragment shader - typewriter reveal
-float reveal = floor(timeSeconds * speed * 4.0);
-float alpha = step(charIndex, reveal);
-texColor.a *= alpha;`,
-    apply: (ctx: CanvasRenderingContext2D, char: string, x: number, y: number, charIndex: number, time: number, speed: number, param: number, baseColor: string) => {
-      const reveal = Math.floor(time * speed * 4.0)
-      if (charIndex <= reveal) {
-        ctx.fillStyle = baseColor
-        ctx.fillText(char, x, y)
-      }
-    }
-  },
   breathing: {
     name: 'Breathing',
     description: 'Slow, smooth scale pulsing',
@@ -110,7 +76,7 @@ texColor.a *= alpha;`,
 float breath = (sin(timeSeconds * speed * 0.3) + 1.0) * 0.1 + 0.9;
 pos *= breath;`,
     apply: (ctx: CanvasRenderingContext2D, char: string, x: number, y: number, charIndex: number, time: number, speed: number, param: number, baseColor: string, totalChars: number, centerX: number) => {
-      const breath = (Math.sin(time * speed * 0.3) + 1) * 0.05 + 0.95
+      const breath = (Math.sin(time * speed * 0.3) + 1) * 0.08 + 0.92
       const offsetX = (x - centerX) * (breath - 1)
       ctx.fillStyle = baseColor
       ctx.fillText(char, x + offsetX, y)
@@ -184,13 +150,13 @@ texColor.a *= alpha;`,
 
 // Example: wavy rainbow
 float phase = charIndex * 0.5 + timeSeconds * speed;
-pos.y += sin(phase) * 2.0;
+pos.y += sin(phase) * 0.1;
 
 float hue = fract(charIndex * 0.05 + timeSeconds * 0.1);
 texColor.rgb = hsv2rgb(vec3(hue, 0.8, 1.0));`,
     apply: (ctx: CanvasRenderingContext2D, char: string, x: number, y: number, charIndex: number, time: number, speed: number, param: number, baseColor: string) => {
       const phase = charIndex * 0.5 + time * speed
-      const offsetY = Math.sin(phase) * 4
+      const offsetY = Math.sin(phase) * 8
       const hue = ((charIndex * 0.05 + time * 0.1) % 1) * 360
       ctx.fillStyle = `hsl(${hue}, 80%, 60%)`
       ctx.fillText(char, x, y + offsetY)
