@@ -4,5 +4,6 @@ export default {
   blocks: 'Blocks',
   furniture: 'Furniture',
   armors: 'Armors',
-  'glyphs-hud': 'Glyphs & HUD'
+  'glyphs-hud': 'Glyphs & HUD',
+  'text-effects': 'Text Effects'
 }
