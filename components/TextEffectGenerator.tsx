@@ -1,28 +1,67 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect, useRef, useCallback } from 'react'
 
 const PRESET_EFFECTS = [
-  { id: 0, name: 'rainbow', label: 'Rainbow', description: 'Cycles through rainbow colors' },
-  { id: 1, name: 'wave', label: 'Wave', description: 'Vertical sine wave motion' },
-  { id: 2, name: 'shake', label: 'Shake', description: 'Random jitter' },
-  { id: 3, name: 'pulse', label: 'Pulse', description: 'Opacity fades in/out' },
-  { id: 4, name: 'gradient', label: 'Gradient', description: 'Static color gradient' },
-  { id: 5, name: 'typewriter', label: 'Typewriter', description: 'Characters appear sequentially' },
+  { id: 0, name: 'rainbow', label: 'Rainbow' },
+  { id: 1, name: 'wave', label: 'Wave' },
+  { id: 2, name: 'shake', label: 'Shake' },
+  { id: 3, name: 'pulse', label: 'Pulse' },
+  { id: 4, name: 'gradient', label: 'Gradient' },
+  { id: 5, name: 'typewriter', label: 'Typewriter' },
 ]
 
-// Alpha LSB encoding constants (matching AlphaLsbEncoding.java)
+// Effect rendering functions (matching ShaderPreview)
+const EFFECT_RENDERS: Record<number, (ctx: CanvasRenderingContext2D, char: string, x: number, y: number, i: number, time: number, speed: number, param: number, color: string, total: number) => void> = {
+  0: (ctx, char, x, y, i, time, speed) => { // Rainbow
+    const hue = ((i * 0.03 + time * speed * 0.03) % 1) * 360
+    ctx.fillStyle = `hsl(${hue}, 90%, 60%)`
+    ctx.fillText(char, x, y)
+  },
+  1: (ctx, char, x, y, i, time, speed, param, color) => { // Wave
+    const phase = i * 0.6 + time * speed * 2.0
+    const offsetY = Math.sin(phase) * Math.max(1, param) * 3
+    ctx.fillStyle = color
+    ctx.fillText(char, x, y + offsetY)
+  },
+  2: (ctx, char, x, y, i, time, speed, param, color) => { // Shake
+    const seed = i + Math.floor(time * speed * 8.0)
+    const amp = Math.max(1, param) * 2.5
+    const randX = (Math.abs(Math.sin(seed * 12.9898) * 43758.5453) % 1 - 0.5) * amp
+    const randY = (Math.abs(Math.sin(seed * 78.233) * 43758.5453) % 1 - 0.5) * amp
+    ctx.fillStyle = color
+    ctx.fillText(char, x + randX, y + randY)
+  },
+  3: (ctx, char, x, y, i, time, speed, param, color) => { // Pulse
+    const pulse = (Math.sin(time * speed * 0.5 + i * 0.3) + 1) * 0.5
+    ctx.globalAlpha = 0.3 + pulse * 0.7
+    ctx.fillStyle = color
+    ctx.fillText(char, x, y)
+    ctx.globalAlpha = 1
+  },
+  4: (ctx, char, x, y, i, time, speed, param, color, total) => { // Gradient
+    const t = i / Math.max(1, total - 1)
+    ctx.fillStyle = `rgb(${Math.round(255 * (1 - t) + 77 * t)}, 77, ${Math.round(77 * (1 - t) + 255 * t)})`
+    ctx.fillText(char, x, y)
+  },
+  5: (ctx, char, x, y, i, time, speed, param, color) => { // Typewriter
+    if (i <= Math.floor(time * speed * 4.0)) {
+      ctx.fillStyle = color
+      ctx.fillText(char, x, y)
+    }
+  },
+}
+
+// Alpha LSB encoding (matching AlphaLsbEncoding.java)
 const LSB_BITS = 4
-const LOW_MASK = (1 << LSB_BITS) - 1 // 0x0F
-const DATA_MASK = (1 << (LSB_BITS - 1)) - 1 // 0x07
+const LOW_MASK = (1 << LSB_BITS) - 1
+const DATA_MASK = (1 << (LSB_BITS - 1)) - 1
 const DATA_MIN = 1
 const DATA_GAP = 5
 
 function encodeNibble(data: number): number {
   let encoded = (data & DATA_MASK) + DATA_MIN
-  if (DATA_GAP >= 0 && encoded >= DATA_GAP) {
-    encoded += 1
-  }
+  if (DATA_GAP >= 0 && encoded >= DATA_GAP) encoded += 1
   return encoded
 }
 
@@ -40,64 +79,24 @@ function clamp(value: number, min: number, max: number): number {
   return Math.max(min, Math.min(max, value))
 }
 
-function encodeTextEffect(
-  baseColor: { r: number; g: number; b: number },
-  effectId: number,
-  speed: number,
-  param: number
-): { r: number; g: number; b: number; hex: string } {
-  const effectClamped = effectId & DATA_MASK
-  const speedClamped = clamp(speed, 1, DATA_MASK)
-  const paramClamped = clamp(param, 0, DATA_MASK)
-
-  const rEnc = avoidAnimationSentinels(encodeChannel(baseColor.r, effectClamped))
-  const gEnc = encodeChannel(baseColor.g, speedClamped)
-  const bEnc = encodeChannel(baseColor.b, paramClamped)
-
+function encodeTextEffect(baseColor: { r: number; g: number; b: number }, effectId: number, speed: number, param: number) {
+  const rEnc = avoidAnimationSentinels(encodeChannel(baseColor.r, effectId & DATA_MASK))
+  const gEnc = encodeChannel(baseColor.g, clamp(speed, 1, DATA_MASK))
+  const bEnc = encodeChannel(baseColor.b, clamp(param, 0, DATA_MASK))
   const hex = `#${rEnc.toString(16).padStart(2, '0')}${gEnc.toString(16).padStart(2, '0')}${bEnc.toString(16).padStart(2, '0')}`
-
   return { r: rEnc, g: gEnc, b: bEnc, hex: hex.toUpperCase() }
 }
 
 function hexToRgb(hex: string): { r: number; g: number; b: number } {
   const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
-  return result
-    ? {
-        r: parseInt(result[1], 16),
-        g: parseInt(result[2], 16),
-        b: parseInt(result[3], 16),
-      }
-    : { r: 255, g: 255, b: 255 }
-}
-
-const inputStyle = {
-  width: '100%',
-  padding: '10px 12px',
-  borderRadius: '6px',
-  border: '1px solid var(--nextra-border)',
-  backgroundColor: 'var(--nextra-bg)',
-  color: 'var(--nextra-fg)',
-  fontSize: '14px',
-}
-
-const labelStyle = {
-  display: 'block',
-  marginBottom: '6px',
-  fontWeight: 600,
-  fontSize: '13px',
-  color: 'var(--nextra-fg)',
-  textTransform: 'uppercase' as const,
-  letterSpacing: '0.5px',
-}
-
-const cardStyle = {
-  backgroundColor: 'var(--nextra-code-bg)',
-  padding: '16px',
-  borderRadius: '8px',
-  marginBottom: '12px',
+  return result ? { r: parseInt(result[1], 16), g: parseInt(result[2], 16), b: parseInt(result[3], 16) } : { r: 255, g: 255, b: 255 }
 }
 
 export default function TextEffectGenerator() {
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const animationRef = useRef<number>(0)
+  const startTimeRef = useRef<number>(Date.now())
+
   const [useCustomId, setUseCustomId] = useState(false)
   const [effectId, setEffectId] = useState(0)
   const [speed, setSpeed] = useState(3)
@@ -105,352 +104,282 @@ export default function TextEffectGenerator() {
   const [baseColorHex, setBaseColorHex] = useState('#FFFFFF')
   const [sampleText, setSampleText] = useState('Hello World!')
   const [copied, setCopied] = useState<string | null>(null)
+  const [fontLoaded, setFontLoaded] = useState(false)
 
   const baseColor = useMemo(() => hexToRgb(baseColorHex), [baseColorHex])
   const presetEffect = PRESET_EFFECTS.find((e) => e.id === effectId)
   const effectName = presetEffect?.name ?? `custom_${effectId}`
-
-  const encodedColor = useMemo(
-    () => encodeTextEffect(baseColor, effectId, speed, param),
-    [baseColor, effectId, speed, param]
-  )
-
+  const encodedColor = useMemo(() => encodeTextEffect(baseColor, effectId, speed, param), [baseColor, effectId, speed, param])
   const miniMessage = `<${encodedColor.hex}>${sampleText}`
+
+  // Load font
+  useEffect(() => {
+    const font = new FontFace('Minecraft', 'url(/fonts/Minecraft-Seven_v2.woff2)')
+    font.load().then((f) => { document.fonts.add(f); setFontLoaded(true) }).catch(() => setFontLoaded(true))
+  }, [])
+
+  // Render preview
+  const render = useCallback(() => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
+
+    const time = (Date.now() - startTimeRef.current) / 1000
+    const fontSize = 20
+    ctx.font = `${fontSize}px Minecraft, monospace`
+
+    const chars = sampleText.split('')
+    const charWidths = chars.map(c => ctx.measureText(c).width)
+    const totalWidth = charWidths.reduce((a, b) => a + b, 0)
+    const padding = 12
+
+    canvas.width = Math.max(180, totalWidth + padding * 2)
+    canvas.height = fontSize * 1.6 + padding * 2
+
+    ctx.fillStyle = '#1a1a2e'
+    ctx.fillRect(0, 0, canvas.width, canvas.height)
+
+    ctx.font = `${fontSize}px Minecraft, monospace`
+    ctx.textBaseline = 'middle'
+    ctx.imageSmoothingEnabled = false
+
+    let x = padding
+    const y = canvas.height / 2
+    const renderFn = EFFECT_RENDERS[effectId] || EFFECT_RENDERS[0]
+
+    for (let i = 0; i < chars.length; i++) {
+      renderFn(ctx, chars[i], x, y, i, time, speed, param, baseColorHex, chars.length)
+      x += charWidths[i]
+    }
+
+    animationRef.current = requestAnimationFrame(render)
+  }, [effectId, speed, param, baseColorHex, sampleText])
+
+  useEffect(() => {
+    if (!fontLoaded) return
+    animationRef.current = requestAnimationFrame(render)
+    return () => cancelAnimationFrame(animationRef.current)
+  }, [fontLoaded, render])
 
   const copyToClipboard = (text: string, label: string) => {
     navigator.clipboard.writeText(text)
     setCopied(label)
-    setTimeout(() => setCopied(null), 2000)
+    setTimeout(() => setCopied(null), 1500)
   }
 
   return (
-    <div
-      style={{
-        border: '1px solid var(--nextra-border)',
-        borderRadius: '12px',
-        padding: '24px',
-        marginTop: '20px',
-        marginBottom: '20px',
-        backgroundColor: 'var(--nextra-bg)',
-      }}
-    >
-      {/* Header */}
-      <div style={{ marginBottom: '24px' }}>
-        <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 600 }}>Color Code Generator</h3>
-        <p style={{ margin: '4px 0 0', fontSize: '14px', opacity: 0.7 }}>
-          Generate hex color codes for applying text effects programmatically
-        </p>
-      </div>
-
-      {/* Effect Selection */}
-      <div style={cardStyle}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '16px' }}>
-          <label style={{ ...labelStyle, marginBottom: 0, flex: 'none' }}>Effect Type</label>
-          <label
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-              fontSize: '13px',
-              cursor: 'pointer',
-              marginLeft: 'auto',
-            }}
-          >
-            <input
-              type="checkbox"
-              checked={useCustomId}
-              onChange={(e) => setUseCustomId(e.target.checked)}
-              style={{ cursor: 'pointer' }}
-            />
-            Use custom ID
-          </label>
-        </div>
-
-        {useCustomId ? (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+    <div style={{
+      border: '1px solid var(--nextra-border)',
+      borderRadius: '10px',
+      overflow: 'hidden',
+      marginTop: '16px',
+      marginBottom: '16px',
+      backgroundColor: 'var(--nextra-bg)',
+    }}>
+      {/* Header with effect selector */}
+      <div style={{
+        padding: '10px 14px',
+        borderBottom: '1px solid var(--nextra-border)',
+        backgroundColor: 'var(--nextra-code-bg)',
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+          <span style={{ fontSize: '12px', fontWeight: 600 }}>Effect:</span>
+          {!useCustomId ? (
+            <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
+              {PRESET_EFFECTS.map((e) => (
+                <button
+                  key={e.id}
+                  onClick={() => setEffectId(e.id)}
+                  style={{
+                    padding: '4px 10px',
+                    borderRadius: '4px',
+                    border: effectId === e.id ? '1px solid var(--nextra-primary)' : '1px solid var(--nextra-border)',
+                    backgroundColor: effectId === e.id ? 'var(--nextra-primary-alpha)' : 'transparent',
+                    color: 'var(--nextra-fg)',
+                    fontSize: '11px',
+                    cursor: 'pointer',
+                  }}
+                >
+                  {e.label}
+                </button>
+              ))}
+            </div>
+          ) : (
             <input
               type="number"
               min="0"
               max="7"
               value={effectId}
               onChange={(e) => setEffectId(clamp(parseInt(e.target.value) || 0, 0, 7))}
-              style={{ ...inputStyle, width: '80px', textAlign: 'center', fontFamily: 'monospace' }}
+              style={{
+                width: '50px',
+                padding: '4px 8px',
+                borderRadius: '4px',
+                border: '1px solid var(--nextra-border)',
+                backgroundColor: 'var(--nextra-bg)',
+                color: 'var(--nextra-fg)',
+                fontSize: '12px',
+                fontFamily: 'monospace',
+              }}
             />
-            <span style={{ fontSize: '13px', opacity: 0.6 }}>
-              Enter effect ID (0-7) for custom effects defined in text_effects.yml
-            </span>
-          </div>
-        ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
-            {PRESET_EFFECTS.map((e) => (
-              <button
-                key={e.id}
-                onClick={() => setEffectId(e.id)}
-                style={{
-                  padding: '10px 12px',
-                  borderRadius: '6px',
-                  border:
-                    effectId === e.id
-                      ? '2px solid var(--nextra-primary)'
-                      : '1px solid var(--nextra-border)',
-                  backgroundColor: effectId === e.id ? 'var(--nextra-primary-alpha)' : 'transparent',
-                  color: 'var(--nextra-fg)',
-                  cursor: 'pointer',
-                  textAlign: 'left',
-                  transition: 'all 0.15s',
-                }}
-              >
-                <div style={{ fontWeight: 600, fontSize: '13px' }}>{e.label}</div>
-                <div style={{ fontSize: '11px', opacity: 0.6, marginTop: '2px' }}>{e.description}</div>
-              </button>
-            ))}
-          </div>
-        )}
+          )}
+          <label style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '11px', marginLeft: 'auto', cursor: 'pointer' }}>
+            <input type="checkbox" checked={useCustomId} onChange={(e) => setUseCustomId(e.target.checked)} />
+            Custom ID
+          </label>
+        </div>
       </div>
 
-      {/* Parameters Grid */}
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
-          gap: '16px',
-          marginBottom: '16px',
-        }}
-      >
-        {/* Speed */}
-        <div style={cardStyle}>
-          <label style={labelStyle}>Speed</label>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <input
-              type="range"
-              min="1"
-              max="7"
-              value={speed}
-              onChange={(e) => setSpeed(parseInt(e.target.value))}
-              style={{ flex: 1 }}
-            />
-            <span
-              style={{
-                fontFamily: 'monospace',
-                fontWeight: 600,
-                fontSize: '16px',
-                minWidth: '20px',
-                textAlign: 'center',
-              }}
-            >
-              {speed}
-            </span>
-          </div>
+      {/* Preview + Controls row */}
+      <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+        {/* Preview */}
+        <div style={{
+          flex: '1 1 200px',
+          padding: '14px',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: '#1a1a2e',
+          minHeight: '70px',
+        }}>
+          <canvas ref={canvasRef} style={{ maxWidth: '100%', imageRendering: 'pixelated' }} />
         </div>
 
-        {/* Param */}
-        <div style={cardStyle}>
-          <label style={labelStyle}>Param</label>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <input
-              type="range"
-              min="0"
-              max="7"
-              value={param}
-              onChange={(e) => setParam(parseInt(e.target.value))}
-              style={{ flex: 1 }}
-            />
-            <span
+        {/* Output */}
+        <div style={{
+          flex: '1 1 200px',
+          padding: '12px 14px',
+          borderLeft: '1px solid var(--nextra-border)',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '8px',
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <div
               style={{
-                fontFamily: 'monospace',
-                fontWeight: 600,
-                fontSize: '16px',
-                minWidth: '20px',
-                textAlign: 'center',
+                width: '40px',
+                height: '40px',
+                backgroundColor: encodedColor.hex,
+                borderRadius: '6px',
+                border: '2px solid var(--nextra-border)',
+                cursor: 'pointer',
               }}
-            >
-              {param}
-            </span>
+              onClick={() => copyToClipboard(encodedColor.hex, 'hex')}
+              title="Click to copy hex"
+            />
+            <div>
+              <div
+                style={{ fontFamily: 'monospace', fontSize: '14px', fontWeight: 600, cursor: 'pointer' }}
+                onClick={() => copyToClipboard(encodedColor.hex, 'hex')}
+              >
+                {encodedColor.hex}
+                {copied === 'hex' && <span style={{ fontSize: '10px', marginLeft: '6px', opacity: 0.6 }}>copied!</span>}
+              </div>
+              <div style={{ fontSize: '10px', opacity: 0.5 }}>
+                RGB({encodedColor.r}, {encodedColor.g}, {encodedColor.b})
+              </div>
+            </div>
+          </div>
+          <div
+            onClick={() => copyToClipboard(miniMessage, 'mini')}
+            style={{
+              padding: '6px 10px',
+              backgroundColor: 'var(--nextra-code-bg)',
+              borderRadius: '4px',
+              fontFamily: 'monospace',
+              fontSize: '11px',
+              cursor: 'pointer',
+              wordBreak: 'break-all',
+            }}
+            title="Click to copy"
+          >
+            {miniMessage}
+            {copied === 'mini' && <span style={{ fontSize: '10px', marginLeft: '6px', opacity: 0.6 }}>copied!</span>}
           </div>
         </div>
+      </div>
 
-        {/* Base Color */}
-        <div style={cardStyle}>
-          <label style={labelStyle}>Base Color</label>
-          <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+      {/* Compact controls */}
+      <div style={{
+        padding: '10px 14px',
+        borderTop: '1px solid var(--nextra-border)',
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
+        gap: '10px',
+        fontSize: '11px',
+      }}>
+        <div>
+          <label style={{ display: 'block', fontWeight: 600, opacity: 0.6, marginBottom: '3px', textTransform: 'uppercase', fontSize: '9px' }}>Text</label>
+          <input
+            type="text"
+            value={sampleText}
+            onChange={(e) => setSampleText(e.target.value)}
+            style={{
+              width: '100%',
+              padding: '5px 8px',
+              borderRadius: '4px',
+              border: '1px solid var(--nextra-border)',
+              backgroundColor: 'var(--nextra-bg)',
+              color: 'var(--nextra-fg)',
+              fontSize: '11px',
+            }}
+          />
+        </div>
+        <div>
+          <label style={{ display: 'block', fontWeight: 600, opacity: 0.6, marginBottom: '3px', textTransform: 'uppercase', fontSize: '9px' }}>Speed ({speed})</label>
+          <input type="range" min="1" max="7" value={speed} onChange={(e) => setSpeed(parseInt(e.target.value))} style={{ width: '100%' }} />
+        </div>
+        <div>
+          <label style={{ display: 'block', fontWeight: 600, opacity: 0.6, marginBottom: '3px', textTransform: 'uppercase', fontSize: '9px' }}>Param ({param})</label>
+          <input type="range" min="0" max="7" value={param} onChange={(e) => setParam(parseInt(e.target.value))} style={{ width: '100%' }} />
+        </div>
+        <div>
+          <label style={{ display: 'block', fontWeight: 600, opacity: 0.6, marginBottom: '3px', textTransform: 'uppercase', fontSize: '9px' }}>Base Color</label>
+          <div style={{ display: 'flex', gap: '4px' }}>
             <input
               type="color"
               value={baseColorHex}
               onChange={(e) => setBaseColorHex(e.target.value)}
-              style={{
-                width: '42px',
-                height: '42px',
-                padding: 0,
-                border: '2px solid var(--nextra-border)',
-                borderRadius: '6px',
-                cursor: 'pointer',
-              }}
+              style={{ width: '28px', height: '24px', padding: 0, border: '1px solid var(--nextra-border)', borderRadius: '3px', cursor: 'pointer' }}
             />
             <input
               type="text"
               value={baseColorHex}
               onChange={(e) => setBaseColorHex(e.target.value)}
-              style={{ ...inputStyle, fontFamily: 'monospace', flex: 1 }}
+              style={{ flex: 1, padding: '4px 6px', borderRadius: '3px', border: '1px solid var(--nextra-border)', backgroundColor: 'var(--nextra-bg)', color: 'var(--nextra-fg)', fontSize: '10px', fontFamily: 'monospace' }}
             />
           </div>
         </div>
       </div>
 
-      {/* Sample Text */}
-      <div style={{ ...cardStyle, marginBottom: '20px' }}>
-        <label style={labelStyle}>Sample Text</label>
-        <input
-          type="text"
-          value={sampleText}
-          onChange={(e) => setSampleText(e.target.value)}
-          style={inputStyle}
-        />
-      </div>
-
-      {/* Output Section */}
-      <div
-        style={{
-          background: 'linear-gradient(135deg, var(--nextra-code-bg) 0%, var(--nextra-bg) 100%)',
-          border: '2px solid var(--nextra-border)',
-          borderRadius: '12px',
-          padding: '20px',
-        }}
-      >
-        <div style={{ display: 'flex', alignItems: 'flex-start', gap: '20px', flexWrap: 'wrap' }}>
-          {/* Color Preview */}
-          <div style={{ textAlign: 'center' }}>
-            <div
-              style={{
-                width: '80px',
-                height: '80px',
-                backgroundColor: encodedColor.hex,
-                borderRadius: '12px',
-                border: '3px solid var(--nextra-border)',
-                boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-              }}
-            />
-            <div
-              style={{
-                marginTop: '8px',
-                fontFamily: 'monospace',
-                fontSize: '18px',
-                fontWeight: 700,
-                cursor: 'pointer',
-              }}
-              onClick={() => copyToClipboard(encodedColor.hex, 'hex')}
-              title="Click to copy"
-            >
-              {encodedColor.hex}
-              {copied === 'hex' && (
-                <span style={{ fontSize: '11px', marginLeft: '6px', opacity: 0.7 }}>copied!</span>
-              )}
-            </div>
-            <div style={{ fontSize: '12px', opacity: 0.6 }}>
-              RGB({encodedColor.r}, {encodedColor.g}, {encodedColor.b})
-            </div>
-          </div>
-
-          {/* Text Preview & MiniMessage */}
-          <div style={{ flex: 1, minWidth: '200px' }}>
-            <div style={{ marginBottom: '16px' }}>
-              <div style={{ fontSize: '11px', fontWeight: 600, opacity: 0.5, marginBottom: '6px' }}>
-                PREVIEW
-              </div>
-              <div
-                style={{
-                  fontFamily: 'monospace',
-                  fontSize: '20px',
-                  color: encodedColor.hex,
-                  textShadow: '0 2px 4px rgba(0,0,0,0.3)',
-                  padding: '8px 0',
-                }}
-              >
-                {sampleText}
-              </div>
-            </div>
-
-            <div>
-              <div style={{ fontSize: '11px', fontWeight: 600, opacity: 0.5, marginBottom: '6px' }}>
-                MINIMESSAGE
-              </div>
-              <div
-                onClick={() => copyToClipboard(miniMessage, 'mini')}
-                style={{
-                  padding: '10px 12px',
-                  backgroundColor: 'rgba(0,0,0,0.2)',
-                  borderRadius: '6px',
-                  fontFamily: 'monospace',
-                  fontSize: '13px',
-                  cursor: 'pointer',
-                  wordBreak: 'break-all',
-                }}
-                title="Click to copy"
-              >
-                {miniMessage}
-                {copied === 'mini' && (
-                  <span
-                    style={{ fontSize: '11px', marginLeft: '8px', opacity: 0.7, fontWeight: 600 }}
-                  >
-                    copied!
-                  </span>
-                )}
-              </div>
-            </div>
-          </div>
+      {/* Encoding info (collapsed by default) */}
+      <details style={{ borderTop: '1px solid var(--nextra-border)' }}>
+        <summary style={{
+          padding: '8px 14px',
+          cursor: 'pointer',
+          fontSize: '10px',
+          fontWeight: 600,
+          opacity: 0.5,
+          backgroundColor: 'var(--nextra-code-bg)',
+        }}>
+          Encoding Details
+        </summary>
+        <div style={{
+          padding: '10px 14px',
+          backgroundColor: 'var(--nextra-code-bg)',
+          fontSize: '10px',
+          fontFamily: 'monospace',
+          display: 'grid',
+          gridTemplateColumns: 'auto 1fr',
+          gap: '2px 12px',
+        }}>
+          <span style={{ opacity: 0.5 }}>Effect:</span><span>{effectName} (ID: {effectId})</span>
+          <span style={{ opacity: 0.5 }}>R channel:</span><span>{baseColor.r} → {encodedColor.r}</span>
+          <span style={{ opacity: 0.5 }}>G channel:</span><span>{baseColor.g} → {encodedColor.g}</span>
+          <span style={{ opacity: 0.5 }}>B channel:</span><span>{baseColor.b} → {encodedColor.b}</span>
         </div>
-
-        {/* Encoding Details - Collapsible */}
-        <details style={{ marginTop: '16px' }}>
-          <summary
-            style={{
-              cursor: 'pointer',
-              fontSize: '12px',
-              fontWeight: 600,
-              opacity: 0.6,
-              padding: '4px 0',
-            }}
-          >
-            Encoding Details
-          </summary>
-          <div
-            style={{
-              marginTop: '12px',
-              padding: '12px',
-              backgroundColor: 'rgba(0,0,0,0.15)',
-              borderRadius: '6px',
-              fontSize: '12px',
-              fontFamily: 'monospace',
-            }}
-          >
-            <div style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gap: '4px 16px' }}>
-              <span style={{ opacity: 0.6 }}>Effect:</span>
-              <span>
-                {effectName} (ID: {effectId})
-              </span>
-              <span style={{ opacity: 0.6 }}>Speed:</span>
-              <span>{speed}</span>
-              <span style={{ opacity: 0.6 }}>Param:</span>
-              <span>{param}</span>
-              <span style={{ opacity: 0.6 }}>R channel:</span>
-              <span>
-                {baseColor.r} → {encodedColor.r} (effect in low bits)
-              </span>
-              <span style={{ opacity: 0.6 }}>G channel:</span>
-              <span>
-                {baseColor.g} → {encodedColor.g} (speed in low bits)
-              </span>
-              <span style={{ opacity: 0.6 }}>B channel:</span>
-              <span>
-                {baseColor.b} → {encodedColor.b} (param in low bits)
-              </span>
-            </div>
-          </div>
-        </details>
-
-        <div style={{ fontSize: '11px', opacity: 0.5, marginTop: '12px' }}>
-          All characters use the same color. The shader derives per-character index from gl_VertexID.
-        </div>
-      </div>
+      </details>
     </div>
   )
 }
