@@ -209,11 +209,10 @@ pos.y += sin(phase) * amplitude;`,
   shake: {
     name: 'Shake',
     description: 'Random jitter effect (vertex only)',
-    vertexGlsl: `// Vertex shader - shake/jitter
-float seed = charIndex + timeSeconds * speed * 8.0;
-float intensity = max(1.0, param) * 0.1;
-pos.x += sin(seed * 12.9898) * intensity;
-pos.y += sin(seed * 78.233) * intensity;`,
+    vertexGlsl: `// Vertex shader - shake/jitter using hash-based random
+// Uses floor() for discrete frames, fract(sin()*43758) for pseudo-random
+pos.x += (fract(sin((charIndex + floor(timeSeconds * speed * 8.0)) * 12.9898) * 43758.5453) - 0.5) * max(1.0, param) * 0.2;
+pos.y += (fract(sin((charIndex + floor(timeSeconds * speed * 8.0)) * 78.233) * 43758.5453) - 0.5) * max(1.0, param) * 0.2;`,
     fragmentGlsl: null,
   },
   rainbowWave: {
@@ -390,14 +389,12 @@ export default function ShaderPreview({
     })
   }, [])
 
-  // Handle fullscreen
+  // Handle fullscreen - let the event handler update state
   const toggleFullscreen = useCallback(() => {
     if (!isFullscreen) {
       containerRef.current?.requestFullscreen?.()
-      setIsFullscreen(true)
     } else {
       document.exitFullscreen?.()
-      setIsFullscreen(false)
     }
   }, [isFullscreen])
 
