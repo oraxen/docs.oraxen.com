@@ -122,14 +122,12 @@ export default function TextEffectGenerator() {
     font.load().then((f) => { document.fonts.add(f); setFontLoaded(true) }).catch(() => setFontLoaded(true))
   }, [])
 
-  // Handle fullscreen
+  // Handle fullscreen - let the event handler update state
   const toggleFullscreen = useCallback(() => {
     if (!isFullscreen) {
       containerRef.current?.requestFullscreen?.()
-      setIsFullscreen(true)
     } else {
       document.exitFullscreen?.()
-      setIsFullscreen(false)
     }
   }, [isFullscreen])
 

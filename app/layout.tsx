@@ -5,6 +5,7 @@ import { Head } from "nextra/components";
 import { getPageMap } from "nextra/page-map";
 import "nextra-theme-docs/style.css";
 import "./external-link.css";
+import ExternalLinkHandler from "../components/ExternalLinkHandler";
 
 // Custom logo wrapper that opens external links in new tab
 function LogoWithExternalIcon() {
@@ -114,6 +115,7 @@ export default async function RootLayout({
         <link rel="dns-prefetch" href="https://cdn.discordapp.com" />
       </Head>
       <body>
+        <ExternalLinkHandler />
         <Layout
           //banner={<Banner storageKey="Nextra 2">Nextra 2 Alpha</Banner>}
           navbar={navbar}
