@@ -279,16 +279,16 @@ texColor.rgb = mix(startColor, endColor, t);
 
 ```glsl
 // Fragment shader
-float reveal = mod(timeSeconds * speed * 2.0, 256.0);
-float alpha = clamp(reveal - charIndex, 0.0, 1.0);
+float reveal = floor(timeSeconds * speed * 4.0);
+float alpha = step(charIndex, reveal);
 texColor.a *= alpha;
 ```
 
 **How it works:**
-- `reveal` is a counter that increases over time
-- When `reveal > charIndex`, that character becomes visible
-- `clamp()` ensures alpha stays between 0 and 1
-- `mod(..., 256.0)` makes it loop for long text
+- `reveal` counts up in discrete steps as time progresses
+- `step(charIndex, reveal)` returns 1.0 when `reveal >= charIndex`, 0.0 otherwise
+- Characters appear one-by-one from left to right
+- This is a one-way reveal (doesn't loop)
 
 </Tabs.Tab>
 </Tabs>
@@ -324,6 +324,7 @@ effects:
 sin(x), cos(x)       // Smooth oscillation (-1 to 1)
 fract(x)             // Fractional part (0 to 1)
 floor(x)             // Round down (for discrete steps)
+step(edge, x)        // 0.0 if x < edge, else 1.0 (binary threshold)
 clamp(x, min, max)   // Constrain value to range
 mix(a, b, t)         // Linear interpolation
 mod(x, y)            // Remainder (for looping)
