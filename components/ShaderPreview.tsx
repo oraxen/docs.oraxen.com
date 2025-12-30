@@ -114,35 +114,52 @@ function parseGLSL(code: string): ParsedShader {
   const createColorEvaluator = () => {
     if (hueExpr) {
       const jsHue = glslToJS(hueExpr)
-      return (vars: GLSLVars) => {
-        try {
-          const fract = (x: number) => x - Math.floor(x)
-          const { charIndex, timeSeconds, speed } = vars
-
-          // Evaluate hue expression
-          const hueVal = eval(jsHue) as number
-          // HSV to RGB conversion
-          const h = fract(hueVal) * 6
-          const s = 0.9
-          const v = 1.0
-          const i = Math.floor(h)
-          const f = h - i
-          const p = v * (1 - s)
-          const q = v * (1 - s * f)
-          const t = v * (1 - s * (1 - f))
-          let r = 0, g = 0, b = 0
-          switch (i % 6) {
-            case 0: r = v; g = t; b = p; break
-            case 1: r = q; g = v; b = p; break
-            case 2: r = p; g = v; b = t; break
-            case 3: r = p; g = q; b = v; break
-            case 4: r = t; g = p; b = v; break
-            case 5: r = v; g = p; b = q; break
+      try {
+        // Create a sandboxed function like createEvaluator does
+        const hueEvaluator = new Function('vars', `
+          const { charIndex, timeSeconds, speed, param, hue, amplitude, phase, seed, pulse, breath } = vars;
+          const fract = (x) => x - Math.floor(x);
+          const clamp = (x, min, max) => Math.max(min, Math.min(max, x));
+          const mix = (a, b, t) => a * (1 - t) + b * t;
+          const step = (edge, x) => x < edge ? 0 : 1;
+          const smoothstep = (e0, e1, x) => { const t = clamp((x - e0) / (e1 - e0), 0, 1); return t * t * (3 - 2 * t); };
+          const mod = (x, y) => x - y * Math.floor(x / y);
+          try {
+            return ${jsHue};
+          } catch(e) {
+            return 0;
           }
-          return { r: r * 255, g: g * 255, b: b * 255 }
-        } catch {
-          return null
+        `) as (vars: GLSLVars) => number
+
+        return (vars: GLSLVars) => {
+          try {
+            const hueVal = hueEvaluator(vars)
+            // HSV to RGB conversion
+            const fract = (x: number) => x - Math.floor(x)
+            const h = fract(hueVal) * 6
+            const s = 0.9
+            const v = 1.0
+            const i = Math.floor(h)
+            const f = h - i
+            const p = v * (1 - s)
+            const q = v * (1 - s * f)
+            const t = v * (1 - s * (1 - f))
+            let r = 0, g = 0, b = 0
+            switch (i % 6) {
+              case 0: r = v; g = t; b = p; break
+              case 1: r = q; g = v; b = p; break
+              case 2: r = p; g = v; b = t; break
+              case 3: r = p; g = q; b = v; break
+              case 4: r = t; g = p; b = v; break
+              case 5: r = v; g = p; b = q; break
+            }
+            return { r: r * 255, g: g * 255, b: b * 255 }
+          } catch {
+            return null
+          }
         }
+      } catch {
+        return null
       }
     }
     return null
