@@ -67,35 +67,37 @@ effects:
 
 ## Available Effects
 
-| Effect | ID | Description | Speed | Param |
-|--------|-----|-------------|-------|-------|
-| Rainbow | 0 | Cycles through hue colors over time | Animation speed | - |
-| Wave | 1 | Vertical sine wave motion | Wave speed | Amplitude |
-| Shake | 2 | Random jitter/shake | Update frequency | Intensity |
-| Pulse | 3 | Opacity fades in and out | Pulse speed | - |
+| Effect | ID | Description | Param Usage |
+|--------|-----|-------------|-------------|
+| Rainbow | 0 | Cycles through hue colors over time | — |
+| Wave | 1 | Vertical sine wave motion | Amplitude |
+| Shake | 2 | Random jitter/shake | Intensity |
+| Pulse | 3 | Opacity fades in and out | — |
+| Gradient | 4 | Static color gradient across text | — |
+| Typewriter | 5 | Characters appear sequentially | — |
 
-### Effect Parameters
+### Parameters
 
-- **Speed** (1-7): Controls how fast the effect animates. Default: 3
-- **Param** (0-7): Effect-specific parameter (amplitude, intensity). Default: 3
+- **Speed** (1-7): Controls animation speed. Higher = faster.
+- **Param** (0-7): Effect-specific intensity. Only used by Wave and Shake.
 
 ## Commands
 
-Oraxen provides commands to test text effects in-game:
+Test effects in-game with these commands:
 
 ```
-/oraxen texteffects              # List all available effects with demos
-/oraxen texteffect basic <effect> <text>
-/oraxen texteffect speed <effect> <speed> <text>
-/oraxen texteffect full <effect> <speed> <param> <text>
+/oraxen texteffects                              # List all effects
+/oraxen texteffect <effect> <text>               # Default speed/param
+/oraxen texteffect <effect> <speed> <text>       # Custom speed
+/oraxen texteffect <effect> <speed> <param> <text>  # Full control
 ```
 
 ### Examples
 
 ```
-/oraxen texteffect basic rainbow Hello World!
-/oraxen texteffect speed wave 5 Wavy Text
-/oraxen texteffect full shake 4 6 Very Shaky!
+/oraxen texteffect rainbow Hello World!
+/oraxen texteffect wave 5 Wavy Text
+/oraxen texteffect shake 4 6 Very Shaky!
 ```
 
 <Callout>
@@ -132,9 +134,9 @@ Text effects may conflict with other resource packs that modify Minecraft's text
 
 - Effects are rendered client-side via shaders
 - Shadows are hidden for text with effects to avoid visual artifacts
-- Maximum 6 effect types (IDs 0-5) are built-in; custom effects can use IDs 0-7
-- Speed and param values are limited to 1-7 and 0-7 respectively
-- Character index is derived from `gl_VertexID` in the shader
+- 6 built-in effects (IDs 0-5); custom effects can use IDs 6-7
+- Speed: 1-7, Param: 0-7
+- Character index derived from `gl_VertexID` in shader
 
 ### Minecraft Version Support
 
