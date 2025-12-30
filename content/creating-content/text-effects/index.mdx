@@ -1,0 +1,147 @@
+# Text Effects
+
+import { Callout } from 'nextra/components'
+import TextEffectGenerator from '../../../components/TextEffectGenerator'
+
+Text effects are shader-based visual effects that can be applied to any text in Minecraft. Unlike animated glyphs which swap between sprite frames, text effects modify how existing characters render (color, position, opacity) using GLSL shaders.
+
+<Callout type="info">
+Text effects require Minecraft 1.21.11+ and Oraxen's resource pack with shaders enabled.
+</Callout>
+
+## Configuration
+
+Text effects are configured in two files:
+- **`settings.yml`** - Master toggle and shader settings
+- **`text_effects.yml`** - Effect definitions and GLSL snippets
+
+### settings.yml
+
+```yaml filename="settings.yml"
+TextEffects:
+  enabled: true                    # Master toggle for all text effects
+  shader:
+    template: auto                 # auto, effects_only, animated_only
+    encoding: alpha_lsb            # Encoding strategy (alpha_lsb recommended)
+```
+
+### text_effects.yml
+
+```yaml filename="text_effects.yml"
+version: 1
+
+# Shared GLSL code available to all effects
+shared:
+  fragment_prelude: |
+    vec3 hsv2rgb(vec3 c) {
+        vec4 K = vec4(1.0, 2.0/3.0, 1.0/3.0, 3.0);
+        vec3 p = abs(fract(c.xxx + K.xyz) * 6.0 - K.www);
+        return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);
+    }
+
+effects:
+  rainbow:
+    id: 0
+    enabled: true
+    description: Cycles through rainbow colors over time
+    snippets:
+      - fragment: |
+          float hue = fract(charIndex * 0.03 + timeSeconds * speed * 0.03);
+          vec3 rgb = hsv2rgb(vec3(hue, 0.9, 1.0));
+          texColor.rgb = rgb;
+```
+
+### Configuration Options
+
+| Option | Description | Values |
+|--------|-------------|--------|
+| `enabled` | Master toggle for all text effects | `true` / `false` |
+| `shader.template` | Which shaders to generate | `auto`, `effects_only`, `animated_only` |
+| `shader.encoding` | Color encoding strategy | `alpha_lsb` (recommended) |
+
+### Shader Templates
+
+- **`auto`**: Generates shaders for both text effects and animated glyphs (recommended)
+- **`effects_only`**: Only generates text effect shaders
+- **`animated_only`**: Only generates animated glyph shaders
+
+## Available Effects
+
+| Effect | ID | Description | Param Usage |
+|--------|-----|-------------|-------------|
+| Rainbow | 0 | Cycles through hue colors over time | — |
+| Wave | 1 | Vertical sine wave motion | Amplitude |
+| Shake | 2 | Random jitter/shake | Intensity |
+| Pulse | 3 | Opacity fades in and out | — |
+| Gradient | 4 | Static color gradient across text | — |
+| Typewriter | 5 | Characters appear sequentially | — |
+
+### Parameters
+
+- **Speed** (1-7): Controls animation speed. Higher = faster.
+- **Param** (0-7): Effect-specific intensity. Only used by Wave and Shake.
+
+## Commands
+
+Test effects in-game with these commands:
+
+```
+/oraxen texteffects                              # List all effects
+/oraxen texteffect <effect> <text>               # Default speed/param
+/oraxen texteffect <effect> <speed> <text>       # Custom speed
+/oraxen texteffect <effect> <speed> <param> <text>  # Full control
+```
+
+### Examples
+
+```
+/oraxen texteffect rainbow Hello World!
+/oraxen texteffect wave 5 Wavy Text
+/oraxen texteffect shake 4 6 Very Shaky!
+```
+
+<Callout>
+Permission required: `oraxen.command.texteffect`
+</Callout>
+
+## Color Encoding
+
+Text effects work by encoding effect parameters into the color of each character. The shader then reads this encoded color and applies the appropriate visual effect.
+
+### Alpha LSB Encoding (Default)
+
+The `alpha_lsb` encoding preserves your base text color while embedding effect data in the low 4 bits of each RGB channel:
+
+- **R low bits**: Effect type (0-7)
+- **G low bits**: Speed (1-7)
+- **B low bits**: Parameter (0-7)
+
+This means you can apply effects to colored text and the base color is preserved.
+
+### Color Code Generator
+
+Use this tool to generate the hex color codes for applying text effects:
+
+<TextEffectGenerator />
+
+## Compatibility Notes
+
+<Callout type="warning">
+Text effects may conflict with other resource packs that modify Minecraft's text shaders (`rendertype_text.vsh`, `rendertype_text.fsh`). If you use multiple packs that edit shaders, use the pack merge system and ensure shader files are merged correctly.
+</Callout>
+
+### Known Limitations
+
+- Effects are rendered client-side via shaders
+- Shadows are hidden for text with effects to avoid visual artifacts
+- 6 built-in effects (IDs 0-5); custom effects can use IDs 6-7
+- Speed: 1-7, Param: 0-7
+- Character index derived from `gl_VertexID` in shader
+
+### Minecraft Version Support
+
+| Version | Support |
+|---------|---------|
+| 1.21.11+ | Full support |
+| 1.21.4 - 1.21.10 | Partial (may require shader adjustments) |
+| Below 1.21.4 | Not supported |
