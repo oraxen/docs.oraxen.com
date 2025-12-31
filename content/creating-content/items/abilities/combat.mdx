@@ -198,3 +198,73 @@ Mechanics:
     charges: 5 # optional: number of uses before item is consumed (-1 for infinite)
 ```
 
+### Knockback Strike
+
+A combo-based knockback mechanic that triggers after landing a certain number of consecutive hits. Perfect for weapons that reward sustained combat engagement.
+
+#### Features
+
+- **Hit Tracking**: Counts consecutive hits and triggers knockback when threshold is reached
+- **Customizable Knockback**: Configure both horizontal and vertical knockback forces
+- **Particle Effects**: Display particles when knockback triggers
+- **Sound Effects**: Play sounds on knockback activation
+- **Auto-Reset**: Hit counter resets after a configurable timeout
+- **Thread-Safe**: Folia-compatible implementation for multi-threaded servers
+
+#### Per item configuration
+
+```yaml
+legendary_hammer:
+  displayname: "<gradient:#F06966:#FAD6A6>Legendary Hammer"
+  material: DIAMOND_PICKAXE
+  lore:
+    - "<#ff455b>» <#D5D6D8>Strike your enemies with a devastating blow"
+    - "<#ff455b>» <#D5D6D8>On the 15th hit, the player is launched forward"
+  Mechanics:
+    knockback_strike:
+      required_hits: 15              # Hits needed to trigger knockback
+      knockback_horizontal: 2.0      # Horizontal force (backward push)
+      knockback_vertical: 1.2        # Vertical force (upward launch)
+      reset_time: 80                 # Ticks before hit counter resets (20 = 1 second)
+      play_sound: true               # Play sound on knockback trigger
+      sound_type: ENTITY_ENDER_DRAGON_HURT  # Sound to play
+      sound_volume: 1.5              # Sound volume (0.0-2.0)
+      sound_pitch: 0.8               # Sound pitch (0.5-2.0, lower = deeper)
+      particle:
+        type: DUST                   # Particle type to spawn
+        count: 200                   # Number of particles
+        spread: 0.5                  # Particle spread radius in blocks
+```
+
+#### Configuration Options
+
+| Option | Default | Description |
+|--------|---------|-------------|
+| `required_hits` | 3 | Number of consecutive hits needed to trigger knockback (1-20) |
+| `knockback_horizontal` | 2.0 | Horizontal knockback force pushing the target backward (0.0-10.0) |
+| `knockback_vertical` | 0.5 | Vertical knockback force launching the target upward (0.0-5.0) |
+| `reset_time` | 60 | Ticks before hit counter resets if no hits land (20-200) |
+| `play_sound` | true | Whether to play a sound when knockback triggers |
+| `sound_type` | ENTITY_PLAYER_ATTACK_KNOCKBACK | Sound to play on knockback |
+| `sound_volume` | 1.0 | Sound volume (0.0-2.0) |
+| `sound_pitch` | 1.0 | Sound pitch (0.5-2.0) |
+| `particle.type` | CRIT | Particle type to display |
+| `particle.count` | 20 | Number of particles to spawn (1-100) |
+| `particle.spread` | 0.5 | Particle spread radius in blocks (0.0-5.0) |
+
+#### Supported Particle Types
+
+Common particle types include: `CRIT`, `EXPLOSION_NORMAL`, `FLAME`, `SPELL_WITCH`, `DUST` (colored), `CLOUD`, `DRAGON_BREATH`, `SWEEP_ATTACK`, and more. The `DUST` particle type displays as red-colored dust.
+
+#### How It Works
+
+1. **Hit Tracking**: Each time you hit an entity with the weapon, a counter increments
+2. **Timeout Reset**: If you don't land another hit within `reset_time` ticks, the counter resets to zero
+3. **Knockback Trigger**: When hits reach `required_hits`, knockback is applied to the target
+4. **Effects**: Particles spawn at the target's location and sound plays (if enabled)
+5. **Counter Reset**: After triggering, the counter resets and the cycle begins again
+
+<Callout type="info">
+This mechanic respects protection plugins through ProtectionLib. Knockback will not trigger in protected areas where PvP is disabled.
+</Callout>
+
