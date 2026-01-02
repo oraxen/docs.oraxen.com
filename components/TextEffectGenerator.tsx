@@ -450,7 +450,7 @@ export default function TextEffectGenerator() {
             gap: '2px 12px',
           }}>
             <span style={{ opacity: 0.5 }}>Effect:</span><span>{effectName} (ID: {effectId})</span>
-            <span style={{ opacity: 0.5 }}>R channel:</span><span>{baseColor.r} → {encodedColor.r}</span>
+            <span style={{ opacity: 0.5 }}>R channel:</span><span>0xF0 | effect → {encodedColor.r} (marker)</span>
             <span style={{ opacity: 0.5 }}>G channel:</span><span>{baseColor.g} → {encodedColor.g}</span>
             <span style={{ opacity: 0.5 }}>B channel:</span><span>{baseColor.b} → {encodedColor.b}</span>
           </div>
