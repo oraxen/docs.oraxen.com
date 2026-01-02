@@ -61,6 +61,11 @@ const DATA_MASK = (1 << (LSB_BITS - 1)) - 1
 const DATA_MIN = 1
 const DATA_GAP = 5
 
+// High-nibble marker for opt-in text effect detection
+// R must have (R & 0xF0) == 0xF0 to be recognized as effect text
+const HIGH_MASK = 0xF0
+const R_HIGH_MARKER = 0xF0
+
 function encodeNibble(data: number): number {
   let encoded = (data & DATA_MASK) + DATA_MIN
   if (DATA_GAP >= 0 && encoded >= DATA_GAP) encoded += 1
@@ -71,18 +76,14 @@ function encodeChannel(base: number, data: number): number {
   return (base & ~LOW_MASK) | encodeNibble(data)
 }
 
-function avoidAnimationSentinels(red: number): number {
-  if (red === 254) return red - 16
-  if (red >= 62 && red <= 64) return red + 16
-  return red
-}
-
 function clamp(value: number, min: number, max: number): number {
   return Math.max(min, Math.min(max, value))
 }
 
 function encodeTextEffect(baseColor: { r: number; g: number; b: number }, effectId: number, speed: number, param: number) {
-  const rEnc = avoidAnimationSentinels(encodeChannel(baseColor.r, effectId & DATA_MASK))
+  // Red channel uses high-nibble marker (0xF0) + effect type in low nibble
+  // This ensures only intentionally encoded colors trigger text effects (range 241-249 / 0xF1-0xF9)
+  const rEnc = R_HIGH_MARKER | encodeNibble(effectId & DATA_MASK)
   const gEnc = encodeChannel(baseColor.g, clamp(speed, 1, DATA_MASK))
   const bEnc = encodeChannel(baseColor.b, clamp(param, 0, DATA_MASK))
   const hex = `#${rEnc.toString(16).padStart(2, '0')}${gEnc.toString(16).padStart(2, '0')}${bEnc.toString(16).padStart(2, '0')}`
