@@ -13,15 +13,22 @@ import net.kyori.adventure.text.Component;
 // Get a specific effect definition
 TextEffect.Definition rainbow = TextEffect.getEffect("rainbow");
 
-// Apply with default speed and param
+// Apply effect to text
 Component text = TextEffect.apply("Hello World!", rainbow);
 
-// Apply with custom speed (1-7) and param (0-7)
-Component wave = TextEffect.apply("Wavy!", TextEffect.getEffect("wave"), 5, 4);
+// Apply by effect name
+Component wave = TextEffect.apply("Wavy text!", "wave");
+
+// Convenience methods for built-in effects
+Component rainbowText = TextEffect.rainbow("Rainbow text!");
+Component wavyText = TextEffect.wave("Wavy text!");
+Component shakyText = TextEffect.shake("Shaky text!");
+Component pulsingText = TextEffect.pulse("Pulsing text!");
 
 // Check if effects are enabled
 boolean enabled = TextEffect.isEnabled();
 boolean rainbowEnabled = TextEffect.isEffectEnabled(rainbow);
+boolean waveEnabled = TextEffect.isEffectEnabled("wave");
 ```
 
 ## Available Methods
@@ -29,167 +36,116 @@ boolean rainbowEnabled = TextEffect.isEffectEnabled(rainbow);
 | Method | Description |
 |--------|-------------|
 | `TextEffect.getEffect(name)` | Get effect definition by name |
+| `TextEffect.getEffect(id)` | Get effect definition by ID |
 | `TextEffect.getEffects()` | Get all available effect definitions |
-| `TextEffect.apply(text, definition)` | Apply effect with defaults |
-| `TextEffect.apply(text, definition, speed, param)` | Apply with custom params |
+| `TextEffect.getEnabledEffects()` | Get all enabled effect definitions |
+| `TextEffect.apply(text, definition)` | Apply effect to text |
+| `TextEffect.apply(text, name)` | Apply effect by name |
 | `TextEffect.isEnabled()` | Check if text effects are enabled globally |
 | `TextEffect.isEffectEnabled(definition)` | Check if a specific effect is enabled |
+| `TextEffect.isEffectEnabled(name)` | Check if an effect is enabled by name |
+| `TextEffect.rainbow(text)` | Apply rainbow effect |
+| `TextEffect.wave(text)` | Apply wave effect |
+| `TextEffect.shake(text)` | Apply shake effect |
+| `TextEffect.pulse(text)` | Apply pulse effect |
 
-## Manual Color Encoding
+## Effect Definitions
 
-If you need to create the encoded colors manually (e.g., for external plugins that don't depend on Oraxen):
-
-```java
-import io.th0rgal.oraxen.font.AlphaLsbEncoding;
-import net.kyori.adventure.text.format.TextColor;
-
-AlphaLsbEncoding encoding = new AlphaLsbEncoding();
-
-// Encode effect into a color
-TextColor baseColor = TextColor.color(0xFFFFFF); // White
-TextColor encoded = encoding.encode(
-    baseColor,
-    0,    // Effect ID (0 = rainbow)
-    3,    // Speed (1-7)
-    0,    // Param (0-7)
-    0     // Character index
-);
-
-// Check if a color has encoded effect data
-boolean hasEffect = encoding.matches(0xFF1234);
-
-// Decode effect data from a color
-AlphaLsbEncoding.Decoded data = encoding.decode(0xFF1234);
-if (data != null) {
-    int effectType = data.effectType();
-    int speed = data.speed();
-    int param = data.param();
-}
-```
-
-## Encoding Algorithm
-
-The Alpha LSB encoding embeds effect data in the low 4 bits of each RGB channel:
-
-```
-R channel: [base R high 4 bits][effect ID low 4 bits]
-G channel: [base G high 4 bits][speed low 4 bits]
-B channel: [base B high 4 bits][param low 4 bits]
-```
-
-This preserves the approximate base color while encoding the effect parameters.
-
-### Implementation Details
+Each effect definition contains:
 
 ```java
-// Constants
-int LSB_BITS = 4;
-int LOW_MASK = 0x0F;  // Lower 4 bits
-int DATA_MASK = 0x07; // Effect data uses 3 bits (0-7)
-int DATA_MIN = 1;     // Minimum encoded value
-int DATA_GAP = 5;     // Skip value 5 to avoid conflicts
+TextEffect.Definition effect = TextEffect.getEffect("rainbow");
 
-// Encode a single channel
-int encodeChannel(int base, int data) {
-    int encoded = (data & DATA_MASK) + DATA_MIN;
-    if (encoded >= DATA_GAP) {
-        encoded += 1;  // Skip over gap
-    }
-    return (base & ~LOW_MASK) | encoded;
-}
-
-// Avoid animation sentinel values in red channel
-int avoidAnimationSentinels(int red) {
-    if (red == 254) return red - 16;
-    if (red >= 62 && red <= 64) return red + 16;
-    return red;
-}
-```
-
-## External Integration
-
-For plugins that don't have Oraxen as a dependency, you can implement the encoding yourself:
-
-```java
-public class TextEffectEncoder {
-    private static final int LOW_MASK = 0x0F;
-    private static final int DATA_MASK = 0x07;
-    private static final int DATA_MIN = 1;
-    private static final int DATA_GAP = 5;
-
-    public static int encodeColor(int baseColor, int effectId, int speed, int param) {
-        int r = (baseColor >> 16) & 0xFF;
-        int g = (baseColor >> 8) & 0xFF;
-        int b = baseColor & 0xFF;
-
-        int rEnc = avoidSentinels(encodeChannel(r, effectId & DATA_MASK));
-        int gEnc = encodeChannel(g, Math.max(1, Math.min(speed, DATA_MASK)));
-        int bEnc = encodeChannel(b, Math.max(0, Math.min(param, DATA_MASK)));
-
-        return (rEnc << 16) | (gEnc << 8) | bEnc;
-    }
-
-    private static int encodeChannel(int base, int data) {
-        int encoded = (data & DATA_MASK) + DATA_MIN;
-        if (encoded >= DATA_GAP) encoded++;
-        return (base & ~LOW_MASK) | encoded;
-    }
-
-    private static int avoidSentinels(int red) {
-        if (red == 254) return red - 16;
-        if (red >= 62 && red <= 64) return red + 16;
-        return red;
-    }
-}
-```
-
-### Usage Example
-
-```java
-// Encode rainbow effect (ID 0) with speed 3 on white text
-int encodedColor = TextEffectEncoder.encodeColor(0xFFFFFF, 0, 3, 0);
-String hex = String.format("#%06X", encodedColor);
-
-// Use in MiniMessage
-String miniMessage = "<" + hex + ">Your text here";
+String name = effect.getName();           // "rainbow"
+int id = effect.getId();                  // 0
+String desc = effect.getDescription();    // "Cycles through rainbow colors over time"
+boolean enabled = effect.isEnabled();     // true
+TextColor trigger = effect.getTriggerColor(); // The trigger color for this effect
 ```
 
 ## MiniMessage Integration
 
-Text effects work with MiniMessage formatting. Simply apply the encoded color:
+The simplest way to use text effects is through MiniMessage tags:
 
 ```java
-import net.kyori.adventure.text.minimessage.MiniMessage;
+import io.th0rgal.oraxen.utils.AdventureUtils;
 
-// Using Oraxen API
-TextEffect.Definition effect = TextEffect.getEffect("rainbow");
-Component component = TextEffect.apply("Hello!", effect, 3, 0);
+// AdventureUtils.MINI_MESSAGE includes the text effect tag resolver
+Component text = AdventureUtils.MINI_MESSAGE.deserialize(
+    "<effect:rainbow>Rainbow text!</effect>"
+);
 
-// Or manually with MiniMessage
-String hex = "#F1F4F4"; // Encoded color from generator
-Component manual = MiniMessage.miniMessage().deserialize(
-    "<" + hex + ">Hello!"
+// Works with other MiniMessage tags
+Component mixed = AdventureUtils.MINI_MESSAGE.deserialize(
+    "<bold><effect:wave>Bold wavy text!</effect></bold>"
 );
 ```
 
-<Callout type="info">
-Use the [Color Code Generator](/creating-content/text-effects#color-code-generator) to quickly get the encoded hex color for any effect configuration.
-</Callout>
+### Custom Tag Resolver
+
+If you need to add the text effect resolver to your own MiniMessage instance:
+
+```java
+import io.th0rgal.oraxen.font.TextEffectTag;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+
+MiniMessage mm = MiniMessage.builder()
+    .tags(TagResolver.resolver(
+        TagResolver.standard(),
+        TextEffectTag.RESOLVER
+    ))
+    .build();
+
+Component text = mm.deserialize("<effect:rainbow>Hello!</effect>");
+```
+
+## How Effects Work
+
+When you apply a text effect, Oraxen:
+
+1. Sets each character to use an **effect-specific font** (e.g., `oraxen:effect/0` for rainbow)
+2. Colors each character with the effect's **trigger color** (e.g., `#FD0D00` for rainbow)
+3. The shader matches this exact color and applies the visual effect
+
+```java
+// The returned component has font and color set per-character
+Component rainbow = TextEffect.apply("Hi", TextEffect.getEffect("rainbow"));
+// Result: Each character has font=oraxen:effect/0, color=#FD0D00
+```
 
 ## PlaceholderAPI
 
-Text effects can be combined with PlaceholderAPI. However, since the color encoding needs to be applied at render time, you'll need to handle this in your plugin:
+Text effects can be combined with PlaceholderAPI:
 
 ```java
 // Example: Apply effect to a placeholder result
 String placeholderResult = PlaceholderAPI.setPlaceholders(player, "%player_name%");
-TextEffect.Definition effect = TextEffect.getEffect("rainbow");
-Component effectComponent = TextEffect.apply(placeholderResult, effect);
+Component effectComponent = TextEffect.apply(placeholderResult, "rainbow");
 ```
+
+## Enabling/Disabling Effects
+
+You can programmatically toggle effects:
+
+```java
+// Toggle global state
+TextEffect.setGlobalEnabled(false);
+
+// Toggle specific effects
+TextEffect.setEffectEnabled("rainbow", false);
+
+TextEffect.Definition wave = TextEffect.getEffect("wave");
+TextEffect.setEffectEnabled(wave, true);
+```
+
+<Callout type="warning">
+Changing effect state at runtime does not regenerate shaders. Effects can only be fully added/removed by editing `text_effects.yml` and reloading the resource pack.
+</Callout>
 
 ## Performance Considerations
 
 - Text effects are rendered client-side via shaders, so there's minimal server impact
-- The encoding is computed once when the text is created
-- Avoid creating many unique effect configurations in tight loops
+- Effect components are computed once when created
 - Cache `TextEffect.Definition` objects rather than calling `getEffect()` repeatedly
+- The MiniMessage tag resolver handles all encoding automatically

@@ -13,23 +13,22 @@ Try out text effects directly in your browser! Select a template to start with, 
 
 ## GLSL Snippet Structure
 
-Each effect can define snippets for vertex and/or fragment shaders:
+Each effect defines its complete visual behavior in GLSL snippets. All parameters (speed, amplitude, colors) are hardcoded in the snippets - no runtime variables needed:
 
 ```yaml filename="text_effects.yml"
 effects:
   my_effect:
-    id: 0              # Effect ID (0-7)
-    enabled: true      # Enable/disable this effect
+    # id: 0                        # Optional - auto-assigned if omitted
+    enabled: true
+    # trigger_color: "#FD0D00"     # Optional - defaults to #FDxD00
     description: My custom effect
     snippets:
-      - targets:                     # Optional: version constraints
+      - targets:                   # Optional: version constraints
           min_pack_format: 34
-          max_pack_format: 46
-          min_version: "1.21"
-          max_version: "1.21.5"
+          min_version: "1.21.4"
         vertex: |
           // Vertex shader code (position effects)
-          pos.y += sin(timeSeconds) * 0.5;
+          pos.y += sin(timeSeconds * 6.0) * 2.0;
         fragment: |
           // Fragment shader code (color effects)
           texColor.rgb = vec3(1.0, 0.0, 0.0);
@@ -42,12 +41,13 @@ These variables are available in your GLSL snippets:
 | Variable | Type | Description |
 |----------|------|-------------|
 | `timeSeconds` | `float` | Game time in seconds (for animation) |
-| `speed` | `float` | Speed parameter (1-7) decoded from color |
-| `param` | `float` | Extra parameter (0-7) decoded from color |
-| `charIndex` | `float` | Character index in the string |
-| `effectType` | `int` | The effect type ID |
+| `charIndex` | `float` | Character index in the string (from `gl_VertexID`) |
 | `pos` | `vec3` | Vertex position (vertex shader only) |
 | `texColor` | `vec4` | Texture color RGBA (fragment shader only) |
+
+<Callout type="info">
+Unlike previous versions, `speed` and `param` variables are no longer available. All effect parameters should be hardcoded directly in your GLSL snippets for simplicity and to avoid false positives.
+</Callout>
 
 ## Shared Code
 
@@ -69,57 +69,62 @@ shared:
 
 ## Built-in Effect Examples
 
+These are the default effects from `text_effects.yml`:
+
 <Tabs items={['Rainbow', 'Wave', 'Shake', 'Pulse']}>
 <Tabs.Tab>
 **Rainbow Effect** - Cycles through hue colors over time
 
 ```glsl
 // Fragment shader
-float hue = fract(charIndex * 0.03 + timeSeconds * speed * 0.03);
-vec3 rgb = hsv2rgb(vec3(hue, 0.9, 1.0));
-texColor.rgb = rgb;
+float hue = fract(charIndex * 0.03 + timeSeconds * 0.09);
+texColor.rgb = hsv2rgb(vec3(hue, 0.9, 1.0));
 ```
 
 **How it works:**
 - Uses `charIndex` to offset each character's hue for a gradient effect
-- Multiplies by `timeSeconds * speed` to animate the color cycling
+- `timeSeconds * 0.09` animates the color cycling
 - `hsv2rgb()` converts the hue value to RGB colors
-- Saturation is fixed at 0.9, brightness at 1.0
+- Saturation is 0.9, brightness is 1.0
 
 </Tabs.Tab>
 <Tabs.Tab>
 **Wave Effect** - Vertical sine wave motion
 
 ```glsl
-// Vertex shader
-float phase = charIndex * 0.6 + timeSeconds * speed * 2.0;
-float amplitude = max(1.0, param) * 0.15;
-pos.y += sin(phase) * amplitude;
+// Fragment shader - sets the wave color
+texColor.rgb = vec3(0.333, 0.804, 0.988);
+
+// Vertex shader - applies the wave motion
+float phase = charIndex * 0.6 + timeSeconds * 6.0;
+pos.y += sin(phase) * 2.0;
 ```
 
 **How it works:**
 - Each character has a phase offset based on its index
 - `sin(phase)` creates the wave motion
-- `param` controls the wave amplitude (height)
-- `speed` controls how fast the wave moves
+- Amplitude (`2.0`) and speed (`6.0`) are hardcoded
+- Color is set to a light blue
 
 </Tabs.Tab>
 <Tabs.Tab>
 **Shake Effect** - Random jitter
 
 ```glsl
-// Vertex shader
-float seed = charIndex + floor(timeSeconds * speed * 8.0);
-float amplitude = max(1.0, param) * 0.15;
-pos.x += (fract(sin(seed * 12.9898) * 43758.5453) - 0.5) * amplitude;
-pos.y += (fract(sin(seed * 78.233) * 43758.5453) - 0.5) * amplitude;
+// Fragment shader - sets the shake color
+texColor.rgb = vec3(1.0, 0.42, 0.42);
+
+// Vertex shader - applies random jitter
+float seed = charIndex + floor(timeSeconds * 32.0);
+pos.x += (fract(sin(seed * 12.9898) * 43758.5453) - 0.5) * 1.5;
+pos.y += (fract(sin(seed * 78.233) * 43758.5453) - 0.5) * 1.5;
 ```
 
 **How it works:**
 - Uses a pseudo-random number generator based on `sin()`
-- `floor(timeSeconds * speed * 8.0)` creates discrete shake "frames"
+- `floor(timeSeconds * 32.0)` creates discrete shake "frames"
 - Random offset is applied to both X and Y positions
-- `param` controls shake intensity
+- Intensity (`1.5`) is hardcoded
 
 </Tabs.Tab>
 <Tabs.Tab>
@@ -127,7 +132,8 @@ pos.y += (fract(sin(seed * 78.233) * 43758.5453) - 0.5) * amplitude;
 
 ```glsl
 // Fragment shader
-float pulse = (sin(timeSeconds * speed * 0.5 + charIndex * 0.3) + 1.0) * 0.5;
+texColor.rgb = vec3(1.0, 0.85, 0.24);
+float pulse = (sin(timeSeconds * 1.5 + charIndex * 0.3) + 1.0) * 0.5;
 texColor.a *= 0.3 + pulse * 0.7;
 ```
 
@@ -135,7 +141,7 @@ texColor.a *= 0.3 + pulse * 0.7;
 - Uses `sin()` to oscillate between 0 and 1
 - Adds `charIndex * 0.3` to offset each character's phase
 - Multiplies the alpha channel to fade opacity
-- Minimum opacity is 0.3 (30%)
+- Minimum opacity is 0.3 (30%), color is golden yellow
 
 </Tabs.Tab>
 </Tabs>
@@ -144,25 +150,24 @@ texColor.a *= 0.3 + pulse * 0.7;
 
 To create your own effect:
 
-1. Choose an effect ID (0-7) - you can replace an existing effect or use an unused ID
-2. Add your effect to `text_effects.yml`:
+1. Add your effect to `text_effects.yml` (IDs are auto-assigned, or specify one explicitly):
 
 ```yaml filename="text_effects.yml"
 effects:
   # Custom: Glowing text that pulses brighter and darker
   glow:
-    id: 3  # Replaces pulse
     enabled: true
     description: Glowing brightness pulse
     snippets:
       - fragment: |
-          float glow = (sin(timeSeconds * speed) + 1.0) * 0.5;
+          float glow = (sin(timeSeconds * 3.0) + 1.0) * 0.5;
           float brightness = 0.7 + glow * 0.6;  // 0.7 to 1.3
-          texColor.rgb *= brightness;
+          texColor.rgb = vec3(0.9, 0.7, 0.2) * brightness;
 ```
 
-3. Reload Oraxen with `/oraxen reload all`
-4. Test with `/oraxen texteffect basic glow Your glowing text!`
+2. Reload Oraxen with `/oraxen reload all`
+3. Test with `/oraxen texteffect glow Your glowing text!`
+4. Or use in MiniMessage: `<effect:glow>Glowing!</effect>`
 
 ## GLSL Reference
 
@@ -189,13 +194,13 @@ dot(a, b)            // Dot product
 
 ```glsl
 // Smooth oscillation between 0 and 1
-float wave = (sin(timeSeconds) + 1.0) * 0.5;
+float wave = (sin(timeSeconds * 2.0) + 1.0) * 0.5;
 
 // Discrete steps (for frame-like animation)
 float frame = floor(timeSeconds * 10.0);  // 10 FPS
 
 // Per-character phase offset
-float phase = charIndex * 0.5 + timeSeconds;
+float phase = charIndex * 0.5 + timeSeconds * 3.0;
 
 // Pseudo-random based on seed
 float rand = fract(sin(seed * 12.9898) * 43758.5453);
@@ -230,14 +235,14 @@ Here are some ideas for custom effects you can create:
 **Breathing Effect** - Slow scale pulse
 ```glsl
 // Vertex shader
-float breath = (sin(timeSeconds * speed * 0.3) + 1.0) * 0.1 + 0.9;
+float breath = (sin(timeSeconds * 1.5) + 1.0) * 0.1 + 0.9;
 pos *= breath;
 ```
 
 **Color Shift** - Cycle through colors
 ```glsl
 // Fragment shader
-float shift = timeSeconds * speed * 0.1;
+float shift = timeSeconds * 0.5;
 texColor.rgb = vec3(
     sin(shift) * 0.5 + 0.5,
     sin(shift + 2.094) * 0.5 + 0.5,
@@ -268,7 +273,6 @@ You can define different GLSL code for different Minecraft versions:
 ```yaml filename="text_effects.yml"
 effects:
   custom:
-    id: 0
     enabled: true
     snippets:
       # Snippet for 1.21.6+
@@ -276,14 +280,14 @@ effects:
           min_version: "1.21.6"
         fragment: |
           // Modern shader code
-          texColor.rgb = modernEffect();
+          texColor.rgb = vec3(1.0, 0.5, 0.0);
 
       # Fallback for older versions
       - targets:
           max_version: "1.21.5"
         fragment: |
           // Legacy shader code
-          texColor.rgb = legacyEffect();
+          texColor.rgb = vec3(0.8, 0.4, 0.0);
 ```
 
 The first matching snippet (based on `targets`) is used. Snippets without targets always match.
@@ -294,7 +298,7 @@ The first matching snippet (based on `targets`) is used. Snippets without target
 |--------|-------------|
 | `min_pack_format` | Minimum resource pack format |
 | `max_pack_format` | Maximum resource pack format |
-| `min_version` | Minimum Minecraft version (e.g., "1.21") |
+| `min_version` | Minimum Minecraft version (e.g., "1.21.4") |
 | `max_version` | Maximum Minecraft version (e.g., "1.21.5") |
 
 ## Debugging Tips
@@ -305,11 +309,11 @@ When developing custom effects, you can quickly test changes by using `/oraxen r
 
 **Common issues:**
 
-1. **Effect not showing**: Check that the effect ID matches what you're using in the command
+1. **Effect not showing**: Check that the effect name matches what you're using in the tag
 2. **Syntax errors**: GLSL is strict - ensure semicolons and proper types
 3. **Nothing visible**: Check if `texColor.a` is being set to 0
 4. **Flickering**: Use `floor()` for discrete animations, not continuous values
-5. **Wrong timing**: Remember `speed` is 1-7, multiply appropriately
+5. **Effect not triggering**: Make sure the effect is enabled in config
 
 **Test your GLSL locally:**
 Use the [Interactive Shader Preview](#interactive-shader-preview) at the top of this page to prototype effects before adding them to Oraxen. It uses the same Minecraft font and simulates the shader environment.
