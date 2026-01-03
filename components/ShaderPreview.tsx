@@ -25,7 +25,7 @@ function highlightGLSL(code: string): string {
   result = result.replace(/\b(sin|cos|tan|abs|floor|ceil|fract|mod|min|max|clamp|mix|step|smoothstep|length|normalize|dot|cross|pow|sqrt|exp|log)\b/g, '<span style="color:#dcdcaa">$1</span>')
 
   // Custom variables we use
-  result = result.replace(/\b(pos|texColor|charIndex|timeSeconds|speed|param|effectType)\b/g, '<span style="color:#9cdcfe">$1</span>')
+  result = result.replace(/\b(pos|texColor|charIndex|timeSeconds)\b/g, '<span style="color:#9cdcfe">$1</span>')
 
   // Function declarations (hsv2rgb, etc)
   result = result.replace(/\b(hsv2rgb)\b/g, '<span style="color:#dcdcaa">$1</span>')
@@ -187,45 +187,43 @@ interface GLSLVars {
 }
 
 // Effect templates with separate vertex and fragment shaders
+// Note: All parameters are now hardcoded in the snippets (no speed/param variables)
 const EFFECT_TEMPLATES = {
   rainbow: {
     name: 'Rainbow',
     description: 'Cycles through rainbow colors (fragment only)',
     vertexGlsl: null,
     fragmentGlsl: `// Fragment shader - rainbow color cycling
-float hue = fract(charIndex * 0.03 + timeSeconds * speed * 0.03);
-vec3 rgb = hsv2rgb(vec3(hue, 0.9, 1.0));
-texColor.rgb = rgb;`,
+float hue = fract(charIndex * 0.03 + timeSeconds * 0.09);
+texColor.rgb = hsv2rgb(vec3(hue, 0.9, 1.0));`,
   },
   wave: {
     name: 'Wave',
-    description: 'Vertical sine wave motion (vertex only)',
+    description: 'Vertical sine wave motion (vertex + fragment)',
     vertexGlsl: `// Vertex shader - wave motion
-float phase = charIndex * 0.6 + timeSeconds * speed * 2.0;
-float amplitude = max(1.0, param) * 0.15;
-pos.y += sin(phase) * amplitude;`,
-    fragmentGlsl: null,
+float phase = charIndex * 0.6 + timeSeconds * 6.0;
+pos.y += sin(phase) * 2.0;`,
+    fragmentGlsl: `// Fragment shader - wave color
+texColor.rgb = vec3(0.333, 0.804, 0.988);`,
   },
   shake: {
     name: 'Shake',
-    description: 'Random jitter effect (vertex only)',
-    vertexGlsl: `// Vertex shader - shake/jitter using hash-based random
-// Uses floor() for discrete frames, fract(sin()*43758) for pseudo-random
-pos.x += (fract(sin((charIndex + floor(timeSeconds * speed * 8.0)) * 12.9898) * 43758.5453) - 0.5) * max(1.0, param) * 0.2;
-pos.y += (fract(sin((charIndex + floor(timeSeconds * speed * 8.0)) * 78.233) * 43758.5453) - 0.5) * max(1.0, param) * 0.2;`,
-    fragmentGlsl: null,
+    description: 'Random jitter effect (vertex + fragment)',
+    vertexGlsl: `// Vertex shader - shake/jitter
+float seed = charIndex + floor(timeSeconds * 32.0);
+pos.x += (fract(sin(seed * 12.9898) * 43758.5453) - 0.5) * 1.5;
+pos.y += (fract(sin(seed * 78.233) * 43758.5453) - 0.5) * 1.5;`,
+    fragmentGlsl: `// Fragment shader - shake color
+texColor.rgb = vec3(1.0, 0.42, 0.42);`,
   },
-  rainbowWave: {
-    name: 'Rainbow Wave',
-    description: 'Rainbow colors with wave motion (both shaders)',
-    vertexGlsl: `// Vertex shader - wave motion
-float phase = charIndex * 0.6 + timeSeconds * speed * 2.0;
-float amplitude = max(1.0, param) * 0.15;
-pos.y += sin(phase) * amplitude;`,
-    fragmentGlsl: `// Fragment shader - rainbow color
-float hue = fract(charIndex * 0.03 + timeSeconds * speed * 0.03);
-vec3 rgb = hsv2rgb(vec3(hue, 0.9, 1.0));
-texColor.rgb = rgb;`,
+  pulse: {
+    name: 'Pulse',
+    description: 'Opacity fades in/out (fragment only)',
+    vertexGlsl: null,
+    fragmentGlsl: `// Fragment shader - pulse effect
+texColor.rgb = vec3(1.0, 0.85, 0.24);
+float pulse = (sin(timeSeconds * 1.5 + charIndex * 0.3) + 1.0) * 0.5;
+texColor.a *= 0.3 + pulse * 0.7;`,
   },
 }
 
@@ -237,6 +235,9 @@ interface ShaderPreviewProps {
   showCode?: boolean
   initialText?: string
 }
+
+// Simplified default template
+const DEFAULT_TEMPLATE: EffectKey = 'rainbow'
 
 // Code editor component with syntax highlighting
 function CodeEditor({
@@ -347,7 +348,7 @@ function CodeEditor({
 }
 
 export default function ShaderPreview({
-  initialTemplate = 'rainbowWave',
+  initialTemplate = DEFAULT_TEMPLATE,
   compact = false,
   showCode: initialShowCode = true,
   initialText = 'Hello Oraxen!'
@@ -363,8 +364,6 @@ export default function ShaderPreview({
   const [compiledVertex, setCompiledVertex] = useState<ParsedShader>(() => parseGLSL(EFFECT_TEMPLATES[initialTemplate].vertexGlsl || ''))
   const [compiledFragment, setCompiledFragment] = useState<ParsedShader>(() => parseGLSL(EFFECT_TEMPLATES[initialTemplate].fragmentGlsl || ''))
   const [sampleText, setSampleText] = useState(initialText)
-  const [speed, setSpeed] = useState(3)
-  const [param, setParam] = useState(3)
   const [textColor, setTextColor] = useState('#FFFFFF')
   const [bgColor, setBgColor] = useState('#1a1a2e')
   const [fontSize, setFontSize] = useState(compact ? 24 : 32)
@@ -543,16 +542,16 @@ export default function ShaderPreview({
       const vars: GLSLVars = {
         charIndex: i,
         timeSeconds: time,
-        speed,
-        param,
+        speed: 3, // Legacy, kept for backwards compatibility
+        param: 3, // Legacy, kept for backwards compatibility
       }
 
-      // Calculate intermediate values
-      vars.phase = i * 0.6 + time * speed * 2.0
-      vars.amplitude = Math.max(1, param) * 0.15
-      vars.seed = i + Math.floor(time * speed * 8.0)
-      vars.pulse = (Math.sin(time * speed * 0.5 + i * 0.3) + 1) * 0.5
-      vars.breath = (Math.sin(time * speed * 0.3) + 1) * 0.03 + 0.97
+      // Calculate intermediate values (simplified - values now hardcoded in GLSL)
+      vars.phase = i * 0.6 + time * 6.0
+      vars.amplitude = 2.0
+      vars.seed = i + Math.floor(time * 32.0)
+      vars.pulse = (Math.sin(time * 1.5 + i * 0.3) + 1) * 0.5
+      vars.breath = (Math.sin(time * 1.5) + 1) * 0.03 + 0.97
 
       let offsetX = 0
       let offsetY = 0
@@ -589,7 +588,7 @@ export default function ShaderPreview({
     if (isPlaying) {
       animationRef.current = requestAnimationFrame(render)
     }
-  }, [compiledVertex, compiledFragment, sampleText, speed, param, textColor, bgColor, fontSize, isPlaying, compact, isFullscreen])
+  }, [compiledVertex, compiledFragment, sampleText, textColor, bgColor, fontSize, isPlaying, compact, isFullscreen])
 
   useEffect(() => {
     if (!fontLoaded) return
@@ -691,11 +690,6 @@ export default function ShaderPreview({
           alignItems: 'center',
           fontSize: '11px',
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-            <span style={{ opacity: 0.6 }}>Speed:</span>
-            <input type="range" min="1" max="7" value={speed} onChange={(e) => setSpeed(parseInt(e.target.value))} style={{ width: '60px' }} />
-            <span style={{ fontFamily: 'monospace' }}>{speed}</span>
-          </div>
           <button
             onClick={() => setIsPlaying(!isPlaying)}
             style={{
@@ -708,7 +702,21 @@ export default function ShaderPreview({
               cursor: 'pointer',
             }}
           >
-            {isPlaying ? '⏸' : '▶'}
+            {isPlaying ? '⏸ Pause' : '▶ Play'}
+          </button>
+          <button
+            onClick={resetTime}
+            style={{
+              padding: '2px 8px',
+              borderRadius: '4px',
+              border: '1px solid var(--nextra-border)',
+              backgroundColor: 'transparent',
+              color: 'var(--nextra-fg)',
+              fontSize: '11px',
+              cursor: 'pointer',
+            }}
+          >
+            ↺ Reset
           </button>
         </div>
       </div>
@@ -898,18 +906,6 @@ export default function ShaderPreview({
         </div>
         <div>
           <label style={{ display: 'block', fontSize: '10px', fontWeight: 600, opacity: 0.6, marginBottom: '4px', textTransform: 'uppercase' }}>
-            Speed ({speed})
-          </label>
-          <input type="range" min="1" max="7" value={speed} onChange={(e) => setSpeed(parseInt(e.target.value))} style={{ width: '100%' }} />
-        </div>
-        <div>
-          <label style={{ display: 'block', fontSize: '10px', fontWeight: 600, opacity: 0.6, marginBottom: '4px', textTransform: 'uppercase' }}>
-            Param ({param})
-          </label>
-          <input type="range" min="0" max="7" value={param} onChange={(e) => setParam(parseInt(e.target.value))} style={{ width: '100%' }} />
-        </div>
-        <div>
-          <label style={{ display: 'block', fontSize: '10px', fontWeight: 600, opacity: 0.6, marginBottom: '4px', textTransform: 'uppercase' }}>
             Size ({fontSize}px)
           </label>
           <input type="range" min="16" max="48" value={fontSize} onChange={(e) => setFontSize(parseInt(e.target.value))} style={{ width: '100%' }} />
@@ -1027,7 +1023,7 @@ export default function ShaderPreview({
         fontSize: '10px',
         opacity: 0.5,
       }}>
-        <strong>Tip:</strong> Edit both shaders above - vertex controls position (pos.x/y), fragment controls color (texColor.rgb/a). Changes apply in real-time.
+        <strong>Tip:</strong> Edit shaders above - vertex controls position (pos.x/y), fragment controls color (texColor.rgb/a). All values are hardcoded in GLSL.
       </div>
     </div>
   )
