@@ -4,5 +4,6 @@ export default {
   farming: 'Farming',
   misc: 'Miscellaneous',
   'custom-ability': 'Custom Abilities',
-  clickaction: 'Click Actions'
+  clickaction: 'Click Actions',
+  'backpack-cosmetic': 'Backpack Cosmetic'
 }

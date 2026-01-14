@@ -3,5 +3,6 @@ export default {
   noteblock: 'NoteBlock',
   stringblock: 'StringBlock',
   chorusblock: 'ChorusBlock',
-  farmblock: 'FarmBlock'
+  farmblock: 'FarmBlock',
+  shapedblock: 'ShapedBlock'
 }
