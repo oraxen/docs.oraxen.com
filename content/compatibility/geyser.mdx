@@ -1,0 +1,660 @@
+import { Callout } from 'nextra/components'
+
+# Geyser (Bedrock)
+
+Geyser enables Bedrock Edition players to join Java Edition servers. However, integrating custom items and resource packs requires manual setup, as Geyser does not automatically convert Java resource packs to Bedrock format.
+
+<Callout type="warning">
+**Oraxen does not automatically convert or setup resource packs for Geyser. You must manually create Bedrock-compatible resource packs and configure custom item mappings.**
+</Callout>
+
+## Overview
+
+1. **Understanding the differences** between Java and Bedrock resource packs
+2. **Converting Oraxen items** to work on Bedrock Edition
+3. **Creating custom item mappings** for Geyser
+4. **Setting up Bedrock resource packs** properly
+5. **Testing and troubleshooting** your setup
+
+## Prerequisites
+
+- Geyser installed and working on your server
+- Oraxen configured with custom items on Java Edition
+- Basic understanding of resource pack structure
+- A text editor for JSON files
+- Image editing software (optional, for texture adjustments)
+
+## Automatic Conversion Tools
+
+Before manually converting your resource pack, consider using these official GeyserMC tools to automate the process.
+
+### Thunder - Resource Pack Converter
+
+**Thunder** is an official tool that converts Java Edition resource packs to Bedrock Edition format.
+
+**What it does**
+- Converts vanilla asset modifications automatically
+- Generates proper Bedrock pack structure with manifest.json
+- Handles texture conversions and file structure changes
+
+**What it doesn't do**
+- Does NOT convert custom items (CustomModelData)
+- Does NOT create Geyser mappings
+- Only works with packs that modify existing vanilla assets
+
+**Download** - [Thunder on GeyserMC](https://geysermc.org/download#thunder)
+
+**Usage**
+1. Download and run Thunder (requires Java 17+)
+2. Select your Java Edition resource pack
+3. Set output pack name
+4. Click convert
+5. Place the generated pack in Geyser's packs folder
+
+<Callout type="info">
+Thunder is great for converting base textures, but you'll still need to create custom item mappings manually for Oraxen items.
+</Callout>
+
+### Rainbow - Custom Item Mapper
+
+**Rainbow** is a Fabric mod that automatically generates Geyser custom item mappings and Bedrock resource packs.
+
+**What it does**
+- Automatically detects custom items with CustomModelData
+- Generates Geyser mappings JSON files
+- Creates complete Bedrock resource packs
+- Supports Geyser Custom Item API v2 (1.21.4+)
+
+**Perfect for** - Oraxen servers with many custom items
+
+**Download** - [Rainbow on GeyserMC](https://geysermc.org/download#rainbow)
+
+**Usage**
+1. Install Fabric 1.21.4+ client with Rainbow mod
+2. Join your server with Oraxen items
+3. Run `/rainbow create oraxen_pack`
+4. Map items using one of these methods:
+   - Hold each item and run `/rainbow map`
+   - Fill inventory and run `/rainbow mapinventory`
+   - Run `/rainbow auto inventory` and open a GUI with custom items
+5. Run `/rainbow finish` to generate files
+6. Copy generated files to your server:
+   - `pack.zip` → `plugins/Geyser-Spigot/packs/`
+   - `geyser_mappings.json` → `plugins/Geyser-Spigot/custom_mappings/`
+
+<Callout type="tip">
+**Recommended Workflow** - Use Rainbow to automatically generate your initial mappings, then manually adjust as needed. This saves significant time compared to creating everything from scratch.
+</Callout>
+
+### Other Conversion Tools
+
+**PackConverter Library**
+- Official GeyserMC library for pack conversion
+- Used internally by Thunder
+- For developers building custom conversion tools
+- [GitHub Repository](https://github.com/GeyserMC/PackConverter)
+
+**Third-Party Converters**
+- Various community tools exist but may have limitations
+- Always verify output with official tools
+- Test thoroughly before production use
+
+### When to Use Manual Conversion
+
+You should manually create your Bedrock pack when:
+- Automatic tools don't support your pack features
+- You need fine-grained control over the conversion
+- You're using advanced features (custom geometries, animations)
+- You want to optimize pack size and performance
+- Automatic tools produce errors or incomplete results
+
+
+## Understanding Java vs Bedrock Differences
+
+### Key Differences
+
+Java and Bedrock editions handle custom items differently.
+
+| Feature | Java Edition | Bedrock Edition |
+|---------|-------------|-----------------|
+| Custom Models | CustomModelData NBT | Attachables + Geometry |
+| Item Textures | Overrides in model JSON | item_texture.json |
+| Transparency | PNG with alpha | TGA or PNG with alpha |
+| File Structure | assets/minecraft/ | textures/, models/ |
+| Format | .zip resource pack | .mcpack or .zip |
+
+### What Cannot Be Directly Converted
+
+- **CustomModelData** - Bedrock doesn't use this system
+- **Model predicates** - Different format required
+- **NBT-based textures** - Must use Geyser mappings
+- **Java-specific features** - Shaders, certain animations
+
+## Manual Conversion Guide
+
+The following sections provide step-by-step instructions for manually creating Bedrock resource packs and Geyser mappings. Use this approach when automatic tools don't meet your needs or you want full control over the conversion process.
+
+### Step 1: Creating Bedrock Resource Pack
+
+#### Basic Pack Structure
+
+Create a new folder for your Bedrock pack with this structure:
+
+```
+OraxenBedrock/
+├── manifest.json              ← Required: Pack metadata
+├── pack_icon.png             ← Optional: Pack icon
+├── textures/
+│   ├── item_texture.json     ← Required: Item texture definitions
+│   └── items/                ← Your item textures
+│       ├── ruby_sword.png
+│       ├── emerald_pickaxe.png
+│       └── ...
+└── models/                    ← Optional: Custom geometries
+    └── entity/
+```
+
+#### Creating manifest.json
+
+Every Bedrock pack needs a manifest.json file.
+
+```json
+{
+  "format_version": 2,
+  "header": {
+    "name": "Oraxen Bedrock Pack",
+    "description": "Custom items for Bedrock players",
+    "uuid": "YOUR-UUID-HERE-1234-5678",
+    "version": [1, 0, 0],
+    "min_engine_version": [1, 20, 0]
+  },
+  "modules": [
+    {
+      "type": "resources",
+      "uuid": "YOUR-UUID-HERE-9876-5432",
+      "version": [1, 0, 0]
+    }
+  ]
+}
+```
+
+<Callout type="info">
+Generate unique UUIDs at [uuidgenerator.net](https://www.uuidgenerator.net/) - you need two different UUIDs for header and modules.
+</Callout>
+
+#### Creating item_texture.json
+
+This file maps texture names to texture files.
+
+```json
+{
+  "resource_pack_name": "oraxen_bedrock",
+  "texture_name": "atlas.items",
+  "texture_data": {
+    "ruby_sword": {
+      "textures": "textures/items/ruby_sword"
+    },
+    "emerald_pickaxe": {
+      "textures": "textures/items/emerald_pickaxe"
+    },
+    "amethyst_helmet": {
+      "textures": "textures/items/amethyst_helmet"
+    }
+  }
+}
+```
+
+#### Preparing Textures
+
+1. **Extract textures** from your Oraxen Java pack
+2. **Convert if needed** - Most PNG files work, but some may need TGA format
+3. **Place in textures/items/** folder
+4. **Name consistently** with your item_texture.json entries
+
+<Callout type="important">
+Keep texture names lowercase with underscores (e.g., `ruby_sword` not `RubySword`).
+</Callout>
+
+
+### Step 2: Creating Geyser Custom Mappings
+
+Geyser uses custom mappings to link Java items (with CustomModelData) to Bedrock items. This is the crucial step that makes your Oraxen items work on Bedrock.
+
+#### Locating the Mappings Folder
+
+After starting your server with Geyser, a `custom_mappings` folder is created:
+
+**Spigot/Paper:**
+```
+plugins/Geyser-Spigot/custom_mappings/
+```
+
+**Standalone:**
+```
+Geyser-Standalone/custom_mappings/
+```
+
+#### Creating a Mapping File
+
+Create a JSON file (e.g., `oraxen_items.json`) in the custom_mappings folder:
+
+```json
+{
+  "format_version": 1,
+  "items": {
+    "minecraft:diamond_sword": [
+      {
+        "name": "ruby_sword",
+        "custom_model_data": 1001,
+        "icon": "ruby_sword",
+        "allow_offhand": true
+      },
+      {
+        "name": "emerald_sword",
+        "custom_model_data": 1002,
+        "icon": "emerald_sword",
+        "allow_offhand": true
+      }
+    ],
+    "minecraft:diamond_pickaxe": [
+      {
+        "name": "emerald_pickaxe",
+        "custom_model_data": 2001,
+        "icon": "emerald_pickaxe",
+        "allow_offhand": false
+      }
+    ],
+    "minecraft:leather_helmet": [
+      {
+        "name": "amethyst_helmet",
+        "custom_model_data": 3001,
+        "icon": "amethyst_helmet",
+        "allow_offhand": false
+      }
+    ]
+  }
+}
+```
+
+#### Understanding the Mapping Structure
+
+- **`minecraft:diamond_sword`** - The base Java item your custom item extends
+- **`name`** - Unique identifier for this custom item (matches item_texture.json)
+- **`custom_model_data`** - The CustomModelData value from your Oraxen item config
+- **`icon`** - Texture name from item_texture.json
+- **`allow_offhand`** - Whether the item can be held in offhand
+
+#### Finding CustomModelData Values
+
+Check your Oraxen item configurations to find the CustomModelData values:
+
+```yaml
+# In Oraxen/items/weapons.yml
+ruby_sword:
+  material: DIAMOND_SWORD
+  Pack:
+    custom_model_data: 1001  # ← This value
+```
+
+#### Advanced Mapping Options
+
+You can add additional properties to customize item behavior:
+
+```json
+{
+  "name": "magic_wand",
+  "custom_model_data": 5001,
+  "icon": "magic_wand",
+  "allow_offhand": true,
+  "display_handheld": true,
+  "creative_category": "equipment",
+  "creative_group": "itemGroup.name.sword"
+}
+```
+
+<Callout type="info">
+**Multiple Mappings:** You can create multiple JSON files in the custom_mappings folder. Geyser will load all of them.
+</Callout>
+
+### Step 3: Packaging and Installing the Bedrock Pack
+
+#### Creating the Pack File
+
+1. **Compress your pack folder** into a ZIP file
+2. **Rename** from `.zip` to `.mcpack` (optional, both work)
+3. **Verify** the structure - manifest.json should be at the root
+
+#### Installing on Geyser
+
+Place your pack in Geyser's packs folder:
+
+**Spigot/Paper:**
+```
+plugins/Geyser-Spigot/packs/
+└── OraxenBedrock.mcpack
+```
+
+**Standalone:**
+```
+Geyser-Standalone/packs/
+└── OraxenBedrock.mcpack
+```
+
+**BungeeCord/Velocity:**
+```
+plugins/Geyser-BungeeCord/packs/
+└── OraxenBedrock.mcpack
+```
+
+#### Restart and Test
+
+1. **Restart your server** (or reload Geyser with `/geyser reload`)
+2. **Connect with Bedrock Edition**
+3. **Accept the resource pack** when prompted
+4. **Test your custom items** in-game
+
+<Callout type="warning">
+If you update the pack, Bedrock players may need to clear their resource pack cache or rejoin to see changes.
+</Callout>
+
+
+## Testing and Troubleshooting
+
+### Verification Checklist
+
+- [ ] Bedrock pack has valid manifest.json with unique UUIDs
+- [ ] item_texture.json contains all custom items
+- [ ] Texture files are in textures/items/ folder
+- [ ] Custom mappings JSON is in Geyser's custom_mappings folder
+- [ ] CustomModelData values match between Oraxen and Geyser mappings
+- [ ] Pack is placed in Geyser's packs folder
+- [ ] Server has been restarted or Geyser reloaded
+
+### Common Issues
+
+#### Items Show as Base Item (No Custom Texture)
+
+**Problem** - Bedrock players see diamond_sword instead of ruby_sword
+
+**Solutions**
+1. Verify CustomModelData matches in both Oraxen config and Geyser mapping
+2. Check that icon name in mapping matches texture name in item_texture.json
+3. Ensure texture file exists in textures/items/ folder
+4. Restart server completely (not just reload)
+
+#### Resource Pack Not Received
+
+**Problem** - Bedrock players don't get prompted to download the pack
+
+**Solutions**
+1. Check pack is in correct Geyser packs folder
+2. Verify manifest.json is valid JSON (use [jsonlint.com](https://jsonlint.com))
+3. Ensure pack file is .zip or .mcpack format
+4. Check Geyser console for pack loading errors
+
+#### Textures Appear Broken or Missing
+
+**Problem** - Items show purple/black checkerboard or wrong texture
+
+**Solutions**
+1. Convert PNG to TGA format if transparency issues occur
+2. Verify texture paths in item_texture.json don't include file extension
+3. Check texture file names match exactly (case-sensitive)
+4. Ensure textures are in correct resolution (16x16 for vanilla style)
+
+#### Items Work on Java but Not Bedrock
+
+**Problem** - Custom items function on Java but appear as vanilla items on Bedrock
+
+**Solutions**
+1. Verify Geyser custom mappings file is loaded (check console)
+2. Ensure base item type matches (e.g., both use diamond_sword)
+3. Check that custom_model_data value is correct
+4. Test with a simple item first to verify setup
+
+### Testing Commands
+
+```bash
+# Check if Geyser loaded your mappings
+/geyser dump
+
+# Reload Geyser without restarting server
+/geyser reload
+
+# Give yourself a custom item (Java)
+/o give <player> <item_id>
+
+# Check Geyser version
+/geyser version
+```
+
+### Debug Mode
+
+Enable debug logging in Geyser config.yml:
+
+```yaml
+debug-mode: true
+```
+
+This will show detailed information about:
+- Custom mapping loading
+- Resource pack sending
+- Item translation between Java and Bedrock
+
+## Advanced Topics
+
+### Custom Geometries (3D Models)
+
+For items with custom 3D models, you'll need additional setup:
+
+1. **Export model** from Blockbench as Bedrock geometry
+2. **Create attachables** JSON file
+3. **Reference in mappings** with geometry property
+
+Example attachable (models/entity/ruby_sword.json):
+
+```json
+{
+  "format_version": "1.10.0",
+  "minecraft:attachable": {
+    "description": {
+      "identifier": "oraxen:ruby_sword",
+      "materials": {
+        "default": "entity_alphatest",
+        "enchanted": "entity_alphatest_glint"
+      },
+      "textures": {
+        "default": "textures/items/ruby_sword"
+      },
+      "geometry": {
+        "default": "geometry.ruby_sword"
+      },
+      "render_controllers": ["controller.render.item_default"]
+    }
+  }
+}
+```
+
+### Armor with Custom Textures
+
+Armor requires additional texture files for worn appearance:
+
+```
+textures/
+├── items/
+│   └── amethyst_helmet.png        ← Inventory icon
+└── models/
+    └── armor/
+        └── amethyst_layer_1.png   ← Worn texture
+```
+
+Mapping for armor:
+
+```json
+{
+  "name": "amethyst_helmet",
+  "custom_model_data": 3001,
+  "icon": "amethyst_helmet",
+  "allow_offhand": false,
+  "armor_texture": "amethyst"
+}
+```
+
+### Dyeable Items
+
+For items with custom colors (like leather armor):
+
+```json
+{
+  "name": "custom_leather_chestplate",
+  "custom_model_data": 4001,
+  "icon": "custom_chestplate",
+  "allow_offhand": false,
+  "dyeable": true
+}
+```
+
+### Remote Pack Hosting
+
+For larger packs, you can host remotely instead of local files:
+
+**Requirements:**
+- HTTPS URL with valid SSL certificate
+- Content-Type: application/zip header
+- Content-Length header must be accurate
+- Direct download link (no redirects)
+
+**Geyser config.yml:**
+
+```yaml
+remote-packs:
+  - url: "https://example.com/packs/oraxen-bedrock.zip"
+```
+
+<Callout type="warning">
+Remote packs have strict requirements. Test thoroughly before deploying to production.
+</Callout>
+
+## Complete Example
+
+Here's a full example for a custom sword:
+
+### 1. Oraxen Item Config (items/swords.yml)
+
+```yaml
+ruby_sword:
+  displayname: "<gradient:#ff0000:#ff6666>Ruby Sword</gradient>"
+  material: DIAMOND_SWORD
+  Pack:
+    generate_model: true
+    parent_model: "item/handheld"
+    textures:
+      - ruby_sword.png
+    custom_model_data: 1001
+  Mechanics:
+    durability:
+      value: 2000
+```
+
+### 2. Bedrock Pack Structure
+
+```
+OraxenBedrock/
+├── manifest.json
+├── pack_icon.png
+└── textures/
+    ├── item_texture.json
+    └── items/
+        └── ruby_sword.png
+```
+
+### 3. manifest.json
+
+```json
+{
+  "format_version": 2,
+  "header": {
+    "name": "Oraxen Bedrock",
+    "description": "Custom items for Bedrock",
+    "uuid": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "version": [1, 0, 0],
+    "min_engine_version": [1, 20, 0]
+  },
+  "modules": [
+    {
+      "type": "resources",
+      "uuid": "f9e8d7c6-b5a4-3210-9876-543210fedcba",
+      "version": [1, 0, 0]
+    }
+  ]
+}
+```
+
+### 4. item_texture.json
+
+```json
+{
+  "resource_pack_name": "oraxen_bedrock",
+  "texture_name": "atlas.items",
+  "texture_data": {
+    "ruby_sword": {
+      "textures": "textures/items/ruby_sword"
+    }
+  }
+}
+```
+
+### 5. Geyser Mapping (custom_mappings/oraxen.json)
+
+```json
+{
+  "format_version": 1,
+  "items": {
+    "minecraft:diamond_sword": [
+      {
+        "name": "ruby_sword",
+        "custom_model_data": 1001,
+        "icon": "ruby_sword",
+        "allow_offhand": true
+      }
+    ]
+  }
+}
+```
+
+### 6. Installation
+
+1. Copy ruby_sword.png to OraxenBedrock/textures/items/
+2. Zip the OraxenBedrock folder
+3. Rename to OraxenBedrock.mcpack
+4. Place in plugins/Geyser-Spigot/packs/
+5. Place oraxen.json in plugins/Geyser-Spigot/custom_mappings/
+6. Restart server
+7. Test with `/o give <player> ruby_sword`
+
+## Additional Resources
+
+### Official Tools
+- [Thunder](https://geysermc.org/download#thunder) - Automatic resource pack converter
+- [Rainbow](https://geysermc.org/download#rainbow) - Automatic custom item mapper
+- [PackConverter](https://github.com/GeyserMC/PackConverter) - Conversion library for developers
+
+### Documentation
+- [Geyser Wiki - Custom Items](https://geysermc.org/wiki/geyser/custom-items)
+- [Geyser Wiki - Resource Packs](https://geysermc.org/wiki/geyser/packs)
+- [Microsoft - Converting Texture Packs](https://learn.microsoft.com/en-us/minecraft/creator/documents/convertingtexturepacks)
+
+### Tools
+- [Blockbench](https://www.blockbench.net/) - 3D model editor
+- [UUID Generator](https://www.uuidgenerator.net/) - For manifest.json
+
+## Community Support
+
+If you need help:
+- Join the [Oraxen Discord](https://discord.gg/oraxen)
+- Visit the [Geyser Discord](https://discord.gg/geysermc)
+- Check existing GitHub issues for similar problems
+
+<Callout type="info">
+**Note:** This setup requires manual maintenance. When adding new Oraxen items, you must update both the Bedrock pack and Geyser mappings.
+</Callout>
