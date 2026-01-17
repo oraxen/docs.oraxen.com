@@ -38,6 +38,7 @@ const Node = React.memo(function Node({ node, style, dragHandle, currentTheme, m
 
   const [showCard, setShowCard] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+  const [isIconHovered, setIsIconHovered] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
   const infoIconRef = useRef<HTMLButtonElement>(null);
   const [cardPosition, setCardPosition] = useState({ top: 0, left: 0 });
@@ -234,14 +235,10 @@ const Node = React.memo(function Node({ node, style, dragHandle, currentTheme, m
             aria-describedby={`card-${node.id}`}
             aria-expanded={showCard}
             onClick={handleInfoClick}
-            onMouseEnter={(e) => {
-              (e.target as HTMLElement).style.color = infoIconHoverColor;
-            }}
-            onMouseLeave={(e) => {
-              (e.target as HTMLElement).style.color = infoIconColor;
-            }}
+            onMouseEnter={() => setIsIconHovered(true)}
+            onMouseLeave={() => setIsIconHovered(false)}
           >
-            <FaInfoCircle style={{ fontSize: '0.75em', color: showCard ? infoIconHoverColor : infoIconColor }} />
+            <FaInfoCircle style={{ fontSize: '0.75em', color: (isIconHovered || showCard) ? infoIconHoverColor : infoIconColor }} />
           </button>
 
           {showCard && ReactDOM.createPortal(
