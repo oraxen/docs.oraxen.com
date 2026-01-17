@@ -34,3 +34,18 @@ You can also use **/o recipes save \<name> \<permission>** so that crafting your
 ## How to edit my recipe?
 
 You can simply edit the configuration with the name of your craft type (shaped.yml for example), then find your craft and change the ingredients, result or permission.
+
+## How to disable vanilla or existing recipes?
+
+You can disable any vanilla Minecraft recipe or existing recipe by adding its namespaced key to the `disabled.yml` file in your recipes folder. This file is automatically created when Oraxen first loads.
+
+Simply add the recipe keys you want to disable:
+
+```yaml
+disabled:
+  - minecraft:diamond_sword # Same namespcaed key that shows up in e.g. the /recipes command
+  - minecraft:iron_pickaxe
+  - oraxen:custom_recipe
+```
+
+The server will need to restart for changes to take effect. Invalid recipe keys or recipes that don't exist will show a warning in the console.
