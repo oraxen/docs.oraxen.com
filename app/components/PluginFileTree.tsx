@@ -278,7 +278,6 @@ export default function PluginFileTree({ initialTreeData }: PluginFileTreeProps)
   const containerRef = useRef<HTMLDivElement>(null);
   const PADDING = 16;
   const PADDING_VERTICAL = 12;
-  const MAX_WIDTH_RATIO = 0.9;
   const MAX_WIDTH_PX = 680;
   const [containerWidth, setContainerWidth] = useState(MAX_WIDTH_PX);
 
@@ -313,9 +312,9 @@ export default function PluginFileTree({ initialTreeData }: PluginFileTreeProps)
   useEffect(() => {
     const handleResize = () => {
       if (containerRef.current) {
-        const parentWidth = containerRef.current.parentElement?.clientWidth || window.innerWidth;
-        const newWidth = Math.min(parentWidth * MAX_WIDTH_RATIO, MAX_WIDTH_PX);
-        setContainerWidth(newWidth);
+        // Use the container's actual width directly
+        const actualWidth = containerRef.current.clientWidth;
+        setContainerWidth(actualWidth);
       }
     };
 
