@@ -99,6 +99,25 @@ display_entity_properties:
     z: 1
 ```
 
+The `translation`-property allows you to offset the furniture's position relative to its placement block.
+This is useful for fine-tuning the exact position of your model without changing its placement coordinates.
+Values are specified in blocks (0.1 = 1/10th of a block).
+It has `x`, `y` and `z` properties for offsetting on each axis.
+Config should look like this:
+```yaml
+display_entity_properties:
+  translation:
+    x: 0.0
+    y: 0.1  # Raise the furniture slightly off the ground
+    z: 0.0
+```
+
+This is particularly useful when:
+- Centering models that are slightly off-center
+- Adjusting vertical placement without modifying the model in BlockBench
+- Fine-tuning furniture that sits on surfaces (tables, chairs, etc.)
+
+
 `view_range` controls from how far the furniture can be seen (in blocks).
 
 `shadow_radius` and `shadow_strength` control the shadow cast by the furniture.
