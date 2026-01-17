@@ -276,9 +276,11 @@ const Node = React.memo(function Node({ node, style, dragHandle, currentTheme, m
 export default function PluginFileTree({ initialTreeData }: PluginFileTreeProps) {
   const treeApiRef = useRef<TreeApi<TreeNodeData> | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const [containerWidth, setContainerWidth] = useState(720);
   const PADDING = 16;
   const PADDING_VERTICAL = 12;
+  const MAX_WIDTH_RATIO = 0.9;
+  const MAX_WIDTH_PX = 680;
+  const [containerWidth, setContainerWidth] = useState(MAX_WIDTH_PX);
 
   const [currentTheme, setCurrentTheme] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
@@ -307,9 +309,6 @@ export default function PluginFileTree({ initialTreeData }: PluginFileTreeProps)
   }, []);
 
   const [containerStyle, setContainerStyle] = useState({ height: 200 });
-
-  const MAX_WIDTH_RATIO = 0.9;
-  const MAX_WIDTH_PX = 680;
 
   useEffect(() => {
     const handleResize = () => {
