@@ -148,6 +148,26 @@ This section allows you to easily perform actions depending on the resource pack
 
 You can send message (through a KICK, the chat, an actionbar or a title) and specify a delay and a period (between the different messages if you are using an actionbar or a title).
 
+#### Player Protection During Loading
+
+Oraxen can protect players while they're downloading and loading the resource pack. This prevents them from being killed or moving into danger while their screen may be frozen or they can't see properly.
+
+```yaml
+Pack:
+  dispatch:
+    disable_movement_on_load: true  # Freeze players during pack loading
+    disable_damage_on_load: true    # Make players invulnerable during pack loading
+```
+
+| Setting | Default | Description |
+|---------|---------|-------------|
+| `disable_movement_on_load` | `true` | Prevents player movement from when they accept the pack until it finishes loading |
+| `disable_damage_on_load` | `true` | Prevents players from taking any damage while the pack is loading |
+
+Both protections are automatically removed once the pack successfully loads, is declined, or fails to download. Players are also removed from the protected state if they disconnect.
+
+#### Status Actions
+
 ```yaml
 receive:
   enabled: true
@@ -310,10 +330,26 @@ This option can cause bugs with other recipe plugins. If you notice bugs with a 
 ```yaml
 Glyphs:
   glyph_handler: vanilla # or nms - vanilla is recommended
-  emoji_list_permission_only: false # Only show emojis player has permission for
+  emoji_list_permission_only: false # Filter emoji list by permissions
   unicode_completions: true # Enable tab-completion for unicode characters
   chat_hover_text: true # Show glyph name on hover in chat
 ```
+
+| Setting | Default | Description |
+|---------|---------|-------------|
+| `glyph_handler` | `vanilla` | Handler for glyph rendering (`vanilla` recommended, `nms` available) |
+| `emoji_list_permission_only` | `false` | Controls `/oraxen emojis` output (see below) |
+| `unicode_completions` | `true` | Enable tab-completion for unicode characters in chat |
+| `chat_hover_text` | `true` | Show glyph name when hovering over emojis in chat |
+
+### Emoji List Permissions
+
+The `emoji_list_permission_only` setting controls how the `/oraxen emojis` command displays emojis:
+
+- **`false` (default)**: Shows all emojis. Hover text indicates permission status with colors:
+  - <span style={{color: 'green'}}>Green</span> = Player has permission
+  - <span style={{color: 'red'}}>Red</span> = No permission
+- **`true`**: Only shows emojis the player has permission to use
 
 ## Chat
 
