@@ -1,14 +1,29 @@
 ---
-description: Iris is a paid world generator
+description: Iris is a paid world generator with first-class Oraxen integration
 cover: >-
   https://cdn.discordapp.com/attachments/896841738621177896/966832733290627072/unknown.png
 coverY: 0
 ---
 
+import { Callout } from 'nextra/components'
+
 # Iris World Generator
 
-IrisWorldGenerator allows you to easily generate a really cool looking world. This supports custom BlockDatas, so you can add custom minerals created with Oraxen to be generated like diamond for example.
-Spigot Link: [https://www.spigotmc.org/resources/iris-world-gen-the-dimension-engine.84586/](https://www.spigotmc.org/resources/iris-world-gen-the-dimension-engine.84586/)
+Iris World Generator allows you to easily generate beautiful worlds with custom terrain, biomes, and structures. It features **first-class Oraxen integration**, allowing you to use custom blocks and items from Oraxen directly in your world generation configurations.
+
+<Callout type="info">
+  Oraxen automatically registers as an external data provider with Iris. Just install both plugins and the integration works out of the box - no additional setup required.
+</Callout>
+
+**Spigot Link:** [Iris World Generator](https://www.spigotmc.org/resources/iris-world-gen-the-dimension-engine.84586/)
+
+## Using Oraxen blocks in Iris
+
+You can reference any Oraxen custom block using the `oraxen:` prefix followed by your block's ID. Iris will automatically resolve these references through Oraxen's data provider.
+
+```
+oraxen:your_block_id
+```
 
 ## How to create custom ores
 
