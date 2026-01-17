@@ -5,14 +5,14 @@
 'use client';
 
 import React, { useState, useRef, useEffect, useCallback, useLayoutEffect } from 'react';
-import { Tree, NodeApi, TreeApi, NodeRendererProps } from 'react-arborist';
+import { Tree, TreeApi, NodeRendererProps } from 'react-arborist';
 import {
   FaFolder,
   FaFolderOpen,
   FaFile,
   FaChevronRight,
   FaChevronDown,
-  FaQuestionCircle,
+  FaInfoCircle,
 } from 'react-icons/fa';
 import ReactDOM from 'react-dom';
 
@@ -31,26 +31,28 @@ interface NodeProps extends NodeRendererProps<TreeNodeData> {
 interface PluginFileTreeProps {
   initialTreeData: TreeNodeData[];
 }
+
 const Node = React.memo(function Node({ node, style, dragHandle, currentTheme, mounted }: NodeProps) {
   const Icon = node.isLeaf ? FaFile : node.isOpen ? FaFolderOpen : FaFolder;
   const ArrowIcon = node.isInternal ? (node.isOpen ? FaChevronDown : FaChevronRight) : null;
 
   const [showCard, setShowCard] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
-  const questionIconRef = useRef<HTMLButtonElement>(null);
+  const infoIconRef = useRef<HTMLButtonElement>(null);
   const [cardPosition, setCardPosition] = useState({ top: 0, left: 0 });
 
-  const handleQuestionClick = (e: React.MouseEvent) => {
+  const handleInfoClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     e.preventDefault();
     setShowCard(prev => !prev);
   };
 
   const calculateCardPosition = useCallback(() => {
-    if (questionIconRef.current && showCard) {
-      const iconRect = questionIconRef.current.getBoundingClientRect();
-      const cardWidth = 300;
-      const cardHeight = cardRef.current?.offsetHeight || 150; // more conservative fallback
+    if (infoIconRef.current && showCard) {
+      const iconRect = infoIconRef.current.getBoundingClientRect();
+      const cardWidth = 280;
+      const cardHeight = cardRef.current?.offsetHeight || 120;
       const margin = 8;
 
       let top = iconRect.top;
@@ -75,7 +77,6 @@ const Node = React.memo(function Node({ node, style, dragHandle, currentTheme, m
     }
   }, [showCard]);
 
-  // Recalculate after card renders to account for actual height
   useLayoutEffect(() => {
     if (showCard) {
       calculateCardPosition();
@@ -93,12 +94,11 @@ const Node = React.memo(function Node({ node, style, dragHandle, currentTheme, m
     };
   }, [showCard, calculateCardPosition]);
 
-
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (!(event.target instanceof Element)) return;
       if (cardRef.current && !cardRef.current.contains(event.target) &&
-          questionIconRef.current && !questionIconRef.current.contains(event.target)) {
+          infoIconRef.current && !infoIconRef.current.contains(event.target)) {
         setShowCard(false);
       }
     };
@@ -109,16 +109,22 @@ const Node = React.memo(function Node({ node, style, dragHandle, currentTheme, m
   }, []);
 
   const isDark = mounted && currentTheme === 'dark';
-  
-  const textColor = isDark ? '#e5e7eb' : '#1f2937';
-  const arrowColor = isDark ? '#9ca3af' : '#6b7280';
-  const folderColor = isDark ? '#fbbf24' : '#f59e0b';
-  const fileColor = isDark ? '#9ca3af' : '#6b7280';
-  const questionIconColor = isDark ? '#6b7280' : '#9ca3af';
 
-  const cardBgColor = isDark ? '#1f2937' : '#ffffff';
-  const cardBorderColor = isDark ? '#374151' : '#e5e7eb';
-  const cardShadow = isDark ? '0 4px 12px rgba(0, 0, 0, 0.3)' : '0 4px 12px rgba(0, 0, 0, 0.08)';
+  // Nextra-aligned colors
+  const textColor = isDark ? '#e5e7eb' : '#374151';
+  const arrowColor = isDark ? '#6b7280' : '#9ca3af';
+  const folderColor = isDark ? '#fbbf24' : '#f59e0b';
+  const fileColor = isDark ? '#6b7280' : '#9ca3af';
+  const infoIconColor = isDark ? '#4b5563' : '#d1d5db';
+  const infoIconHoverColor = isDark ? '#9ca3af' : '#6b7280';
+  const rowHoverBg = isDark ? 'rgba(255, 255, 255, 0.03)' : 'rgba(0, 0, 0, 0.02)';
+
+  // Tooltip colors matching Nextra popups
+  const cardBgColor = isDark ? '#1a1a1a' : '#ffffff';
+  const cardBorderColor = isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.06)';
+  const cardShadow = isDark
+    ? '0 4px 16px rgba(0, 0, 0, 0.4)'
+    : '0 4px 16px rgba(0, 0, 0, 0.08)';
 
   const handleNodeKeyDown = (e: React.KeyboardEvent) => {
     if ((e.key === 'Enter' || e.key === ' ') && node.isInternal) {
@@ -137,43 +143,78 @@ const Node = React.memo(function Node({ node, style, dragHandle, currentTheme, m
         cursor: node.isInternal ? 'pointer' : 'default',
         position: 'relative',
         color: textColor,
-        paddingTop: 0,
-        paddingBottom: 0,
+        paddingTop: 2,
+        paddingBottom: 2,
+        paddingRight: 8,
+        borderRadius: '4px',
+        backgroundColor: isHovered ? rowHoverBg : 'transparent',
+        transition: 'background-color 0.15s ease',
       }}
       className="node-container"
       role="treeitem"
       aria-expanded={node.isInternal ? node.isOpen : undefined}
       tabIndex={0}
       onKeyDown={handleNodeKeyDown}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
       onClick={(e: React.MouseEvent) => {
-        if (questionIconRef.current?.contains(e.target as HTMLElement)) {
+        if (infoIconRef.current?.contains(e.target as HTMLElement)) {
           return;
         }
         node.isInternal && node.toggle();
       }}
     >
       {/* Arrow icon container */}
-      <div style={{ width: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        {ArrowIcon && <ArrowIcon style={{ fontSize: '0.75em', color: arrowColor }} />}
+      <div style={{
+        width: '18px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        flexShrink: 0,
+      }}>
+        {ArrowIcon && (
+          <ArrowIcon
+            style={{
+              fontSize: '0.65em',
+              color: arrowColor,
+              transition: 'transform 0.15s ease',
+            }}
+          />
+        )}
       </div>
-      <div style={{ marginLeft: '4px', marginRight: '8px', display: 'flex', alignItems: 'center' }}>
-        <Icon color={node.isLeaf ? fileColor : folderColor} />
+
+      {/* File/Folder icon */}
+      <div style={{
+        marginRight: '8px',
+        display: 'flex',
+        alignItems: 'center',
+        flexShrink: 0,
+      }}>
+        <Icon
+          color={node.isLeaf ? fileColor : folderColor}
+          style={{ fontSize: '0.95em' }}
+        />
       </div>
+
+      {/* File name */}
       <span style={{
         whiteSpace: 'nowrap',
         overflow: 'hidden',
         textOverflow: 'ellipsis',
-        flexShrink: 1,
-        minWidth: 0
+        flexGrow: 1,
+        minWidth: 0,
+        fontSize: '0.875rem',
+        fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace',
       }}>
         {node.data.name}
       </span>
 
+      {/* Info icon - show on hover or when card is open */}
       {node.data.hoverText && (
         <>
           <button
             type="button"
-            ref={questionIconRef}
+            ref={infoIconRef}
             style={{
               display: 'flex',
               alignItems: 'center',
@@ -181,18 +222,26 @@ const Node = React.memo(function Node({ node, style, dragHandle, currentTheme, m
               cursor: 'pointer',
               zIndex: 1,
               marginLeft: '8px',
-              marginRight: '8px',
               flexShrink: 0,
               background: 'none',
               border: 'none',
-              padding: 0,
+              padding: '4px',
+              borderRadius: '4px',
+              opacity: isHovered || showCard ? 1 : 0,
+              transition: 'opacity 0.15s ease, color 0.15s ease',
             }}
             aria-label={`More info about ${node.data.name}`}
             aria-describedby={`card-${node.id}`}
             aria-expanded={showCard}
-            onClick={handleQuestionClick}
+            onClick={handleInfoClick}
+            onMouseEnter={(e) => {
+              (e.target as HTMLElement).style.color = infoIconHoverColor;
+            }}
+            onMouseLeave={(e) => {
+              (e.target as HTMLElement).style.color = infoIconColor;
+            }}
           >
-            <FaQuestionCircle style={{ fontSize: '0.8em', color: questionIconColor }} />
+            <FaInfoCircle style={{ fontSize: '0.75em', color: showCard ? infoIconHoverColor : infoIconColor }} />
           </button>
 
           {showCard && ReactDOM.createPortal(
@@ -205,14 +254,14 @@ const Node = React.memo(function Node({ node, style, dragHandle, currentTheme, m
                 position: 'fixed',
                 top: cardPosition.top,
                 left: cardPosition.left,
-                width: '300px',
-                padding: '12px',
+                width: '280px',
+                padding: '10px 12px',
                 backgroundColor: cardBgColor,
                 border: `1px solid ${cardBorderColor}`,
-                borderRadius: '8px',
+                borderRadius: '6px',
                 boxShadow: cardShadow,
                 zIndex: 1000,
-                fontSize: '0.9em',
+                fontSize: '0.8125rem',
                 color: textColor,
                 lineHeight: '1.5',
               }}
@@ -226,6 +275,7 @@ const Node = React.memo(function Node({ node, style, dragHandle, currentTheme, m
     </div>
   );
 });
+
 export default function PluginFileTree({ initialTreeData }: PluginFileTreeProps) {
   const treeApiRef = useRef<TreeApi<TreeNodeData> | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -238,14 +288,14 @@ export default function PluginFileTree({ initialTreeData }: PluginFileTreeProps)
 
   useEffect(() => {
     setMounted(true);
-    
+
     const getTheme = () => {
-      const isDark = document.documentElement.classList.contains('dark') || 
+      const isDark = document.documentElement.classList.contains('dark') ||
                      document.documentElement.style.colorScheme === 'dark' ||
                      document.documentElement.getAttribute('data-theme') === 'dark';
       return isDark ? 'dark' : 'light';
     };
-    
+
     const theme = getTheme();
     setCurrentTheme(theme);
 
@@ -261,13 +311,14 @@ export default function PluginFileTree({ initialTreeData }: PluginFileTreeProps)
 
   const [containerStyle, setContainerStyle] = useState({ height: 200 });
 
-  const MAX_WIDTH_RATIO = 0.5;
-  const MAX_WIDTH_PX = 720;
+  const MAX_WIDTH_RATIO = 0.9;
+  const MAX_WIDTH_PX = 680;
 
   useEffect(() => {
     const handleResize = () => {
       if (containerRef.current) {
-        const newWidth = Math.min(window.innerWidth * MAX_WIDTH_RATIO, MAX_WIDTH_PX);
+        const parentWidth = containerRef.current.parentElement?.clientWidth || window.innerWidth;
+        const newWidth = Math.min(parentWidth * MAX_WIDTH_RATIO, MAX_WIDTH_PX);
         setContainerWidth(newWidth);
       }
     };
@@ -283,8 +334,8 @@ export default function PluginFileTree({ initialTreeData }: PluginFileTreeProps)
   const updateLayout = useCallback(() => {
     if (!treeApiRef.current) return;
 
-    const ROW_HEIGHT = 32;
-    const MIN_HEIGHT = 32;
+    const ROW_HEIGHT = 28;
+    const MIN_HEIGHT = 28;
     const MAX_HEIGHT = 500;
 
     const visibleNodesCount = treeApiRef.current.visibleNodes.length;
@@ -302,7 +353,11 @@ export default function PluginFileTree({ initialTreeData }: PluginFileTreeProps)
     updateLayout();
   }, [containerWidth, updateLayout]);
 
-  const containerBgColor = mounted && currentTheme === 'dark' ? '#0f172a' : '#ffffff';
+  const isDark = mounted && currentTheme === 'dark';
+
+  // Match Nextra code block styling
+  const containerBgColor = isDark ? 'rgba(255, 255, 255, 0.03)' : 'rgba(0, 0, 0, 0.02)';
+  const containerBorderColor = isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.06)';
 
   return (
     <div
@@ -310,20 +365,24 @@ export default function PluginFileTree({ initialTreeData }: PluginFileTreeProps)
       suppressHydrationWarning
       style={{
         boxSizing: 'border-box',
-        width: `${containerWidth}px`,
-        borderRadius: '12px',
+        width: '100%',
+        maxWidth: `${MAX_WIDTH_PX}px`,
+        borderRadius: '8px',
         padding: `${PADDING_VERTICAL}px ${PADDING}px`,
         overflow: 'hidden',
-        transition: 'background-color 0.3s ease',
+        transition: 'background-color 0.2s ease, border-color 0.2s ease',
         height: `${containerStyle.height}px`,
         backgroundColor: containerBgColor,
+        border: `1px solid ${containerBorderColor}`,
+        marginTop: '1rem',
+        marginBottom: '1rem',
       }}
     >
       <Tree
         ref={treeApiRef}
         initialData={initialTreeData}
-        indent={28}
-        rowHeight={32}
+        indent={24}
+        rowHeight={28}
         width={containerWidth - (PADDING * 2)}
         className="file-tree"
         onToggle={() => requestAnimationFrame(updateLayout)}
