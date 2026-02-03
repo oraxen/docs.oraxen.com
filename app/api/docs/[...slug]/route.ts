@@ -136,7 +136,16 @@ export async function GET(
           try {
             const mdPath = join(CONTENT_DIR, `${docPath}.md`);
             const content = await readFile(mdPath, "utf-8");
-            contents.push(stripFrontmatter(content));
+            const frontmatter = extractFrontmatter(content);
+            const markdown = stripFrontmatter(content);
+
+            contents.push(`# ${frontmatter.title || docPath}`);
+            contents.push("");
+            if (frontmatter.description) {
+              contents.push(`> ${frontmatter.description}`);
+              contents.push("");
+            }
+            contents.push(markdown);
             contents.push("");
             contents.push("---");
             contents.push("");
