@@ -37,7 +37,21 @@ function extractFrontmatter(content: string): Record<string, string> {
 /**
  * List all available documentation files
  */
-async function listDocs(dir: string = CONTENT_DIR, prefix: string = "", seen: Set<string> = new Set()): Promise<string[]> {
+async function listDocs(
+  dir: string = CONTENT_DIR,
+  prefix: string = "",
+  seenDocs: Set<string> = new Set(),
+  visitedDirs: Set<string> = new Set()
+): Promise<string[]> {
+  // Get canonical path to prevent circular symlinks
+  const realDir = await realpath(dir);
+
+  // Check if we've already visited this directory (prevents infinite recursion)
+  if (visitedDirs.has(realDir)) {
+    return [];
+  }
+  visitedDirs.add(realDir);
+
   const entries = await readdir(dir, { withFileTypes: true });
   const docs: string[] = [];
 
@@ -49,19 +63,52 @@ async function listDocs(dir: string = CONTENT_DIR, prefix: string = "", seen: Se
     const relativePath = prefix ? `${prefix}/${entry.name}` : entry.name;
 
     if (entry.isDirectory()) {
-      docs.push(...(await listDocs(fullPath, relativePath, seen)));
+      docs.push(...(await listDocs(fullPath, relativePath, seenDocs, visitedDirs)));
     } else if (entry.name.endsWith(".mdx") || entry.name.endsWith(".md")) {
       // Convert filename to URL path (remove extension)
       const urlPath = relativePath.replace(/\.(mdx?|md)$/, "");
       // Only add if not already seen (prevents duplicates when both .md and .mdx exist)
-      if (!seen.has(urlPath)) {
-        seen.add(urlPath);
+      if (!seenDocs.has(urlPath)) {
+        seenDocs.add(urlPath);
         docs.push(urlPath);
       }
     }
   }
 
   return docs;
+}
+
+/**
+ * Process and format documentation content
+ */
+async function processDocContent(
+  filePath: string,
+  docPath: string,
+  realContentDir: string
+): Promise<string[]> {
+  // Validate that the resolved path is within CONTENT_DIR
+  const realFilePath = await realpath(filePath);
+  if (!realFilePath.startsWith(realContentDir)) {
+    throw new Error("Path traversal attempt detected");
+  }
+
+  const content = await readFile(filePath, "utf-8");
+  const frontmatter = extractFrontmatter(content);
+  const markdown = stripFrontmatter(content);
+
+  const result: string[] = [];
+  result.push(`# ${frontmatter.title || docPath}`);
+  result.push("");
+  if (frontmatter.description) {
+    result.push(`> ${frontmatter.description}`);
+    result.push("");
+  }
+  result.push(markdown);
+  result.push("");
+  result.push("---");
+  result.push("");
+
+  return result;
 }
 
 /**
@@ -114,43 +161,23 @@ export async function GET(
         "",
       ];
 
+      // Get the real (canonical) path of CONTENT_DIR to validate against
+      const realContentDir = await realpath(CONTENT_DIR);
+
       for (const docPath of docs) {
-        const filePath = join(CONTENT_DIR, `${docPath}.mdx`);
-        try {
-          const content = await readFile(filePath, "utf-8");
-          const frontmatter = extractFrontmatter(content);
-          const markdown = stripFrontmatter(content);
+        // Try .mdx first, then .md as fallback
+        const possiblePaths = [
+          join(CONTENT_DIR, `${docPath}.mdx`),
+          join(CONTENT_DIR, `${docPath}.md`),
+        ];
 
-          contents.push(`# ${frontmatter.title || docPath}`);
-          contents.push("");
-          if (frontmatter.description) {
-            contents.push(`> ${frontmatter.description}`);
-            contents.push("");
-          }
-          contents.push(markdown);
-          contents.push("");
-          contents.push("---");
-          contents.push("");
-        } catch {
-          // Try .md extension as fallback
+        for (const filePath of possiblePaths) {
           try {
-            const mdPath = join(CONTENT_DIR, `${docPath}.md`);
-            const content = await readFile(mdPath, "utf-8");
-            const frontmatter = extractFrontmatter(content);
-            const markdown = stripFrontmatter(content);
-
-            contents.push(`# ${frontmatter.title || docPath}`);
-            contents.push("");
-            if (frontmatter.description) {
-              contents.push(`> ${frontmatter.description}`);
-              contents.push("");
-            }
-            contents.push(markdown);
-            contents.push("");
-            contents.push("---");
-            contents.push("");
+            const docContent = await processDocContent(filePath, docPath, realContentDir);
+            contents.push(...docContent);
+            break; // Found and processed, move to next doc
           } catch {
-            // Skip if file not found
+            // Try next path or skip if none work
           }
         }
       }
