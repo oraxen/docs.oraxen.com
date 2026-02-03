@@ -148,6 +148,22 @@ This section allows you to easily perform actions depending on the resource pack
 
 You can send message (through a KICK, the chat, an actionbar or a title) and specify a delay and a period (between the different messages if you are using an actionbar or a title).
 
+#### Resource Pack Layering (1.20.3+)
+
+```yaml
+Pack:
+  dispatch:
+    layer: true  # Enable pack layering to preserve proxy-sent packs
+```
+
+The `layer` option enables resource pack layering on Minecraft 1.20.3+ servers. When enabled:
+- Oraxen's pack is sent as a layer instead of replacing existing packs
+- Preserves resource packs sent by BungeeCord/Velocity proxies
+- Old Oraxen packs are automatically removed before sending new ones
+- Prevents clearing proxy-distributed resource packs
+
+Set to `false` (default) to use traditional pack sending behavior where Oraxen's pack replaces any existing packs.
+
 #### Player Protection During Loading
 
 Oraxen can protect players while they're downloading and loading the resource pack. This prevents them from being killed or moving into danger while their screen may be frozen or they can't see properly.
