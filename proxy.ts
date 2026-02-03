@@ -51,7 +51,8 @@ export function proxy(request: NextRequest) {
     pathname.startsWith("/_next/") ||
     pathname.startsWith("/static/") ||
     pathname.startsWith("/_pagefind/") ||
-    pathname.includes(".") && !pathname.endsWith(".md") // Has extension but not .md
+    // Skip files with extensions (except .md) - check last segment after last slash
+    (/\/[^/]+\.[^/.]+$/.test(pathname) && !pathname.endsWith(".md"))
   ) {
     return NextResponse.next();
   }

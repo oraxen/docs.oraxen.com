@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { readFile, readdir, stat } from "fs/promises";
+import { readFile, readdir, stat, realpath } from "fs/promises";
 import { join } from "path";
 
 // Content directory relative to project root
@@ -10,7 +10,8 @@ const CONTENT_DIR = join(process.cwd(), "content");
  * Frontmatter is the YAML block between --- markers at the start
  */
 function stripFrontmatter(content: string): string {
-  const frontmatterRegex = /^---\s*\n[\s\S]*?\n---\s*\n/;
+  // Match frontmatter with optional trailing newline for consistency
+  const frontmatterRegex = /^---\s*\n[\s\S]*?\n---\s*\n?/;
   return content.replace(frontmatterRegex, "").trim();
 }
 
@@ -18,7 +19,8 @@ function stripFrontmatter(content: string): string {
  * Extract frontmatter metadata from MDX content
  */
 function extractFrontmatter(content: string): Record<string, string> {
-  const match = content.match(/^---\s*\n([\s\S]*?)\n---/);
+  // Match frontmatter with optional trailing newline for consistency
+  const match = content.match(/^---\s*\n([\s\S]*?)\n---\s*\n?/);
   if (!match) return {};
 
   const frontmatter: Record<string, string> = {};
@@ -35,7 +37,7 @@ function extractFrontmatter(content: string): Record<string, string> {
 /**
  * List all available documentation files
  */
-async function listDocs(dir: string = CONTENT_DIR, prefix: string = ""): Promise<string[]> {
+async function listDocs(dir: string = CONTENT_DIR, prefix: string = "", seen: Set<string> = new Set()): Promise<string[]> {
   const entries = await readdir(dir, { withFileTypes: true });
   const docs: string[] = [];
 
@@ -47,11 +49,15 @@ async function listDocs(dir: string = CONTENT_DIR, prefix: string = ""): Promise
     const relativePath = prefix ? `${prefix}/${entry.name}` : entry.name;
 
     if (entry.isDirectory()) {
-      docs.push(...(await listDocs(fullPath, relativePath)));
+      docs.push(...(await listDocs(fullPath, relativePath, seen)));
     } else if (entry.name.endsWith(".mdx") || entry.name.endsWith(".md")) {
       // Convert filename to URL path (remove extension)
       const urlPath = relativePath.replace(/\.(mdx?|md)$/, "");
-      docs.push(urlPath);
+      // Only add if not already seen (prevents duplicates when both .md and .mdx exist)
+      if (!seen.has(urlPath)) {
+        seen.add(urlPath);
+        docs.push(urlPath);
+      }
     }
   }
 
@@ -166,10 +172,19 @@ export async function GET(
   let content: string | null = null;
   let foundPath: string | null = null;
 
+  // Get the real (canonical) path of CONTENT_DIR to validate against
+  const realContentDir = await realpath(CONTENT_DIR);
+
   for (const filePath of possiblePaths) {
     try {
       const stats = await stat(filePath);
       if (stats.isFile()) {
+        // Validate that the resolved path is within CONTENT_DIR
+        const realFilePath = await realpath(filePath);
+        if (!realFilePath.startsWith(realContentDir)) {
+          // Path traversal attempt detected
+          continue;
+        }
         content = await readFile(filePath, "utf-8");
         foundPath = filePath;
         break;
