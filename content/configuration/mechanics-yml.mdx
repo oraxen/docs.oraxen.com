@@ -359,7 +359,7 @@ furniture:
     - DIAMOND
     - NETHERITE
   evolution_check_delay: 200    # Ticks between plant growth checks
-  detect_viabackwards: true     # Block Display Entities on clients <1.19.4
+  detect_viabackwards: true     # Block Display Entities on clients &lt;1.19.4
 ```
 
 **Key Settings**:
@@ -370,9 +370,9 @@ furniture:
 - `GLOW_ITEM_FRAME` - Glowing variant of ITEM_FRAME
 
 **`detect_viabackwards`** (default: `true`)
-- When `true`: Blocks Display Entity furniture for clients <1.19.4 via ViaBackwards
+- When `true`: Blocks Display Entity furniture for clients &lt;1.19.4 via ViaBackwards
 - Prevents crashes/issues on older clients
-- **Use case**: Keep `true` if you have ViaBackwards and support <1.19.4 clients
+- **Use case**: Keep `true` if you have ViaBackwards and support &lt;1.19.4 clients
 
 **`evolution_check_delay`** (default: `200`)
 - How often to check if furniture with plant mechanics should grow
@@ -777,10 +777,10 @@ aura:
 ## Troubleshooting
 
 ### "Mechanic not working"
-1. Verify `enabled: true` in mechanics.yml
-2. Check item has the mechanic properly configured
-3. Reload: `/oraxen reload all`
-4. Check console for errors
+- Verify `enabled: true` in mechanics.yml
+- Check item has the mechanic properly configured
+- Reload: `/oraxen reload all`
+- Check console for errors
 
 ### "Custom blocks breaking too fast with axes"
 ```yaml
