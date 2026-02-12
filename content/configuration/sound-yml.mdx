@@ -1,6 +1,5 @@
 ---
 description: Complete guide to custom sound configuration in sound.yml
-icon: volume-high
 ---
 
 # sound.yml Configuration
@@ -41,9 +40,9 @@ sounds:
 
 ### Adding a Custom Sound
 
-- **Place your .ogg file** in `plugins/Oraxen/pack/sounds/` (create subdirectories if needed)
+1. **Place your .ogg file** in `plugins/Oraxen/pack/sounds/` (create subdirectories if needed)
 
-- **Register in sound.yml:**
+2. **Register in sound.yml:**
 
 ```yaml
 sounds:
@@ -53,9 +52,9 @@ sounds:
     subtitle: "Custom Sound Effect"
 ```
 
-- **Reload Oraxen:** `/oraxen reload all`
+3. **Reload Oraxen:** `/oraxen reload all`
 
-- **Use in game:** Play with `/playsound oraxen:my_custom_sound`
+4. **Use in game:** Play with `/playsound oraxen:my_custom_sound`
 
 ### Sound Categories
 
@@ -374,11 +373,11 @@ my_custom_block:
 
 ### Sound Not Playing
 
-- **Check file format:** Must be `.ogg` (OGG Vorbis)
-- **Verify file path:** Check `plugins/Oraxen/pack/sounds/<path>`
-- **Reload Oraxen:** `/oraxen reload all`
-- **Resend pack:** `/oraxen pack send @a`
-- **Check client logs:** F3 + T to reload resource pack
+1. **Check file format:** Must be `.ogg` (OGG Vorbis)
+2. **Verify file path:** Check `plugins/Oraxen/pack/sounds/<path>`
+3. **Reload Oraxen:** `/oraxen reload all`
+4. **Resend pack:** `/oraxen pack send @a`
+5. **Check client logs:** F3 + T to reload resource pack
 
 ### Sound Plays But No Subtitle
 
@@ -386,10 +385,10 @@ Ensure subtitle is defined and in-game subtitles are enabled (Options > Accessib
 
 ### Jukebox Song Not Playing
 
-- Verify `song_key` matches sound ID: `oraxen:<sound_id>`
-- Ensure `stream: true` is set
-- Check `length_in_seconds` is accurate
-- Confirm item has `jukebox_playable` component
+1. Verify `song_key` matches sound ID: `oraxen:<sound_id>`
+2. Ensure `stream: true` is set
+3. Check `length_in_seconds` is accurate
+4. Confirm item has `jukebox_playable` component
 
 ### Sound File Too Large
 
