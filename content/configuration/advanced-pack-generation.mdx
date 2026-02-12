@@ -355,7 +355,7 @@ Pack:
 
 ## Performance Optimization
 
-### For Small Packs (<100 items)
+### For Small Packs (&lt;100 items)
 
 Standard settings work well:
 
@@ -443,18 +443,18 @@ Pack:
 ### "Pack generation is slow"
 
 **Solutions:**
-1. Disable `verify_pack_files` if you're sure your assets are valid
-2. Reduce number of items
-3. Exclude more file extensions
-4. Check for very large textures (>512x512)
+- Disable `verify_pack_files` if you're sure your assets are valid
+- Reduce number of items
+- Exclude more file extensions
+- Check for very large textures (>512x512)
 
 ### "Some textures don't show up"
 
 **Check:**
-1. `verify_pack_files: true` - Check console for errors
-2. `exclude_malformed_from_atlas: true` - Check if textures were excluded
-3. Texture file format (must be PNG)
-4. Texture file names (must be lowercase, no spaces)
+- `verify_pack_files: true` - Check console for errors
+- `exclude_malformed_from_atlas: true` - Check if textures were excluded
+- Texture file format (must be PNG)
+- Texture file names (must be lowercase, no spaces)
 
 ### "Glyphs don't show with Force Unicode enabled"
 
@@ -468,13 +468,13 @@ Then regenerate the pack: `/oraxen reload all`
 ### "Pack is too large (>100MB)"
 
 **Solutions:**
-1. Add more extensions to `excluded_file_extensions`
-2. Use `compression: BEST_COMPRESSION`
-3. Optimize textures:
+- Add more extensions to `excluded_file_extensions`
+- Use `compression: BEST_COMPRESSION`
+- Optimize textures:
    - Reduce resolution where possible
    - Use 8-bit PNG instead of 24-bit
    - Remove unused textures
-4. Enable `protection: false` temporarily to check uncompressed size
+- Enable `protection: false` temporarily to check uncompressed size
 
 ### "Textures look wrong on 1.20.2+"
 

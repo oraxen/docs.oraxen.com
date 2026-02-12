@@ -41,9 +41,9 @@ sounds:
 
 ### Adding a Custom Sound
 
-1. **Place your .ogg file** in `plugins/Oraxen/pack/sounds/` (create subdirectories if needed)
+- **Place your .ogg file** in `plugins/Oraxen/pack/sounds/` (create subdirectories if needed)
 
-2. **Register in sound.yml:**
+- **Register in sound.yml:**
 
 ```yaml
 sounds:
@@ -53,9 +53,9 @@ sounds:
     subtitle: "Custom Sound Effect"
 ```
 
-3. **Reload Oraxen:** `/oraxen reload all`
+- **Reload Oraxen:** `/oraxen reload all`
 
-4. **Use in game:** Play with `/playsound oraxen:my_custom_sound`
+- **Use in game:** Play with `/playsound oraxen:my_custom_sound`
 
 ### Sound Categories
 
@@ -235,7 +235,7 @@ The `required.` prefix tells Oraxen these are essential sound mappings.
 - Narration/dialogue
 
 **Use `stream: false` (or omit) for:**
-- Short sound effects (<5 seconds)
+- Short sound effects (&lt;5 seconds)
 - Block break/place sounds
 - UI sounds
 - Frequently played sounds
@@ -374,11 +374,11 @@ my_custom_block:
 
 ### Sound Not Playing
 
-1. **Check file format:** Must be `.ogg` (OGG Vorbis)
-2. **Verify file path:** Check `plugins/Oraxen/pack/sounds/<path>`
-3. **Reload Oraxen:** `/oraxen reload all`
-4. **Resend pack:** `/oraxen pack send @a`
-5. **Check client logs:** F3 + T to reload resource pack
+- **Check file format:** Must be `.ogg` (OGG Vorbis)
+- **Verify file path:** Check `plugins/Oraxen/pack/sounds/<path>`
+- **Reload Oraxen:** `/oraxen reload all`
+- **Resend pack:** `/oraxen pack send @a`
+- **Check client logs:** F3 + T to reload resource pack
 
 ### Sound Plays But No Subtitle
 
@@ -386,10 +386,10 @@ Ensure subtitle is defined and in-game subtitles are enabled (Options > Accessib
 
 ### Jukebox Song Not Playing
 
-1. Verify `song_key` matches sound ID: `oraxen:<sound_id>`
-2. Ensure `stream: true` is set
-3. Check `length_in_seconds` is accurate
-4. Confirm item has `jukebox_playable` component
+- Verify `song_key` matches sound ID: `oraxen:<sound_id>`
+- Ensure `stream: true` is set
+- Check `length_in_seconds` is accurate
+- Confirm item has `jukebox_playable` component
 
 ### Sound File Too Large
 
