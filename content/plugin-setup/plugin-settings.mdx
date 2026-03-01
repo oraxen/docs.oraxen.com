@@ -123,6 +123,43 @@ The `appearance` section controls how item textures are applied. **Multiple syst
 
 See [Item Appearance](/creating-content/items/appearance#appearance-systems-1214) for detailed documentation and per-item options.
 
+#### Multi-Version Packs
+
+If your server uses ViaVersion or ProtocolSupport to accept players on different Minecraft versions, you can enable multi-version resource pack generation. Oraxen will generate a separate pack for each version range with the correct `pack_format`, and send the right one to each player on join.
+
+```yaml
+Pack:
+  generation:
+    multi_version_packs: false
+```
+
+When enabled, Oraxen generates packs for these version ranges:
+
+| Version Range | Pack Format |
+|---------------|-------------|
+| 1.20-1.20.1 | 15 |
+| 1.20.2 | 18 |
+| 1.20.3-1.20.4 | 22 |
+| 1.20.5-1.20.6 | 32 |
+| 1.21-1.21.1 | 34 |
+| 1.21.2-1.21.3 | 42 |
+| 1.21.4 | 46 |
+| 1.21.5 | 55 |
+| 1.21.6 | 63 |
+| 1.21.7-1.21.8 | 64 |
+| 1.21.9+ | 69 |
+
+**Requirements:**
+- **ViaVersion** or **ProtocolSupport** plugin installed (for client version detection)
+- Upload type must be `polymath` or `external` (not `self-host`, which can only serve one file)
+- Pack upload must be enabled (`Pack.upload.enabled: true`)
+
+Without a version detection plugin, all players receive the server's own version pack as fallback.
+
+<Callout type="info">
+Legacy predicate overrides are always generated when multi-version packs are enabled, since older clients (pre-1.21.4) cannot use item definitions.
+</Callout>
+
 #### Protection
 
 Protection will allow you to prevent players from stealing your textures easily. This won't make your pack heavier but if you enabled it. You **shall not** try to extract the generated zip, this could damage your disk.
