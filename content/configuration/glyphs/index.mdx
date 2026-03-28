@@ -121,6 +121,10 @@ Renders PNG sprite sheets and makes them animated ingame using core shaders.
   The sprite sheet should be a PNG file which can be referenced in the `texture` field.<br />
 </Callout>
 
+<Callout type="important">
+  Its important that your texture is a square (e.g. `16x16`), otherwise your glyph will move to the right in each frame.<br />
+</Callout>
+
 `frames` - The number of frames in the sprite sheet.<br />
 `fps` - The frames per second of the animation.<br />
 `loop` - Whether the animation should loop.<br />
