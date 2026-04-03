@@ -1,22 +1,22 @@
 ---
-title: "🧩 Creating a custom ESC logo..."
-description: "Add your own ESC menu logo by mapping a custom glyph in pack/lang files."
+title: "🧩 Creating an Escape Menu Logo..."
+description: "Replace the pause menu logo with your own glyph using Oraxen language keys."
 ---
 
 import { Callout, Steps } from 'nextra/components'
 
-# 🧩 Creating a custom ESC logo...
+# 🧩 Creating an Escape Menu Logo...
 
 ## Overview
-The escape menu is controlled by language keys in `pack/lang`, especially `menu.game`.
-By default, Oraxen points this key to its own logo glyph. You can swap that value to any custom glyph you create.
+The pause menu is controlled through language keys in `pack/lang`.
+You can replace it with any custom glyph by defining your own and pointing the language key at it.
 
 ## Tutorial
 
 <Steps>
 
 ### Disable default asset generation
-Open `plugins/Oraxen/settings.yml` and disable default asset generation first.
+Open `plugins/Oraxen/settings.yml` and disable default asset generation.
 
 <PluginFileTree
   initialTreeData={[
@@ -46,11 +46,11 @@ Plugin:
 ```
 
 <Callout type="note">
-  `pack/lang` files are extracted from default assets. Disabling `default_assets` prevents Oraxen from restoring the default logo entries on new generations.
+  `pack/lang` files are extracted from Oraxen's default pack assets. If `default_assets` stays enabled, Oraxen will restore the default logo entries on every pack generation.
 </Callout>
 
-### Create a glyph for your ESC logo
-Create a glyph config, for example `plugins/Oraxen/glyphs/logos.yml`.
+### Create the logo glyph
+Create a glyph file for your logo, for example `plugins/Oraxen/glyphs/logos.yml`, and place the texture in `pack/textures/glyphs/logo/`.
 
 <PluginFileTree
   initialTreeData={[
@@ -73,12 +73,30 @@ Create a glyph config, for example `plugins/Oraxen/glyphs/logos.yml`.
               ],
             },
             {
-              id: "plugins/Oraxen/pack/textures/glyphs/logo",
-              name: "pack/textures/glyphs/logo",
+              id: "plugins/Oraxen/pack",
+              name: "pack",
               children: [
                 {
-                  id: "plugins/Oraxen/pack/textures/glyphs/logo/esc_logo.png",
-                  name: "esc_logo.png",
+                  id: "plugins/Oraxen/pack/textures",
+                  name: "textures",
+                  children: [
+                    {
+                      id: "plugins/Oraxen/pack/textures/glyphs",
+                      name: "glyphs",
+                      children: [
+                        {
+                          id: "plugins/Oraxen/pack/textures/glyphs/logo",
+                          name: "logo",
+                          children: [
+                            {
+                              id: "plugins/Oraxen/pack/textures/glyphs/logo/esc_logo.png",
+                              name: "esc_logo.png",
+                            },
+                          ],
+                        },
+                      ],
+                    },
+                  ],
                 },
               ],
             },
@@ -94,17 +112,43 @@ esc_logo:
   texture: glyphs/logo/esc_logo
   ascent: 8
   height: 8
-  char: 'uE210'
 ```
 
-Place your texture at `plugins/Oraxen/pack/textures/glyphs/logo/esc_logo.png`.
+### Point the language key at your glyph
+Open `plugins/Oraxen/pack/lang/global.json` and update the pause menu keys.
 
-<Callout type="tip">
-  Keep `char` unique across your glyph files to avoid collisions.
-</Callout>
-
-### Point ESC menu keys to your glyph
-Open `plugins/Oraxen/pack/lang/global.json` and replace the default values.
+<PluginFileTree
+  initialTreeData={[
+    {
+      id: "plugins",
+      name: "plugins",
+      children: [
+        {
+          id: "plugins/Oraxen",
+          name: "Oraxen",
+          children: [
+            {
+              id: "plugins/Oraxen/pack",
+              name: "pack",
+              children: [
+                {
+                  id: "plugins/Oraxen/pack/lang",
+                  name: "lang",
+                  children: [
+                    {
+                      id: "plugins/Oraxen/pack/lang/global.json",
+                      name: "global.json",
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+  ]}
+/>
 
 ```json
 {
@@ -114,16 +158,15 @@ Open `plugins/Oraxen/pack/lang/global.json` and replace the default values.
 }
 ```
 
-The important key for the top ESC logo area is `menu.game`.
-You can still use `menu.disconnect` and `menu.returnToGame` for your own branding text if needed.
+`menu.game` controls the logo shown at the top of the pause menu. You can also customise `menu.disconnect` and `menu.returnToGame` to match your own branding.
 
-### Check locale overrides
-If you use language-specific files (for example `pack/lang/en_us.json`), apply the same keys there too.
+### Check locale-specific overrides
+If you use locale files such as `pack/lang/en_us.json`, mirror the same changes there too.
 
-A locale file can override `global.json`, so keeping only the old `menu.game` value in `en_us.json` can bring back the default logo.
+Locale files can override `global.json`, so if `en_us.json` still contains the old `menu.game` value, your custom logo will not appear for players using that locale.
 
-<Callout>
-  After editing your glyph and language files, run `/o reload` and regenerate your resource pack so the new ESC logo appears in-game.
+<Callout type="tip">
+  After editing the glyph and language files, run `/o reload` and regenerate the resource pack to see the updated pause menu logo in game.
 </Callout>
 
 </Steps>
