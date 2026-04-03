@@ -1,0 +1,129 @@
+---
+title: "🧩 Creating a custom ESC logo..."
+description: "Add your own ESC menu logo by mapping a custom glyph in pack/lang files."
+---
+
+import { Callout, Steps } from 'nextra/components'
+
+# 🧩 Creating a custom ESC logo...
+
+## Overview
+The escape menu is controlled by language keys in `pack/lang`, especially `menu.game`.
+By default, Oraxen points this key to its own logo glyph. You can swap that value to any custom glyph you create.
+
+## Tutorial
+
+<Steps>
+
+### Disable default asset generation
+Open `plugins/Oraxen/settings.yml` and disable default asset generation first.
+
+<PluginFileTree
+  initialTreeData={[
+    {
+      id: "plugins",
+      name: "plugins",
+      children: [
+        {
+          id: "plugins/Oraxen",
+          name: "Oraxen",
+          children: [
+            {
+              id: "plugins/Oraxen/settings.yml",
+              name: "settings.yml",
+            },
+          ],
+        },
+      ],
+    },
+  ]}
+/>
+
+```yaml
+Plugin:
+  generation:
+    default_assets: false
+```
+
+<Callout type="note">
+  `pack/lang` files are extracted from default assets. Disabling `default_assets` prevents Oraxen from restoring the default logo entries on new generations.
+</Callout>
+
+### Create a glyph for your ESC logo
+Create a glyph config, for example `plugins/Oraxen/glyphs/logos.yml`.
+
+<PluginFileTree
+  initialTreeData={[
+    {
+      id: "plugins",
+      name: "plugins",
+      children: [
+        {
+          id: "plugins/Oraxen",
+          name: "Oraxen",
+          children: [
+            {
+              id: "plugins/Oraxen/glyphs",
+              name: "glyphs",
+              children: [
+                {
+                  id: "plugins/Oraxen/glyphs/logos.yml",
+                  name: "logos.yml",
+                },
+              ],
+            },
+            {
+              id: "plugins/Oraxen/pack/textures/glyphs/logo",
+              name: "pack/textures/glyphs/logo",
+              children: [
+                {
+                  id: "plugins/Oraxen/pack/textures/glyphs/logo/esc_logo.png",
+                  name: "esc_logo.png",
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+  ]}
+/>
+
+```yaml
+esc_logo:
+  texture: glyphs/logo/esc_logo
+  ascent: 8
+  height: 8
+  char: 'uE210'
+```
+
+Place your texture at `plugins/Oraxen/pack/textures/glyphs/logo/esc_logo.png`.
+
+<Callout type="tip">
+  Keep `char` unique across your glyph files to avoid collisions.
+</Callout>
+
+### Point ESC menu keys to your glyph
+Open `plugins/Oraxen/pack/lang/global.json` and replace the default values.
+
+```json
+{
+  "menu.game": "<glyph:esc_logo>",
+  "menu.disconnect": "<gray>See you soon!",
+  "menu.returnToGame": "Back to the server"
+}
+```
+
+The important key for the top ESC logo area is `menu.game`.
+You can still use `menu.disconnect` and `menu.returnToGame` for your own branding text if needed.
+
+### Check locale overrides
+If you use language-specific files (for example `pack/lang/en_us.json`), apply the same keys there too.
+
+A locale file can override `global.json`, so keeping only the old `menu.game` value in `en_us.json` can bring back the default logo.
+
+<Callout>
+  After editing your glyph and language files, run `/o reload` and regenerate your resource pack so the new ESC logo appears in-game.
+</Callout>
+
+</Steps>
