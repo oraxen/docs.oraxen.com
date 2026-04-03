@@ -17,7 +17,7 @@ On a fresh install, those language files are extracted from Oraxen's default pac
 <Steps>
 
 ### Disable default asset generation
-Open `plugins/Oraxen/settings.yml` and disable the default asset generation first.
+Open `plugins/Oraxen/settings.yml` and disable default asset generation.
 
 <PluginFileTree
   initialTreeData={[
@@ -47,7 +47,7 @@ Plugin:
 ```
 
 <Callout type="note">
-  `pack/lang` is extracted from Oraxen's default pack assets, so disabling `default_assets` before the first pack generation prevents Oraxen from recreating the default language files.
+  `pack/lang` files are extracted from Oraxen's default pack assets. If `default_assets` stays enabled, Oraxen will restore the default logo entries on every pack generation.
 </Callout>
 
 ### Open the language files
