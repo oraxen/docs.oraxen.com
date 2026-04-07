@@ -221,6 +221,28 @@ This section allows you to easily perform actions depending on the resource pack
 
 You can send message (through a KICK, the chat, an actionbar or a title) and specify a delay and a period (between the different messages if you are using an actionbar or a title).
 
+#### Dispatch Mode (1.212.0+)
+
+```yaml
+Pack:
+  dispatch:
+    send_pre_join: false  # Send pack during config phase (Paper 1.21.7+ only)
+    send_on_join: true    # Send pack after player joins (default behavior)
+```
+
+| Setting | Default | Description |
+|---------|---------|-------------|
+| `send_on_join` | `true` | Sends the resource pack after the player has fully joined the server. This is the standard behavior and works on all server versions. |
+| `send_pre_join` | `false` | Sends the resource pack during the configuration phase, before the player sees the world. Requires **Paper 1.21.7+**. When enabled and supported, takes priority over `send_on_join`. |
+
+<Callout type="info">
+`send_pre_join` uses the Paper `PlayerConfigurationConnection` API introduced in 1.21.7. On servers that do not support it, Oraxen automatically falls back to `send_on_join` regardless of your setting.
+</Callout>
+
+<Callout type="warning">
+`send_pre_join` is experimental and disabled by default. Enable it only if you want players to receive the pack before they see any blocks or items in the world.
+</Callout>
+
 #### Resource Pack Layering (1.20.3+)
 
 ```yaml
