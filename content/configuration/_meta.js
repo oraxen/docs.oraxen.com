@@ -1,4 +1,6 @@
 export default {
   "sound-yml": "sound.yml",
-  "branding-customization": "Branding & Customization"
+  "mechanics-yml": "mechanics.yml",
+  "branding-customization": "Branding & Customization",
+  "advanced-pack-generation": "Advanced Pack Generation"
 }
