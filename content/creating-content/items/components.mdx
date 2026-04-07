@@ -344,10 +344,120 @@ Oraxen validates and deserializes these component objects through Minecraft's co
 
 ---
 
+## AttributeModifiers (Modern Format)
+
+<Callout type="info">
+  Requires **Minecraft 1.20.5+** (for `EquipmentSlotGroup` API). Tooltip display modes require **1.21.6+**.
+</Callout>
+
+In addition to the legacy list format, Oraxen 1.212.0+ supports a section-based `AttributeModifiers` configuration. Each modifier is defined as a named subsection:
+
+```yaml
+emerald_helmet:
+  material: PAPER
+  AttributeModifiers:
+    armor:
+      attribute: ARMOR
+      amount: 3
+      operation: ADD_NUMBER
+      slot: HEAD
+    toughness:
+      attribute: ARMOR_TOUGHNESS
+      amount: 2
+      operation: ADD_NUMBER
+      slot: HEAD
+    health_boost:
+      attribute: MAX_HEALTH
+      amount: 4
+      operation: ADD_NUMBER
+      slot: HEAD
+```
+
+### Fields
+
+| Field | Required | Description |
+|-------|----------|-------------|
+| `attribute` | Yes | The attribute to modify (e.g., `ARMOR`, `ATTACK_DAMAGE`, `MAX_HEALTH`) |
+| `amount` | Yes | The modifier value |
+| `operation` | No | `ADD_NUMBER` (default), `ADD_SCALAR`, or `MULTIPLY_SCALAR_1` |
+| `slot` | No | Equipment slot group: `HAND`, `OFFHAND`, `HEAD`, `CHEST`, `LEGS`, `FEET`, `ARMOR`, `ANY` (default) |
+
+### Display Modes (1.21.6+)
+
+Control how each modifier appears in item tooltips:
+
+```yaml
+AttributeModifiers:
+  hidden_armor:
+    attribute: ARMOR
+    amount: 5
+    operation: ADD_NUMBER
+    slot: CHEST
+    display:
+      type: hidden  # Completely hide from tooltip
+  custom_text:
+    attribute: ATTACK_DAMAGE
+    amount: 10
+    operation: ADD_NUMBER
+    slot: HAND
+    display:
+      type: override
+      text: "<red>+10 Fire Damage"  # Custom MiniMessage tooltip text
+```
+
+| Display Type | Description |
+|-------------|-------------|
+| `hidden` | Hides the modifier from the tooltip entirely |
+| `reset` (or `default`) | Shows the default vanilla tooltip format |
+| `override` (or `custom`) | Replaces the tooltip line with custom text (requires `text` field) |
+
+<Callout type="warning">
+The legacy list format (`AttributeModifiers: [{...}]`) still works. If Oraxen detects a section format, it uses the modern parser. If it finds a list, it falls back to the legacy format. Both formats can coexist across different items.
+</Callout>
+
+---
+
 ## Complete Examples
 
 ### Custom Armor (1.21.2+)
 
+<Tabs items={['Modern Format (1.20.5+)', 'Legacy Format']}>
+<Tabs.Tab>
+```yaml
+emerald_helmet:
+  itemname: <gradient:#89E59D:#37C6BA>Emerald Helmet
+  material: PAPER
+  Components:
+    durability:
+      value: 437
+      damage_entity_hit: true
+    equippable:
+      slot: HEAD
+      model: oraxen:emerald
+  AttributeModifiers:
+    health:
+      attribute: MAX_HEALTH
+      amount: 2
+      operation: ADD_NUMBER
+      slot: HEAD
+    armor:
+      attribute: ARMOR
+      amount: 3
+      operation: ADD_NUMBER
+      slot: HEAD
+    toughness:
+      attribute: ARMOR_TOUGHNESS
+      amount: 2
+      operation: ADD_NUMBER
+      slot: HEAD
+  Pack:
+    generate_model: true
+    parent_model: item/generated
+    textures:
+      - default/armors/emerald_helmet
+```
+</Tabs.Tab>
+<Tabs.Tab>
 ```yaml
 emerald_helmet:
   itemname: <gradient:#89E59D:#37C6BA>Emerald Helmet
@@ -369,6 +479,8 @@ emerald_helmet:
     textures:
       - default/armors/emerald_helmet
 ```
+</Tabs.Tab>
+</Tabs>
 
 ### Custom Food with Effects (1.21.2+)
 
