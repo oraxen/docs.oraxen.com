@@ -180,6 +180,53 @@ Mechanics:
           - "[console] say %player% clicked the block!"
 ```
 
+## Stackable Blocks
+
+*Requires Oraxen 1.212.0+*
+
+Create blocks that stack when right-clicked, similar to vanilla Pink Petals or candles. Each stack level uses a different `custom_variation` and model, and breaking a stacked block drops items proportional to the stack level.
+
+### Configuration
+
+Define a `stackable` list under your StringBlock mechanic. The parent block is always the base (stage 0). Each entry in `stackable` defines the next stack level:
+
+```yaml
+pink_petals:
+  displayname: "<light_purple>Pink Petals"
+  material: PAPER
+  Pack:
+    generate_model: false
+    model: default/pink_petals_1
+  Mechanics:
+    stringblock:
+      custom_variation: 40
+      model: default/pink_petals_1
+      hardness: 1
+      drop:
+        silktouch: false
+        loots:
+          - { oraxen_item: pink_petals, probability: 1.0 }
+      stackable:
+        - custom_variation: 41
+          model: default/pink_petals_2
+        - custom_variation: 42
+          model: default/pink_petals_3
+        - custom_variation: 43
+          model: default/pink_petals_4
+```
+
+### How It Works
+
+- The parent block (`custom_variation: 40`) is placed first
+- Right-clicking with the same item advances to the next stack level (`41`, `42`, `43`)
+- Once the maximum stack level is reached, no further stacking occurs
+- Breaking the block drops items equal to the stack level (e.g., breaking at level 3 drops 3 items)
+- Each stack variation must use a unique `custom_variation` value
+
+<Callout type="info">
+Each `custom_variation` in the stackable list consumes one of the 127 available StringBlock variations. Plan your variation IDs accordingly.
+</Callout>
+
 ## Custom Models
 
 Use your own 3D models:
