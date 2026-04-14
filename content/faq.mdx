@@ -11,14 +11,13 @@ import { Callout } from 'nextra/components'
 
 ### Can I Disable The Default Assets And Configs Oraxen Comes With?
 
-Absolutely. Your `settings.yml` file contains options to disable both of these.
-Note: Required configs and assets will still be generated, but most will be disabled.
+Yes, we have a dedicated tutorial for it <Highlight color="#2E8B57" to="usage\tutorials\d017g">**here**</Highlight>.
 
 ### Can I Use Oraxen Items In Custom Recipes?
 Yes, Oraxen items can be used in both vanilla crafting recipes and custom recipes. You can reference Oraxen items in recipe configurations using their item IDs. Check the recipes documentation for detailed examples.
 
 ### Can I Use Oraxen With Other Plugins?
-Yes, Oraxen is designed to be compatible with most plugins & allows easy integration for plugin developers. However, some plugins that heavily modify items or resource packs might conflict. For a detailed list of compatibility check out our <Highlight color="#2E8B57" to="./compatibility">**Compatibility**</Highlight> section.
+Yes, Oraxen is designed to be compatible with most plugins & allows easy integration for plugin developers. However, some plugins that heavily modify items or resource packs might conflict. For a detailed list of compatibility check out our <Highlight color="#2E8B57" to="/compatibility">**Compatibility**</Highlight> section.
 
 ### Does Oraxen Replace Any Vanilla Items?
 The goal of Oraxen is to add things to the game without losing features, so the short answer is no. However, Minecraft has some limitations.
@@ -99,15 +98,10 @@ To prevent this, use <Highlight color="#1877F2" to="https://www.spigotmc.org/res
 No, Oraxen is not a mod. It's a Minecraft plugin that adds custom items, blocks, and features to the game using only a resource pack and server-side implementation. Players don't need to install any client-side modifications.
 
 ### Oraxen Is Using Its Own Resource Pack, Can I Still Use Mine?
-Yes, you can merge your existing resource pack with Oraxen's generated pack. More information about pack merging can be found <Highlight color="#1877F2" to=".usage/merging">**here**</Highlight>.
+Yes, you can merge your existing resource pack with Oraxen's generated pack. More information about pack merging can be found <Highlight color="#1877F2" to="usage/merging">**here**</Highlight>.
 
 ### What File Formats Does Oraxen Support For Textures?
-Oraxen supports PNG files for textures and JSON files for models. Textures should be in PNG format with appropriate resolutions (16x16, 32x32, etc.). Models should follow Minecraft's JSON model format.
-
-### Adding an item breaks the Textures Of Others Already Created?
-By default (pre 1.21.4), Oraxen automatically picks custom model data values for your items. Every item with a different model needs a unique custom model data value. When manually setting custom model data values, you might accidentally use the same value for different items, causing conflicts.
-
-Don't forget to reload the plugin with `/o reload all`.
+Oraxen supports PNG files for textures and JSON files for models. Textures should be in PNG format with appropriate resolutions (`16x16`, `32x32`, etc.). Models should follow Minecraft's JSON model format. We are restricted by minecrafts texture limits (e.g. `256x256` for glyphs)
 
 ### Where Do I Suggest New Features Or Report An Issue?
 - For critical issues (e.g. Dupe Glitches) join our <Highlight color="#1877F2" to="https://discord.gg/sstfjsJcQ5">**Discord**</Highlight> and open a support ticket. 
