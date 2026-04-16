@@ -147,7 +147,9 @@ When enabled, Oraxen generates packs for these version ranges:
 | 1.21.5 | 55 |
 | 1.21.6 | 63 |
 | 1.21.7-1.21.8 | 64 |
-| 1.21.9+ (includes 1.21.11) | 69 |
+| 1.21.9-1.21.10 | 69 |
+| 1.21.11 | 75 |
+| 26.1.x | 84 |
 
 **Requirements:**
 - **ViaVersion** or **ProtocolSupport** plugin installed (for client version detection)
@@ -158,6 +160,14 @@ Without a version detection plugin, all players receive the server's own version
 
 <Callout type="info">
 Legacy predicate overrides are always generated when multi-version packs are enabled, since older clients (pre-1.21.4) cannot use item definitions.
+</Callout>
+
+<Callout type="info">
+**26.1.x and `pack.mcmeta` changes:** Starting with pack format 65 (Minecraft 1.21.9+), the resource pack metadata uses top-level `min_format` and `max_format` fields instead of the `supported_formats` object. Oraxen handles this automatically — packs targeting 1.21.9+ will include both the new fields and the legacy `supported_formats` for backward compatibility with older clients via ViaVersion.
+</Callout>
+
+<Callout type="info">
+**Cross-version shader overlays:** Oraxen automatically generates shader overlays for all supported format groups (1.20.2, 1.21.4, 1.21.6, 26.x) so that a single resource pack works across all client versions. On 26.x, `rendertype_text*.json` shader definition files are no longer emitted as the engine manages pipeline metadata automatically, and lightmap sampling uses `sample_lightmap()` instead of `texelFetch()`.
 </Callout>
 
 #### Protection
@@ -468,6 +478,10 @@ This option lets you hide the red scoreboard numbers.
 ```yaml
   hide_scoreboard_numbers: true
 ```
+
+<Callout type="warning">
+On Minecraft 26.x+, shader-based scoreboard number hiding is **not supported** because the rendering engine now manages pipeline metadata automatically. On Paper 1.20.3+, use a packet adapter (ProtocolLib or PacketEvents) instead — Oraxen will do this automatically if one is available.
+</Callout>
 
 **Before:**
 ![](https://media.discordapp.net/attachments/758785982005903431/1043486669371887616/image.png)
