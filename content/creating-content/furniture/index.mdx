@@ -158,7 +158,7 @@ Mechanics:
           z: 2
 ```
 
-# Seats
+## Seats
 <b>Seats are only available when barriers are enabled.</b>
 Currently it will also spawn a seat for every barrier, if there is multiple ones.
 You can alter the height-offset of seats with the following configuration:
@@ -176,7 +176,7 @@ Mechanics:
     seat: { height: -0.5, yaw: 90 }
 ```
 
-# Restrict Rotation
+## Restrict Rotation
 You can restrict the amount of rotation-facings a furniture has with `restricted_rotation`.
 It can be set to STRICT or VERY_STRICT, with 8 and 4 facings respectively.
 ```yaml
@@ -186,7 +186,7 @@ chair:
       restricted_rotation: VERY_STRICT #STRICT is default if unspecified
 ```
 
-# Limited placing
+## Limited placing
 You can customize what blocks a custom block/furniture can be placed on with `limited_placing` subsection.
 You can use the `roof`, `floor` and `wall` options to dictate where a block can be placed. By default, all are set to `true`.
 The `type` specifies if it should only be allowed on or denied on specific blocks.
@@ -220,7 +220,7 @@ The `block_types` are materials. Useful if you want to allow/deny a specific lis
 The `oraxen_blocks` are blocks defined in the oraxen configuration.
 This allows all custom blocks and furniture in here, but furniture requires a barrier-hitbox.
 
-# Storage
+## Storage
 This is a sub-mechanic for furniture and noteblock mechanics, that let you make a custom storage container.
 Essentially a chest, closet or whatever you might want.
 
