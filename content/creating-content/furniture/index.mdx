@@ -58,6 +58,66 @@ table:
         loots:
           - { oraxen_item: table, probability: 1.0 }
 ```
+
+## Text Displays
+
+Furniture can attach packet-only text displays to the base furniture entity. These text displays are only sent to clients; they are not saved as real server entities and do not add collision or entity AI cost.
+
+Use `text_entity` for one label:
+
+```yaml
+table:
+  Mechanics:
+    furniture:
+      type: DISPLAY_ENTITY
+      text_entity:
+        text:
+          - "<gold>Workshop Table"
+          - "<gray>%player_name%"
+        offset: { x: 0.0, y: 1.2, z: 0.0 }
+        scale: { x: 1.0, y: 1.0, z: 1.0 }
+        billboard: CENTER
+        alignment: CENTER
+        shadow: true
+        see_through: false
+        background_color: "#40000000"
+        text_opacity: -1
+        line_width: 200
+        view_range: 32
+        refresh_ticks: 20
+```
+
+Use `text_entities` for multiple labels:
+
+```yaml
+Mechanics:
+  furniture:
+    text_entities:
+      - text: "<green>Open"
+        offset: { x: 0.0, y: 1.1, z: 0.0 }
+      - text: "<red>Closed"
+        offset: { x: 0.0, y: 0.8, z: 0.0 }
+        scale: [0.75, 0.75, 0.75]
+```
+
+| Property | Default | Description |
+|----------|---------|-------------|
+| `text` | Empty | String or list of strings. Lists render as separate lines. MiniMessage is supported. |
+| `offset` | `{ x: 0.0, y: 0.6, z: 0.0 }` | Position relative to the furniture base entity. Can also be `[x, y, z]`. |
+| `scale` | `{ x: 1.0, y: 1.0, z: 1.0 }` | Text display scale. Can also be `[x, y, z]`. |
+| `billboard` | `CENTER` | `FIXED`, `VERTICAL`, `HORIZONTAL`, or `CENTER`. |
+| `alignment` | `CENTER` | `LEFT`, `CENTER`, or `RIGHT`. |
+| `shadow` | `false` | Adds the vanilla text shadow. |
+| `see_through` | `false` | Renders the text through blocks. |
+| `default_background` | `false` | Uses the client's default text display background. |
+| `background_color` | `#40000000` | ARGB hex color. Six-digit RGB values use alpha `40`. |
+| `text_opacity` | `-1` | Vanilla text opacity value from `-1` to `127`. |
+| `line_width` | `200` | Maximum text line width before wrapping. |
+| `view_range` | `32` | Maximum view distance in blocks. |
+| `refresh_ticks` | `0` | Metadata refresh interval. Text containing placeholders refreshes automatically when this is unset. |
+
+Text is refreshed per viewer when `refresh_ticks` is greater than `0`, so PlaceholderAPI placeholders can resolve differently for each player. If `refresh_ticks` is `0` and the text has no placeholders, the text is sent when the furniture enters the player's view.
+
 ## Custom Sounds
 Furniture, like custom blocks, can have custom sounds.
 Currently the options are place/break/hit/step/fall.
