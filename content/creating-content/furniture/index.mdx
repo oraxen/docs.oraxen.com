@@ -114,9 +114,9 @@ Mechanics:
 | `text_opacity` | `-1` | Vanilla text opacity value from `-1` to `127`. |
 | `line_width` | `200` | Maximum text line width before wrapping. |
 | `view_range` | `32` | Maximum view distance in blocks. |
-| `refresh_ticks` | `0` | Metadata refresh interval. Set this when using PlaceholderAPI placeholders or other changing text. |
+| `refresh_ticks` | `0` | Metadata refresh interval. Text containing placeholders refreshes automatically when this is unset. |
 
-Text is refreshed per viewer when `refresh_ticks` is greater than `0`, so PlaceholderAPI placeholders can resolve differently for each player. If `refresh_ticks` is `0`, the text is sent when the furniture enters the player's view.
+Text is refreshed per viewer when `refresh_ticks` is greater than `0`, so PlaceholderAPI placeholders can resolve differently for each player. If `refresh_ticks` is `0` and the text has no placeholders, the text is sent when the furniture enters the player's view.
 
 ## Custom Sounds
 Furniture, like custom blocks, can have custom sounds.
