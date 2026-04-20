@@ -163,7 +163,7 @@ Legacy predicate overrides are always generated when multi-version packs are ena
 </Callout>
 
 <Callout type="info">
-**26.1.x and `pack.mcmeta` changes:** Starting with Minecraft 1.21.9 (pack format 69), the resource pack metadata uses top-level `min_format` and `max_format` fields instead of the legacy `supported_formats` object. Oraxen handles this automatically — packs targeting 1.21.9+ use the new fields, while older format packs keep `supported_formats`.
+**26.1.x and `pack.mcmeta` changes:** Starting with Minecraft 1.21.9 (pack format 69), the resource pack metadata uses top-level `min_format` and `max_format` fields instead of the legacy `supported_formats` object. Oraxen handles this automatically. Packs targeting 1.21.9+ use the new fields, packs targeting 1.20.2 through 1.21.8 use `supported_formats`, and older targets such as 1.20-1.20.1 only use `pack_format`.
 </Callout>
 
 <Callout type="info">
