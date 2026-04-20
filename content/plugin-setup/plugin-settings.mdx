@@ -167,7 +167,7 @@ Legacy predicate overrides are always generated when multi-version packs are ena
 </Callout>
 
 <Callout type="info">
-**Cross-version shader overlays:** Oraxen automatically generates shader overlays for all supported format groups (1.20.2, 1.21.4, 1.21.6, 26.x) so that a single resource pack works across all client versions. On 26.x, `rendertype_text*.json` shader definition files are no longer emitted as the engine manages pipeline metadata automatically, and lightmap sampling uses `sample_lightmap()` instead of `texelFetch()`.
+**Cross-version shader overlays:** When multi-version packs are enabled, Oraxen generates shader overlays for each supported format group (1.20.2, 1.21.4, 1.21.6, 26.x) as part of the version-specific pack served to each client. On 26.x, `rendertype_text*.json` shader definition files are no longer emitted as the engine manages pipeline metadata automatically, and lightmap sampling uses `sample_lightmap()` instead of `texelFetch()`.
 </Callout>
 
 #### Protection
