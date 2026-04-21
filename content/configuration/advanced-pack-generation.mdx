@@ -14,6 +14,7 @@ Beyond basic pack generation settings, Oraxen provides advanced options for:
 - Texture format conversion (1.20.2+ atlas system)
 - Atlas generation and optimization
 - Custom file exclusions
+- Resource key obfuscation
 
 **Location:** `settings.yml` → `Pack.generation`
 
@@ -308,6 +309,42 @@ Pack:
 
 ---
 
+## Resource Key Obfuscation
+
+### obfuscation.type
+
+Controls whether generated resource pack model, texture, and sound paths are renamed in the final pack.
+
+```yaml
+Pack:
+  generation:
+    obfuscation:
+      type: NONE  # Options: NONE, SIMPLE, FULL
+```
+
+| Type | Behavior |
+|------|----------|
+| `NONE` | Default. Keeps generated resource keys readable. |
+| `SIMPLE` | Renames pack-internal model, texture, and sound paths while preserving namespaces. |
+| `FULL` | Renames pack-internal paths and also replaces namespaces used by renamed resources. |
+
+`false`, `off`, and `disabled` are also accepted as disabled values.
+
+This only changes the generated resource pack output. Item and furniture configuration should continue to reference the normal logical model, texture, and sound paths.
+
+**When enabled:**
+- Makes shipped pack internals harder to inspect by their original names
+- Rewrites JSON references in generated models, atlases, fonts, and sounds
+- Works with both normal and multi-version pack generation
+
+**When disabled:**
+- Generated pack paths stay readable
+- Easier to debug custom resource pack files
+
+**Recommendation**: Keep `NONE` while developing or debugging pack files. Use `SIMPLE` or `FULL` only after confirming the generated pack loads correctly.
+
+---
+
 ## Complete Example
 
 Optimal settings for a production server:
@@ -345,6 +382,8 @@ Pack:
 
     # Compression & protection
     compression: BEST_COMPRESSION
+    obfuscation:
+      type: SIMPLE
     protection: true
 
     comment: "© 2026 MyServer - All Rights Reserved"
