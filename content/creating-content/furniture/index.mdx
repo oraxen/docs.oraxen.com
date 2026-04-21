@@ -61,7 +61,7 @@ table:
 
 ## Text Displays
 
-Furniture can attach packet-only text displays to the base furniture entity. These text displays are only sent to clients; they are not saved as real server entities and do not add collision or entity AI cost.
+Furniture can attach packet-only text displays to the base furniture entity. These text displays are only sent to clients; they are not saved as real server entities and do not add collision or entity AI cost. They require a server version with display entity support.
 
 Use `text_entity` for one label:
 
@@ -103,7 +103,7 @@ Mechanics:
 | Property | Default | Description |
 |----------|---------|-------------|
 | `text` | Empty | String or list of strings. Lists render as separate lines. MiniMessage is supported. |
-| `offset` | `{ x: 0.0, y: 0.6, z: 0.0 }` | Position relative to the furniture base entity. Can also be `[x, y, z]`. |
+| `offset` | `{ x: 0.0, y: 0.6, z: 0.0 }` | Position relative to the furniture base entity. X/Z offsets rotate with the furniture. Can also be `[x, y, z]`. |
 | `scale` | `{ x: 1.0, y: 1.0, z: 1.0 }` | Text display scale. Can also be `[x, y, z]`. |
 | `billboard` | `CENTER` | `FIXED`, `VERTICAL`, `HORIZONTAL`, or `CENTER`. |
 | `alignment` | `CENTER` | `LEFT`, `CENTER`, or `RIGHT`. |
