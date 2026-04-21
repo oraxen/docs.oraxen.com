@@ -282,9 +282,26 @@ custom_sapling:
         growSound: block.grass.break
         minLightLevel: 4             # Minimum light to grow
         requiresWaterSource: false   # Needs nearby water
+        replaceBlocks: false         # Replace existing blocks when pasting schematic
         schematicName: custom_tree   # Structure to spawn
 ```
 
+| Setting | Default | Description |
+|---------|---------|-------------|
+| `canGrowNaturally` | `true` | Whether the sapling grows over time |
+| `naturalGrowthTime` | `6000` | Ticks until natural growth |
+| `canGrowFromBoneMeal` | `true` | Whether bone meal can trigger growth |
+| `boneMealGrowChance` | `50` | Percentage chance per bone meal use |
+| `growSound` | — | Sound played on growth |
+| `minLightLevel` | `4` | Minimum light level required to grow |
+| `requiresWaterSource` | `false` | Whether a nearby water source is required for growth |
+| `replaceBlocks` | `false` | When `true`, existing blocks in the schematic footprint are replaced on growth. When `false`, growth is blocked if non-replaceable blocks exist in the footprint. |
+| `schematicName` | — | Name of the schematic file to paste when the sapling grows |
+
 <Callout type="info">
-The `schematicName` refers to a schematic file that will be placed when the sapling grows. This allows you to create custom trees or any structure.
+The `schematicName` refers to a schematic file that will be placed when the sapling grows. This allows you to create custom trees or any structure. Requires WorldEdit to be installed.
+</Callout>
+
+<Callout type="warning">
+In versions prior to 1.212.1, the config key was `shouldReplaceBlocks` — this still works but `replaceBlocks` is preferred. Additionally, the `requiresWaterSource` water check was inverted in `SaplingListener` before 1.212.1 — update to the latest version if saplings are not growing correctly near water.
 </Callout>
