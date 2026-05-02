@@ -481,6 +481,8 @@ leather_backpack:
         z: -0.2
       scale: 0.8
       view_distance: 48
+      hide_while_swimming: true
+      hide_while_gliding: true
 ```
 
 **Options**<br />
@@ -489,7 +491,9 @@ leather_backpack:
 `offset` defines the rendered position relative to the player.<br />
 `scale` defines the rendered size.<br />
 `view_distance` defines the maximum visible distance.<br />
-`hide_in_spectator`, `small`, and `visible_to_self` control extra render behavior.
+`hide_in_spectator`, `small`, and `visible_to_self` control extra render behavior.<br />
+`hide_while_swimming` defines whether the backpack gets hidden when swimming (defaults to `true` when not defined).<br />
+`hide_while_gliding` defines whether the backpack gets hidden when gliding (defaults to `true` when not defined).
 
 **Global configuration**<br />
 ```yaml
