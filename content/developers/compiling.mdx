@@ -1,0 +1,81 @@
+---
+title: "🔨 Compiling"
+description: "How to compile Oraxen from source."
+---
+
+import { Callout, Tabs, Steps, Details } from 'nextra/components'
+
+# 🔨 Compiling (Developers)
+
+## Overview
+Oraxen is open-source, meaning you can compile it yourself at no cost. We understand that not everyone is able to spend $20 on a Minecraft plugin, especially in difficult economic circumstances or in countries where income levels differ significantly. For that reason, we want Oraxen to remain accessible to everyone.
+We also want to make it easy for anyone to contribute, and for servers to modify Oraxen to better suit their specific needs.
+
+## Usage
+
+<Steps>
+### Clone Oraxen’s source code
+
+```bash
+git clone https://github.com/oraxen/oraxen
+```
+
+### Compile the project
+
+Spigot BuildTools are required when compiling older Oraxen versions that depend on legacy Spigot modules. Newer Oraxen versions still support Spigot, but no longer require Spigot BuildTools for the regular build process.
+
+If you have Spigot BuildTools installed, you can compile the project normally.
+
+</Steps>
+<Details>
+<summary id="macos">`macOS / Linux`</summary>
+```bash
+./gradlew build
+```
+</Details>
+
+<Details>
+<summary id="macos">`Powershell`</summary>
+```powershell
+./gradlew build
+```
+</Details>
+
+<Details>
+<summary id="macos">`Windows Command Prompt`</summary>
+```cmd
+gradlew build
+```
+</Details>
+
+If you do not have Spigot BuildTools installed, exclude the older Spigot modules from the build by setting the `CI` environment variable or by manually excluding the affected modules with `-x <module>`.
+
+<Details>
+<summary id="nobuildtools-macos">`macOS / Linux`</summary>
+```bash
+CI=true ./gradlew build
+```
+</Details>
+
+<Details>
+<summary id="nobuildtools-powershell">`PowerShell`</summary>
+```powershell
+$env:CI = "true"
+.\gradlew build
+```
+</Details>
+
+<Details>
+<summary id="nobuildtools-cmd">`Windows Command Prompt`</summary>
+```cmd
+set CI=true
+gradlew build
+```
+</Details>
+    
+## Notes
+
+<Callout type="important">
+  - Ticket support is not included in "compiled" versions of Oraxen, but you can use the community help channel (where Staff will also respond in).
+  - Default assets are not included in "compiled" versions of Oraxen, meaning that you have to remove the default items (via `/o remove-defaults`), otherwise the pack won't work fine.
+</Callout>
