@@ -793,232 +793,51 @@ Mechanics:
 `consume` defines whether one skin item is consumed on use.
 </Details>
 
+
 <Details>
-    <summary id="block"><strong>🍄 `block`</strong></summary>
-The legacy mushroom stem block mechanic. Its configuration matches `noteblock`, but it is disabled by default and only kept for older setups.<br />
+    <summary id="block"><strong> `block`</strong></summary>
+Makes the item be placeable as a block.<br />
 
 ```yaml
 Mechanics:
   block:
-    custom_variation: 2
-    model: my_block
-    hardness: 20
-    light: 5
-    drop:
-      silktouch: false
-      minimal_type: STONE
-      best_tools:
-        - PICKAXE
-      loots:
-        - { oraxen_item: caveblock, probability: 1.0 }
-```
-
-**Options**<br />
-`custom_variation` defines the unique block variation id.<br />
-`model` defines the placed block model.<br />
-`hardness` defines break speed.<br />
-`light`, `is_falling`, `blast_resistant`, `immovable`, and `can_ignite` control block behavior.<br />
-`drop` configures silk touch, tool requirements, and loot tables.<br />
-`storage`, `limited_placing`, `blocklocker`, and `clickActions` are also supported like other block mechanics.
-
-**Global configuration**<br />
-```yaml
-block:
-  enabled: true
-  tool_types:
-    - WOODEN
-    - STONE
-    - IRON
-    - GOLDEN
-    - DIAMOND
-    - NETHERITE
-```
-
-<Callout type="info">
-  This is a legacy mechanic. Prefer `noteblock` for new custom blocks.
-</Callout>
-</Details>
-
-<Details>
-    <summary id="noteblock"><strong>🧱 `noteblock`</strong></summary>
-Creates custom blocks using note block states. This is the primary block mechanic for most solid custom blocks.<br />
-
-```yaml
-Mechanics:
-  noteblock:
-    custom_variation: 2
-    model: my_block
-    hardness: 20
-    light: 5
-    is_falling: false
-    blast_resistant: true
-    immovable: true
-    can_ignite: false
-    limited_placing:
-      roof: true
-      floor: true
-      wall: true
-      type: ALLOW
-      block_types:
-        - GRASS_BLOCK
-    blocklocker:
-      can_protect: true
-      protection_type: CONTAINER
-    drop:
-      silktouch: false
-      minimal_type: STONE
-      best_tools:
-        - PICKAXE
-      loots:
-        - { oraxen_item: caveblock, probability: 1.0 }
-```
-
-**Options**<br />
-`custom_variation` defines the unique note block variation id.<br />
-`model` defines the placed block model.<br />
-`hardness` defines break speed.<br />
-`light` defines the emitted light level.<br />
-`is_falling`, `blast_resistant`, `immovable`, and `can_ignite` control vanilla-like block behavior.<br />
-`drop` configures silk touch, minimum tool type, best tools, and loot tables.<br />
-`storage`, `limited_placing`, `blocklocker`, `clickActions`, and `block_sounds` are supported.
-</Details>
-
-<Details>
-    <summary id="stringblock"><strong>🌿 `stringblock`</strong></summary>
-Creates custom tripwire-based blocks, commonly used for plants, flowers, and passable decorations.<br />
-
-```yaml
-Mechanics:
-  stringblock:
-    custom_variation: 9
-    model: jasmine_flower
-    hardness: 2
-    is_tall: false
-    light: 10
-    blast_resistant: false
-    immovable: false
-    is_falling: false
-    random_place:
-      blocks:
-        - red_flower
-        - blue_flower
-    stackable:
-      - custom_variation: 41
-        model: default/pink_petals_2
-    storage:
-      type: STORAGE
-      rows: 3
-      title: "My Storage"
-    drop:
-      silktouch: false
-      loots:
-        - { oraxen_item: jasmine_flower, probability: 1.0 }
-```
-
-**Options**<br />
-`custom_variation` defines the unique tripwire variation id.<br />
-`model` defines the placed block model.<br />
-`hardness` defines break speed.<br />
-`is_tall` makes the block two blocks tall.<br />
-`random_place.blocks` lets placement pick randomly from multiple blocks.<br />
-`light`, `blast_resistant`, `immovable`, and `is_falling` control block behavior.<br />
-`storage`, `blocklocker`, `clickActions`, `stackable`, `sapling`, and `drop` are also supported.
-
-**Global configuration**<br />
-```yaml
-stringblock:
-  enabled: true
-  tool_types:
-    - WOODEN
-    - STONE
-    - IRON
-    - GOLDEN
-    - DIAMOND
-    - NETHERITE
+    type: FULL # FULL, STRING, CHORUS, STAIR, SLAB, DOOR, TRAPDOOR, GRATE, BULB
+    block-sounds:
+      break-sound: block.wood.break
+      place-sound: block.wood.place
+    placeable:
+      floor: true # top of blocks
+      wall: true  # sides of blocks
+      roof: false # underside of blocks
+    custom-variation: 5
+    appearance: # Also supports textures
+      model: crystalmush_log
+    events: # Run actions when a placed block is clicked
+      - click: right # both, left, right
+        actions:
+          - command: 'say "<Player> clicked this block"' # Action 1; Command
+            executor: CONSOLE # PLAYER, CONSOLE, OP-PLAYER
+          - message: '<green>Hi <Player>!' # Action 2; Message
+    breaking: # New drop & breaking config section
+      - when: # When the tool is...
+          - minecraft:iron_axe
+          - minecraft:golden_axe
+          - minecraft:diamond_axe
+          - minecraft:netherite_axe # Also supports tags via "#<tag>"
+        hardness: 2 # Hardness when these tools are used
+        drops: # Drops when this tool is used
+          - item: crystalmush_log
+            probability: 1.0
+            silk-touch: false # Only drop when this tool has silk touch
+            fortune: 1 # Percentage (1 = 100%) to increase the loot amount per fortune level
+      - else: # Anything that is not covered by another `when` section
+        hardness: 4
+        drops:
+          - item: crystalmush_log
+            probability: 1.0
 ```
 </Details>
 
-<Details>
-    <summary id="chorusblock"><strong>🪟 `chorusblock`</strong></summary>
-Creates custom blocks using chorus plant states. It is especially useful for transparent blocks and simple see-through furniture.<br />
-
-```yaml
-Mechanics:
-  chorusblock:
-    custom_variation: 1
-    model: my_chorus_block
-    hardness: 5
-    light: 12
-    is_falling: false
-    blast_resistant: true
-    immovable: true
-    seat:
-      height: 0.5
-      yaw: 0
-    blocklocker:
-      can_protect: true
-      protection_type: CONTAINER
-    storage:
-      type: STORAGE
-      rows: 3
-      title: "My Storage"
-    drop:
-      silktouch: false
-      loots:
-        - { oraxen_item: my_chorus_block, probability: 1.0 }
-```
-
-**Options**<br />
-`custom_variation` defines the unique chorus plant variation id from `1` to `63`.<br />
-`model` defines the placed block model.<br />
-`hardness`, `light`, `is_falling`, `blast_resistant`, and `immovable` control block behavior.<br />
-`seat` allows the block to be sat on.<br />
-`drop`, `block_sounds`, `limited_placing`, `blocklocker`, `clickActions`, and `storage` are also supported.
-</Details>
-
-<Details>
-    <summary id="shaped_block"><strong>🪚 `shaped_block`</strong></summary>
-Creates custom stairs, slabs, doors, trapdoors, grates, and bulbs using waxed copper block states.<br />
-
-```yaml
-Mechanics:
-  shaped_block:
-    type: STAIR
-    custom_variation: 1
-    hardness: 2
-    light: 0
-    textures:
-      bottom: block/oak_door_bottom
-      top: block/oak_door_top
-    block_sounds:
-      break_sound: block.wood.break
-      place_sound: block.wood.place
-    drop:
-      silktouch: false
-      fortune: false
-      minimal_type: WOODEN
-      best_tools:
-        - PICKAXE
-      loots:
-        - { oraxen_item: custom_oak_stairs, probability: 1.0 }
-```
-
-**Options**<br />
-`type` defines the shaped block type. Supported values are `STAIR`, `SLAB`, `DOOR`, `TRAPDOOR`, `GRATE`, and `BULB`.<br />
-`custom_variation` defines the unique variation from `1` to `4` for that shaped block type.<br />
-`hardness` and `light` control basic block behavior.<br />
-`textures` is used for special cases like doors with top and bottom textures.<br />
-`block_sounds` configures place, break, hit, step, and fall sounds.<br />
-`drop` configures silk touch, fortune, minimum tool type, best tools, and loot tables.
-
-**Global configuration**<br />
-```yaml
-shaped_block:
-  enabled: true
-  convert_vanilla_waxed: true
-  handle_world_generation: true
-```
-</Details>
 
 <Details>
     <summary id="furniture"><strong>🪑 `furniture`</strong></summary>
