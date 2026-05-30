@@ -24,7 +24,7 @@ Mechanics are item-bound behaviors in Oraxen. A mechanic is configured per-item 
   A custom mechanic usually has three parts.
 
   - `Mechanic` - holds the per-item configuration and optional item modifiers
-  - `MechanicFactory` - parses the item config, caches mechanics by item id, registers listeners/tasks
+  - `MechanicFactory` - parses the item config, caches mechanics by item id, registers listeners/tasks, cleans up on unregister
   - One or more `Listener`s that implement the behavior
 
   Core types:
@@ -39,6 +39,8 @@ Mechanics are item-bound behaviors in Oraxen. A mechanic is configured per-item 
   // Per-mechanic parser + registry
   public abstract class MechanicFactory {
       public abstract Mechanic parse(ConfigurationSection itemMechanicConfiguration);
+      public void onUnregister() { ... }
+      public List<MechanicConfigProperty> getConfigSchema() { ... }
       protected void addToImplemented(Mechanic mechanic) { ... }
   }
   ```
@@ -77,7 +79,7 @@ public class DamageMultiplierMechanic extends Mechanic {
 
 ### Create the Factory Class
 
-The factory parses the per-item config, caches mechanics via `addToImplemented`, and registers your listeners using `MechanicsManager` so Oraxen can unload them on reload.
+The factory parses the per-item config, caches mechanics via `addToImplemented`, and registers your listeners using `MechanicsManager` so Oraxen can unload them on reload. Override `onUnregister()` if your mechanic owns additional resources.
 
 ```java
 import io.th0rgal.oraxen.mechanics.Mechanic;
@@ -216,6 +218,7 @@ If you prefer learning from existing implementations, browse the built-in mechan
 
 <Callout type="info">
   - `Mechanic` instances are created per item during item parsing.
-  - Use `addToImplemented(mechanic)` in your factory so you can later query it with `factory.getMechanic(itemStack)`.
+  - Use `addToImplemented(mechanic)` in your factory so you can later query it with `factory.getMechanic(itemStack)` or `factory.getMechanic(itemId)`.
   - Prefer `MechanicConfigProperty` / `@ConfigProperty` to expose your mechanic's config schema for tools.
+  - `MechanicsManager.unregisterMechanicFactory(...)` calls `onUnregister()`, unloads registered listeners, and cancels registered tasks.
 </Callout>
