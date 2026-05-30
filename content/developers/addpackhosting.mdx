@@ -21,11 +21,20 @@ Oraxen allows you to easily add your own custom pack hosting provider with just 
 
 	```java
 	public interface HostingProvider {
-    	boolean uploadPack(File resourcePack);
-    	String getPackURL();
-    	byte[] getSHA1();
-    	String getOriginalSHA1();
-    	UUID getPackUUID();
+	    boolean uploadPack(File resourcePack);
+
+	    default boolean uploadPack(File resourcePack, String packName) {
+	        return uploadPack(resourcePack);
+	    }
+
+	    default boolean requiresNewInstancePerUpload() {
+	        return false;
+	    }
+
+	    String getPackURL();
+	    byte[] getSHA1();
+	    String getOriginalSHA1();
+	    UUID getPackUUID();
 	}
 ```
 </Callout>
@@ -66,6 +75,12 @@ public class MyCustomHostingProvider implements HostingProvider {
             e.printStackTrace();
             return false;
         }
+    }
+
+    @Override
+    public boolean uploadPack(File resourcePack, String packName) {
+        // Optional: use the generated pack name (useful for multi-version packs)
+        return uploadPack(resourcePack);
     }
     
     @Override
@@ -113,7 +128,11 @@ Pack:
 
 ### Deploy Your Provider
 
-Place your compiled class in the server's classpath or create a plugin that includes your hosting provider.
+Place your compiled class in the server's classpath or create a plugin that includes your hosting provider. Oraxen looks for either a public no-args constructor or a public constructor that takes a `ConfigurationSection`.
+
+<Callout type="info">
+  If your provider stores upload-specific state and you use multi-version packs, override `requiresNewInstancePerUpload()` and return `true`. Oraxen will create a fresh provider for each pack version.
+</Callout>
 </Steps>
 
 ## Example
