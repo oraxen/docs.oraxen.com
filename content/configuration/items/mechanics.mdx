@@ -795,29 +795,34 @@ Mechanics:
 
 
 <Details>
-    <summary id="block"><strong> `block`</strong></summary>
+    <summary id="block"><strong>🧱 `block`</strong></summary>
 Makes the item be placeable as a block.<br />
 
 ```yaml
 Mechanics:
   block:
     type: FULL # FULL, STRING, CHORUS, STAIR, SLAB, DOOR, TRAPDOOR, GRATE, BULB
+    light: 15
     block-sounds:
       break-sound: block.wood.break
       place-sound: block.wood.place
     placeable:
-      floor: true # top of blocks
-      wall: true  # sides of blocks
-      roof: false # underside of blocks
+       floor: true # top of blocks
+       wall: true  # sides of blocks
+       roof: false # underside of blocks
+       allow:
+          - minecraft:grass
+       disallow:
+          - minecraft:dirt
     custom-variation: 5
     appearance: # Also supports textures
       model: crystalmush_log
     events: # Run actions when a placed block is clicked
       - click: right # both, left, right
         actions:
-          - command: 'say "<Player> clicked this block"' # Action 1; Command
+          - command: 'say "<Player> clicked this block"'
             executor: CONSOLE # PLAYER, CONSOLE, OP-PLAYER
-          - message: '<green>Hi <Player>!' # Action 2; Message
+          - message: '<green>Hi <Player>!'
     breaking: # New drop & breaking config section
       - when: # When the tool is...
           - minecraft:iron_axe
