@@ -3,7 +3,7 @@ title: "🔨 Compiling"
 description: "How to compile Oraxen from source."
 ---
 
-import { Callout, Tabs, Steps, Details } from 'nextra/components'
+import { Callout, Tabs, Steps, Details, Table } from 'nextra/components'
 
 # 🔨 Compiling (Developers)
 
@@ -21,13 +21,18 @@ git clone https://github.com/oraxen/oraxen
 ```
 
 ### Compile the project
-
-Spigot BuildTools are required when compiling older Oraxen versions that depend on legacy Spigot modules. Newer Oraxen versions still support Spigot, but no longer require Spigot BuildTools for the regular build process.
-
-If you have Spigot BuildTools installed, you can compile the project normally.
-
 </Steps>
-<Details>
+
+<Callout type="warning">
+    Spigot BuildTools are required when compiling older Oraxen versions that depend on legacy Spigot modules. Newer Oraxen versions still support Spigot, but no longer require Spigot BuildTools for the regular build process.
+
+    If you have Spigot BuildTools installed, you can compile the project normally.
+    If you do not have Spigot BuildTools installed, exclude the older Spigot modules from the build by setting the `CI` environment variable or by manually excluding the affected modules with `-x <module>`.
+</Callout>
+
+<Tabs items={['No BuildTools', 'With BuildTools']}>
+  <Tabs.Tab>
+  <Details>
 <summary id="macos">`macOS / Linux`</summary>
 ```bash
 ./gradlew build
@@ -47,35 +52,45 @@ If you have Spigot BuildTools installed, you can compile the project normally.
 gradlew build
 ```
 </Details>
+  </Tabs.Tab>
+  <Tabs.Tab>
+      <Details>
+      <summary id="nobuildtools-macos">`macOS / Linux`</summary>
+      ```bash
+      CI=true ./gradlew build
+      ```
+      </Details>
+      
+      <Details>
+      <summary id="nobuildtools-powershell">`Powershell`</summary>
+      ```powershell
+      $env:CI = "true"
+      .\gradlew build
+      ```
+      </Details>
+      
+      <Details>
+      <summary id="nobuildtools-cmd">`Windows Command Prompt`</summary>
+      ```cmd
+      set CI=true
+      gradlew build
+      ```
+      </Details>
+  </Tabs.Tab>
+</Tabs>
 
-If you do not have Spigot BuildTools installed, exclude the older Spigot modules from the build by setting the `CI` environment variable or by manually excluding the affected modules with `-x <module>`.
+## Limitations & Notes
 
-<Details>
-<summary id="nobuildtools-macos">`macOS / Linux`</summary>
-```bash
-CI=true ./gradlew build
-```
-</Details>
+The compiled edition of Oraxen includes a few limitations.
 
-<Details>
-<summary id="nobuildtools-powershell">`PowerShell`</summary>
-```powershell
-$env:CI = "true"
-.\gradlew build
-```
-</Details>
+### Compiled
+- 🟢 × Functionality / features.
+- 🟠 × Development builds.
+- 🟠 × Oraxen studio.
+- 🔴 × Tickets / Advanced support.
+- 🔴 × Default items / assets (only required assets).
+- 🔴 × Tickets / Advanced support.
 
-<Details>
-<summary id="nobuildtools-cmd">`Windows Command Prompt`</summary>
-```cmd
-set CI=true
-gradlew build
-```
-</Details>
-    
-## Notes
-
-<Callout type="important">
-  - Ticket support is not included in "compiled" versions of Oraxen, but you can use the community help channel (where Staff will also respond in).
-  - Default assets are not included in "compiled" versions of Oraxen, meaning that you have to remove the default items (via `/o remove-defaults`), otherwise the pack won't work fine.
+<Callout type="note">
+  - To remove the default items (which is a required step if you don't want to have a broken pack when using a compiled edition), run `/oraxen remove-defaults`.
 </Callout>
