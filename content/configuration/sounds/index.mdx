@@ -9,12 +9,12 @@ import { Callout, Details } from 'nextra/components'
 # 🔊 Sounds
 
 ## Overview
-Custom sounds are configured in `sound.yml`. Oraxen reads this file, generates `assets/minecraft/sounds.json`, and can also generate a datapack for custom jukebox songs.
+Custom sounds are configured in `sounds.yml`. Oraxen reads this file, generates `assets/minecraft/sounds.json`, and can also generate a datapack for custom jukebox songs.
 
 Use this file to add brand new sound events, override existing vanilla sounds, or package longer audio tracks for music discs and other custom content.
 
 ## Configuration
-Sounds are configured in `plugins/Oraxen/sound.yml`.
+Sounds are configured in `plugins/Oraxen/sounds.yml`.
 
 <PluginFileTree
   initialTreeData={[
@@ -27,8 +27,8 @@ Sounds are configured in `plugins/Oraxen/sound.yml`.
           name: "Oraxen",
           children: [
             {
-              id: "plugins/Oraxen/sound.yml",
-              name: "sound.yml",
+              id: "plugins/Oraxen/sounds.yml",
+              name: "sounds.yml",
             }
           ]
         }
@@ -42,7 +42,7 @@ Sounds are configured in `plugins/Oraxen/sound.yml`.
 </Callout>
 
 <Callout type="info">
-Sound files live in `plugins/Oraxen/pack/sounds/`. Oraxen then exports them to `assets/minecraft/sounds/` in the generated resource pack.
+Sound files live in `plugins/Oraxen/pack/sounds/`. Oraxen then exports them to `assets/<namespace>/sounds/` in the generated resource pack.
 
 `sound: welcome.ogg` points to `plugins/Oraxen/pack/sounds/welcome.ogg`.<br />
 `sound: music/welcome` points to `plugins/Oraxen/pack/sounds/music/welcome.ogg`.<br />
@@ -50,9 +50,25 @@ Sound files live in `plugins/Oraxen/pack/sounds/`. Oraxen then exports them to `
 The `.ogg` extension is optional.
 </Callout>
 
+<Callout type="info">
+  Legacy `sound.yml` files are migrated into `sounds.yml` automatically. The old map format under `sounds:` is now a list of sound entries, and every entry needs an `id`.
+</Callout>
+
 ## Sound Entry
 
-Each entry under `sounds:` becomes one sound event.
+Each entry in the `sounds:` list becomes one sound event.
+
+<Details>
+  <summary id="id"><strong>🏷️ `id`</strong></summary>
+Sets the sound event id. This field is required for custom sounds.<br />
+
+```yaml
+sounds:
+  - id: oraxen:welcome
+```
+
+If no namespace is specified, Minecraft's namespace is used. For example, `id: welcome` becomes `minecraft:welcome`.
+</Details>
 
 <Details>
   <summary id="category"><strong>🎵 `category`</strong></summary>
@@ -60,7 +76,7 @@ Sets the sound category used when the sound plays.<br />
 
 ```yaml
 sounds:
-  welcome:
+  - id: oraxen:welcome
     category: records
 ```
 
@@ -81,12 +97,12 @@ Defines the audio file or files used by the sound event.<br />
 
 ```yaml
 sounds:
-  welcome:
+  - id: oraxen:welcome
     sound: welcome.ogg
 ```
 ```yaml
 sounds:
-  welcome:
+  - id: oraxen:welcome
     sounds:
       - welcome_1
       - welcome_2
@@ -107,7 +123,7 @@ Sets the subtitle shown when the sound plays.<br />
 
 ```yaml
 sounds:
-  welcome:
+  - id: oraxen:welcome
     subtitle: "Welcome Song"
 ```
 </Details>
@@ -118,7 +134,7 @@ Marks the sound event as a replacement for an existing vanilla entry.<br />
 
 ```yaml
 sounds:
-  block.wood.place:
+  - id: block.wood.place
     replace: true
 ```
 </Details>
@@ -129,28 +145,47 @@ Tells Minecraft to stream the audio instead of loading it like a short sound eff
 
 ```yaml
 sounds:
-  welcome:
+  - id: oraxen:welcome
     stream: true
 ```
 </Details>
 
 <Details>
-  <summary id="jukebox_song"><strong>💿 `jukebox_song`</strong></summary>
+  <summary id="sound_options"><strong>🎚️ `sound options`</strong></summary>
+These fields are applied to the generated sound entries in `sounds.json`. They control stuff like volume, pitch or the attenuation distance.<br />
+
+```yaml
+sounds:
+  - id: oraxen:welcome
+    sound: welcome
+    volume: 1.0
+    pitch: 1.0
+    weight: 1
+    attenuation_distance: 16
+    preload: false
+```
+</Details>
+
+<Details>
+  <summary id="jukebox"><strong>💿 `jukebox`</strong></summary>
 Generates a custom jukebox song datapack entry for this sound.<br />
 
 ```yaml
 sounds:
-  welcome:
-    jukebox_song:
+  - id: oraxen:welcome
+    jukebox:
       description: "<gold>Welcome <yellow>Song</yellow></gold>"
-      length_in_seconds: 180
+      duration: 180s
       comparator_output: 12
+      range: 8
 ```
 
 **Fields**<br />
-`description` - `string`, MiniMessage formatted, default `<white>Music Disc</white>`<br />
-`length_in_seconds` - `integer`, default `120`<br />
-`comparator_output` - `integer`, default `15`<br />
+`description` - `string`, MiniMessage formatted, default `subtitle` or `<white>Music Disc</white>`<br />
+`duration` - duration, for example `180s`, default `120s`<br />
+`comparator_output` - `integer` from `1` to `15`, default `15`<br />
+`range` - positive number, optional sound range<br />
+`song_key` - optional namespaced id for the generated jukebox song entry<br />
 
 <Callout type="info">
   When this section is present, Oraxen also generates the jukebox datapack automatically.
@@ -164,19 +199,20 @@ settings:
   automatically_generate: true
 
 sounds:
-  welcome:
+  - id: oraxen:welcome
     category: records
     sound: welcome.ogg
     stream: true
     subtitle: "Welcome Song"
-    jukebox_song:
+    jukebox:
       description: "<gold>Welcome <yellow>Song</yellow></gold>"
-      length_in_seconds: 180
+      duration: 180s
       comparator_output: 12
+      range: 8
 
-  block.wood.place:
+  - id: block.wood.place
     replace: true
 
-  block.wood.break:
+  - id: block.wood.break
     replace: true
 ```
