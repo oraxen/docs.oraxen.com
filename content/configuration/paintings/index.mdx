@@ -9,9 +9,16 @@ import { Callout, Details } from 'nextra/components'
 # 🏞️ Paintings
 
 ## Overview
-Custom paintings are configured in `paintings.yml`. Oraxen reads this file, generates a datapack for custom paintings.
-
+Custom paintings are configured in `paintings.yml`. Oraxen reads this file and then generates the paintings via server internals.
 Use this file to register new paintings.
+
+<Callout type="important">
+	Paintings require Paper 1.21.5+.
+</Callout>
+<Callout type="note">
+	Paintings are hot-reloadable, meaning that your Server doesn't require a restart for your changes to apply.
+	Run `/oraxen reload paintings` to re-register paintings. Please note that you will have to rejoin for some changes to apply, this is a limitation of minecraft.
+</Callout>
 
 <Callout type="warning">
 	To turn the painting into an actual item you still need to use the <Highlight to="https://oraxen.mizius.com/configuration/items/data/components#painting_variant" color="#1877F2">`painting_variant`</Highlight> component or see the full tutorial <Highlight to="https://oraxen.mizius.com/usage/tutorials/491d3" color="#2E8B57">**here**</Highlight>.
