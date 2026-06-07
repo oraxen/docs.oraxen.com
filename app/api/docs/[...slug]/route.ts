@@ -35,6 +35,14 @@ function extractFrontmatter(content: string): Record<string, string> {
 }
 
 /**
+ * Headers are serialized as ByteStrings by Next/undici, so arbitrary
+ * frontmatter (for example emoji in titles) can throw at response creation.
+ */
+function toSafeHeaderValue(value: string): string {
+  return value.replace(/[^\x20-\x7E]/g, "").trim();
+}
+
+/**
  * List all available documentation files
  */
 async function listDocs(
@@ -263,8 +271,8 @@ export async function GET(
       "Content-Type": "text/markdown; charset=utf-8",
       "Cache-Control": "public, max-age=3600",
       "X-Content-Type-Options": "nosniff",
-      "X-Doc-Title": frontmatter.title || normalizedPath,
-      "X-Doc-Path": normalizedPath,
+      "X-Doc-Title": toSafeHeaderValue(frontmatter.title || normalizedPath) || normalizedPath,
+      "X-Doc-Path": toSafeHeaderValue(normalizedPath),
     },
   });
 }
