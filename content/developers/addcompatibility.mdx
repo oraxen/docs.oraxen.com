@@ -17,21 +17,22 @@ Oraxen provides a robust compatibility system that allows developers to easily i
 ## Usage
 
 <Callout type="info">
-	All compatibility providers must extend the `CompatibilityProvider` abstract class with these key methods.
+	All compatibility providers must extend the `CompatibilityProvider` class with these key methods.
 
 	```java
-	public abstract class CompatibilityProvider<T extends Plugin> implements Listener {
+	public class CompatibilityProvider<T extends Plugin> implements Listener {
+	    protected String pluginName;
 	    protected T plugin;
-	    private boolean enabled = false;
-	    
+	    protected boolean isEnabled;
+
 	    public void enable(String pluginName) {
 	        // Called when target plugin is detected
-	        // Register event listeners and initialize integration
+	        // Registers this provider as a Bukkit listener
 	    }
-	    
+
 	    public void disable() {
 	        // Called when compatibility is disabled
-	        // Clean up resources and unregister listeners
+	        // Unregisters this provider's listeners
 	    }
 	}
 	```
@@ -44,8 +45,8 @@ Create a class that extends `CompatibilityProvider<T>` where T is the main class
 
 ```java
 import io.th0rgal.oraxen.compatibilities.CompatibilityProvider;
+import io.th0rgal.oraxen.OraxenPlugin;
 import org.bukkit.event.EventHandler;
-import org.bukkit.plugin.Plugin;
 
 public class MyPluginCompatibility extends CompatibilityProvider<MyTargetPlugin> {
     
@@ -54,7 +55,7 @@ public class MyPluginCompatibility extends CompatibilityProvider<MyTargetPlugin>
         super.enable(pluginName);
         // Initialize your integration here
         // Event listeners are automatically registered
-        getOraxenPlugin().getLogger().info("MyPlugin compatibility enabled!");
+        OraxenPlugin.get().getLogger().info("MyPlugin compatibility enabled!");
     }
     
     @Override
@@ -62,7 +63,7 @@ public class MyPluginCompatibility extends CompatibilityProvider<MyTargetPlugin>
         super.disable();
         // Clean up your integration here
         // Event listeners are automatically unregistered
-        getOraxenPlugin().getLogger().info("MyPlugin compatibility disabled!");
+        OraxenPlugin.get().getLogger().info("MyPlugin compatibility disabled!");
     }
     
     @EventHandler
@@ -106,51 +107,30 @@ The compatibility system automatically handles.
 ## Example
 
 ```java
-import io.lumine.xikage.mythicmobs.MythicMobs;
-import io.lumine.xikage.mythicmobs.api.bukkit.events.MythicDropLoadEvent;
-import io.lumine.xikage.mythicmobs.drops.Drop;
-import io.lumine.xikage.mythicmobs.drops.DropMetadata;
+import io.lumine.mythic.bukkit.MythicBukkit;
+import io.lumine.mythic.bukkit.events.MythicDropLoadEvent;
+import io.lumine.mythic.bukkit.utils.numbers.RandomDouble;
+import io.lumine.mythic.core.drops.Drop;
 import io.th0rgal.oraxen.compatibilities.CompatibilityProvider;
-import io.th0rgal.oraxen.items.OraxenItems;
+import io.th0rgal.oraxen.api.OraxenItems;
+import io.th0rgal.oraxen.utils.MythicUtil;
 import org.bukkit.event.EventHandler;
 import org.bukkit.inventory.ItemStack;
 
-public class MythicMobsCompatibility extends CompatibilityProvider<MythicMobs> {
-    
-    @Override
-    public void enable(String pluginName) {
-        super.enable(pluginName);
-        getOraxenPlugin().getLogger().info("MythicMobs compatibility enabled!");
-    }
-    
-    @Override
-    public void disable() {
-        super.disable();
-        getOraxenPlugin().getLogger().info("MythicMobs compatibility disabled!");
-    }
+public class MythicMobsCompatibility extends CompatibilityProvider<MythicBukkit> {
     
     @EventHandler
     public void onMythicDropLoadEvent(MythicDropLoadEvent event) {
-        String dropName = event.getDropName();
-        
-        if (!dropName.equals("oraxen")) return;
-        
-        // Register custom Oraxen drop type
-        event.register(new Drop() {
-            @Override
-            public ItemStack getDrop(DropMetadata dropMetadata, double amount) {
-                String itemId = dropMetadata.getDropConfig().getString("item", "");
-                ItemStack oraxenItem = OraxenItems.getItemById(itemId).build();
-                
-                if (oraxenItem != null) {
-                    int dropAmount = (int) Math.max(1, amount);
-                    oraxenItem.setAmount(dropAmount);
-                    return oraxenItem;
-                }
-                
-                return null;
-            }
-        });
+        if (!event.getDropName().equalsIgnoreCase("oraxen")) return;
+
+        String line = event.getContainer().getLine();
+        String itemId = line.split(" ").length >= 2 ? line.split(" ")[1] : "";
+        if (!OraxenItems.exists(itemId)) return;
+
+        ItemStack oraxenItem = OraxenItems.getItemById(itemId).build();
+
+        Drop drop = MythicUtil.getOraxenDrop(line, event.getConfig(), oraxenItem, new RandomDouble("1-1"));
+        event.register(drop);
     }
 }
 ```
