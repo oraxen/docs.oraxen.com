@@ -835,11 +835,17 @@ Mechanics:
             probability: 1.0
             silk-touch: false # Only drop when this tool has silk touch
             fortune: 1 # Percentage (1 = 100%) to increase the loot amount per fortune level
+        durability:
+          remove: 1 # Remove or add durability when breaking.
+          add: 0
       - else: # Anything that is not covered by another `when` section
         hardness: 4
         drops:
           - item: crystalmush_log
             probability: 1.0
+        durability:
+          remove: 2 # Remove or add durability when breaking.
+          add: 0
 ```
 </Details>
 
