@@ -109,8 +109,8 @@ Repairs the item in your hand or all repairable items in your inventory.
 Reloads specific Oraxen systems or everything at once.
 
 ```yml
-/oraxen reload <items|pack|hud|recipes|messages|all>
-/oraxen rl <items|pack|hud|recipes|messages|all>
+/oraxen reload <items|pack|hud|recipes|configs|messages|paintings|all>
+/oraxen rl <items|pack|hud|recipes|configs|messages|paintings|all>
 ```
 
 `oraxen.command.reload` - Allows using the reload command.<br />
@@ -119,8 +119,10 @@ Reloads specific Oraxen systems or everything at once.
 `pack` - Regenerate the resource pack.<br />
 `hud` - Reload HUD configuration and restart HUD tasks.<br />
 `recipes` - Reload recipes.<br />
-`messages` - Listed by suggestions, but the current implementation falls through to the full reload path.<br />
-`all` - Reload configs, mechanics, items, pack, HUDs, and recipes.<br />
+`configs` - Reload configuration files and custom paintings.<br />
+`messages` - Reload configuration files/messages.<br />
+`paintings` - Reload custom paintings.<br />
+`all` - Reload messages, paintings, mechanics, items, pack, HUDs, and recipes.<br />
 </details>
 
 <details>
@@ -248,25 +250,25 @@ Enables or disables a specific HUD for the player.
 <details>
 <summary id="glyph-info"><strong>🔤 Glyph Info</strong></summary>
 
-Shows information about a configured glyph, including texture, bitmap state, and Unicode character.
+Shows information about a configured glyph, including texture and Unicode characters.
 
 ```yml
-/oraxen glyphinfo <glyphid>
+/oraxen info glyph <glyphid|all>
 ```
 
-`oraxen.command.glyphinfo` - Allows using the glyph info command.<br />
+`oraxen.command.info` - Allows using info commands.<br />
 </details>
 
 <details>
 <summary id="item-info"><strong>📦 Item Info</strong></summary>
 
-Shows debug information about an Oraxen item such as material, model data, and generated model path.
+Shows debug information about an Oraxen item such as material, model data, item model, display name, and generated model path.
 
 ```yml
-/oraxen iteminfo <itemid>
+/oraxen info item <itemid|all>
 ```
 
-`oraxen.command.iteminfo` - Allows using the item info command.<br />
+`oraxen.command.info` - Allows using info commands.<br />
 </details>
 
 <details>
@@ -275,10 +277,10 @@ Shows debug information about an Oraxen item such as material, model data, and g
 Shows block-state information for Oraxen blocks, including noteblock or stringblock data.
 
 ```yml
-/oraxen blockinfo <itemid>
+/oraxen info block <itemid|all>
 ```
 
-`oraxen.command.blockinfo` - Allows using the block info command.<br />
+`oraxen.command.info` - Allows using info commands.<br />
 </details>
 
 <details>
@@ -299,8 +301,7 @@ Prints a small system report with plugin, server, and operating-system informati
 Lists the highest used custom model data value for each material.
 
 ```yml
-/oraxen highest_modeldata
-/oraxen h_md
+/oraxen highest-modeldata
 ```
 
 `oraxen.command.debug` - Allows using this command.<br />
@@ -331,7 +332,10 @@ Removes branding (escape menu) and disables the "welcome" sound.<br />
 
 ```yml
 /oraxen remove-branding
+/oraxen remove-branding confirm
 ```
+
+`oraxen.command.remove-branding` - Allows removing branding after confirmation.<br />
 
 </details>
 
@@ -346,7 +350,10 @@ Removes all shipped default assets and configs (for a clean, minimalistic setup)
 
 ```yml
 /oraxen remove-defaults
+/oraxen remove-defaults confirm
 ```
+
+`oraxen.command.remove-defaults` - Allows removing defaults after confirmation.<br />
 
 </details>
 
@@ -380,6 +387,22 @@ Places or removes Oraxen furniture in a single location or in an area.
 Use `all` as the furniture ID together with `remove` to clear any Oraxen furniture found in the selected area.
 </details>
 
+<details>
+<summary id="totem-animation"><strong>🪄 Totem Animation</strong></summary>
+
+Plays a totem-resurrection animation for a player using an Oraxen item or vanilla item material.
+
+```yml
+/oraxen totem-animation <player> <item|minecraft:material>
+```
+
+`oraxen.command.totem-animation` - Allows playing custom totem animations.<br />
+
+<Callout type="note">
+  Vanilla items can be written as `minecraft:totem_of_undying` or by material name. Oraxen applies Paper death-protection components when supported so custom items can trigger the animation.
+</Callout>
+</details>
+
 ### Debug And Maintenance
 
 <details>
@@ -401,7 +424,7 @@ Enables or disables Oraxen debug mode in `settings.yml`.
 Uploads `logs/latest.log` to mclo.gs, with a Hastebin fallback if needed.
 
 ```yml
-/oraxen dump_log
+/oraxen dump-log
 ```
 
 `oraxen.command.dumplog` - Allows using the log dump command.<br />
@@ -452,7 +475,7 @@ Lists all available text effects, their descriptions, and a live demo for player
 ## Notes
 
 <Callout type="info">
-  Many utility and admin commands are player-only in practice, even when the syntax looks generic. Commands such as `/oraxen inventory`, `/oraxen repair`, `/oraxen recipes`, `/oraxen emojis`, `/oraxen hud toggle`, and the admin placement tools should be run by a player ingame.
+  Many utility and admin commands are player-only in practice, even when the syntax looks generic. Commands such as `/oraxen inventory`, `/oraxen repair`, `/oraxen recipes`, `/oraxen emojis`, `/oraxen hud toggle`, `/oraxen totem-animation`, and the admin placement tools should be run by or target an online player ingame.
 </Callout>
 
 <Callout type="warning">
