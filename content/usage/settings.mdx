@@ -403,6 +403,7 @@ Pack:
   dispatch:
     send: true
     mode: "JOIN"
+    timeout: 30s
     exclude: []
     delay: -1
     mandatory: true
@@ -415,6 +416,7 @@ Pack:
 
 `dispatch.send` - Sends the pack to players when enabled.<br />
 `dispatch.mode` - Chooses when the pack is sent. Valid options are `JOIN` and `PRE-JOIN`. `PRE-JOIN` requires Paper 1.21.7+ and falls back to `JOIN` when unavailable.<br />
+`dispatch.timeout` - Time to wait for the client to respond in `PRE-JOIN` mode before continuing login. Supports values such as `30s`, `500ms`, `1m`, or `20t`.<br />
 `dispatch.exclude` - Client versions that should not receive the pack. Quote every rule, for example `'< 1.12'`, `'= 1.21.11'`, or `'> 1.21.11'`.<br />
 `dispatch.delay` - Delays pack sending by the configured number of seconds after join. Values at or below `0`, including `-1`, send immediately. This only applies to `JOIN` mode.<br />
 `dispatch.mandatory` - Makes the pack required instead of optional.<br />
