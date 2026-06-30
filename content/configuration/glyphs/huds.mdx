@@ -11,7 +11,7 @@ import { Callout } from 'nextra/components'
 HUDs in Oraxen use glyphs to render custom textures directly in text-based displays. This lets you build bars, counters, icons, and other on-screen overlays in places like action bars, scoreboards, and GUI titles. Under the hood, each HUD element is a Unicode character mapped to a texture through Minecraft’s font system. Because fonts can be separated, the same character can show different visuals depending on the selected font, giving you flexible control over how your HUD appears.
 
 ## Configuration
-HUDs are configured in the `huds.yml` files in the `plugins/Oraxen/` directory.
+HUDs are configured in the `hud.yml` file in the `plugins/Oraxen/` directory.
 
 <PluginFileTree
   initialTreeData={[
@@ -24,8 +24,8 @@ HUDs are configured in the `huds.yml` files in the `plugins/Oraxen/` directory.
           name: "Oraxen",
           children: [
             {
-              id: "plugins/Oraxen/huds.yml",
-              name: "huds.yml",
+              id: "plugins/Oraxen/hud.yml",
+              name: "hud.yml",
             },
           ],
         },
