@@ -68,22 +68,3 @@ Pack:
 ```
 
 Layers allow multiple packs to coexist, but players still have to download each unique pack at least once.
-
-## Troubleshooting
-
-**The resource-pack request appears again after switching servers**
-
-Confirm that OneTimePack is installed on the proxy and that both backends generate the same final pack. Set `log-level` under OneTimePack's `plugin` section to `4`, then restart the proxy to enable debug messages.
-
-```yaml
-plugin:
-  log-level: 4
-```
-
-**Players receive no pack after a restart**
-
-OneTimePack filters pack sends; it does not send Oraxen's pack itself. Confirm that pack dispatch remains enabled in Oraxen and wait until Oraxen has finished generating and uploading the pack before players join.
-
-**A new pack version is not sent**
-
-Make sure the new pack has different metadata from the old one. A new hash or UUID allows OneTimePack to identify it as a different pack and let the backend send it.
