@@ -1,5 +1,5 @@
 {
-  "name": "docs.oraxen.com",
+  "name": "oraxen-docs",
   "private": true,
   "scripts": {
     "dev": "next dev",
