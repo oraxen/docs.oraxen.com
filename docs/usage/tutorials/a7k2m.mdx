@@ -123,15 +123,6 @@ Add the model to an Oraxen item configuration. Then run `/oraxen reload all`.
 Check the console for model or texture validation errors. Reconnect after the pack has been regenerated so the client receives the new files.
 
 ## Troubleshooting
-
-**The texture is missing or purple/black**
-
-Verify that the JSON texture reference matches the texture file exactly, including its path and capitalization.
-
-**The model is a paper item**
-
-Verify that the item uses the same model path as the exported JSON file. The path is relative to `plugins/Oraxen/pack/models` and does not include `.json`.
-
-**The model faces the wrong direction**
-
-Correct the model orientation, pivots, or display settings in Blockbench and export it again. Do not try to fix a wrongly exported model only with furniture translation settings.
+- Texture is missing or purple/black - verify that the JSON texture reference matches the texture file exactly, including its path and capitalization.
+- Model is a paper item - verify that the item uses the same model path as the exported JSON file. The path is relative to `plugins/Oraxen/pack/models` and does not include `.json`.
+- Model faces the wrong direction - correct the model orientation, pivots, or display settings in Blockbench and export it again. Do not try to fix a wrongly exported model only with furniture translation settings.
