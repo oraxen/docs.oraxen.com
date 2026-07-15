@@ -18,7 +18,7 @@ const sidebars = {docsSidebar: [
     'usage/commands', 'usage/recipes', 'usage/merging', 'usage/hosting', 'usage/settings',
   ]},
   {type: 'category', label: '🤝 Compatibility', link: {type: 'doc', id: 'compatibility/index'}, items: [
-    'compatibility/skript', 'compatibility/viaversion', 'compatibility/packlayer', 'compatibility/modelengine', 'compatibility/mythichud', 'compatibility/mythiccrucible', 'compatibility/mythicmobs', 'compatibility/mmoitems', 'compatibility/betterhud',
+    'compatibility/placeholderapi', 'compatibility/skript', 'compatibility/viaversion', 'compatibility/packlayer', 'compatibility/modelengine', 'compatibility/mythichud', 'compatibility/mythiccrucible', 'compatibility/mythicmobs', 'compatibility/mmoitems', 'compatibility/betterhud',
     {type: 'category', label: '🌍 World Generators', link: {type: 'doc', id: 'compatibility/generators/index'}, items: ['compatibility/generators/iris', 'compatibility/generators/terralith', 'compatibility/generators/customoregen']},
     {type: 'category', label: '📂 Archives', link: {type: 'doc', id: 'compatibility/archives/index'}, items: ['compatibility/archives/bossshoppro', 'compatibility/archives/cratereloaded', 'compatibility/archives/trmenu', 'compatibility/archives/epicworldgenerator', 'compatibility/archives/realisticworldgenerator']},
   ]},
