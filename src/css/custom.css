@@ -134,6 +134,7 @@ summary[id]:hover .summary-link,
 .file-tree { background: var(--ifm-color-emphasis-200); border: 0; border-radius: 8px; box-shadow: none; font-family: var(--ifm-font-family-monospace); margin: 1rem 0; padding: .5rem 1rem; }
 .file-tree-list { list-style: none; margin: 0; padding-left: 1.25rem; }
 .file-tree > .file-tree-list { padding-left: 0; }
+.file-tree details > div > div { border-top: 0; margin-top: 0; padding-top: 0; }
 
 /* For readability concerns, you should choose a lighter palette in dark mode. */
 [data-theme='dark'] {
