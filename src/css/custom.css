@@ -39,8 +39,11 @@
   --ifm-alert-background-color: var(--callout-bg);
   --ifm-alert-background-color-highlight: color-mix(in srgb, var(--callout-accent) 12%, var(--callout-bg));
   --ifm-alert-border-color: var(--callout-accent);
+  --ifm-alert-border-left-width: 0;
   --ifm-alert-foreground-color: var(--callout-text);
   --callout-title: var(--callout-accent);
+  background-image: linear-gradient(to right, var(--callout-accent) 0 5px, transparent 5px);
+  padding-left: calc(var(--ifm-alert-padding-horizontal) + 5px);
 }
 .oraxen-callout > div:first-child,
 .oraxen-callout > div:first-child svg {
