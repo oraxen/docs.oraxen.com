@@ -1,4 +1,5 @@
 import React from 'react';
+import {Details} from '@docusaurus/theme-common/Details';
 
 function Branch({nodes}) {
   return (
@@ -6,10 +7,11 @@ function Branch({nodes}) {
       {nodes.map((node) => (
         <li key={node.id}>
           {node.children?.length ? (
-            <details open>
-              <summary title={node.hoverText}>📁 {node.name}</summary>
+            <Details
+              open
+              summary={<summary title={node.hoverText}>📁 {node.name}</summary>}>
               <Branch nodes={node.children} />
-            </details>
+            </Details>
           ) : <span title={node.hoverText}>📄 {node.name}</span>}
         </li>
       ))}
