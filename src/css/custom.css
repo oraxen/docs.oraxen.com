@@ -18,6 +18,14 @@
 }
 
 .navbar__logo img { border-radius: 6px; }
+.oraxen-navbar-anchor {
+  border: 0;
+  box-shadow: none;
+  height: 0;
+  min-height: 0;
+  padding: 0;
+  position: absolute;
+}
 .theme-doc-sidebar-container {
   --ifm-menu-link-padding-vertical: .5rem;
   border-right: 0 !important;
