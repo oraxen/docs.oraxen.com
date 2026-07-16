@@ -35,6 +35,48 @@
   padding: .25rem .5rem;
 }
 .pagination-nav { display: none; }
+.oraxen-callout {
+  --ifm-alert-background-color: var(--callout-bg);
+  --ifm-alert-background-color-highlight: color-mix(in srgb, var(--callout-accent) 12%, var(--callout-bg));
+  --ifm-alert-border-color: var(--callout-accent);
+  --ifm-alert-foreground-color: var(--callout-text);
+  --callout-title: var(--callout-accent);
+}
+.oraxen-callout > div:first-child,
+.oraxen-callout > div:first-child svg {
+  color: var(--callout-title);
+  fill: var(--callout-title);
+}
+.oraxen-callout--note {
+  --callout-accent: #0f766e;
+  --callout-bg: #d9f2f3;
+  --callout-text: #0b2d35;
+}
+.oraxen-callout--info {
+  --callout-accent: #0ea5e9;
+  --callout-bg: #e0f2fe;
+  --callout-text: #0b2d35;
+}
+.oraxen-callout--warning {
+  --callout-accent: #d97706;
+  --callout-bg: #fffbeb;
+  --callout-text: #3a2a00;
+}
+.oraxen-callout--important {
+  --callout-accent: #2563eb;
+  --callout-bg: #eff6ff;
+  --callout-text: #081b3c;
+}
+.oraxen-callout--danger {
+  --callout-accent: #dc2626;
+  --callout-bg: #fef2f2;
+  --callout-text: #3a0a0a;
+}
+.oraxen-callout--tip {
+  --callout-accent: #16a34a;
+  --callout-bg: #ecfdf5;
+  --callout-text: #052e17;
+}
 details.alert {
   --ifm-alert-background-color: var(--ifm-color-emphasis-200);
   --ifm-alert-background-color-highlight: var(--ifm-color-emphasis-300);
@@ -146,4 +188,28 @@ summary[id]:hover .summary-link,
   --ifm-color-primary-lighter: #32d8b4;
   --ifm-color-primary-lightest: #4fddbf;
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
+}
+[data-theme='dark'] .oraxen-callout--note,
+[data-theme='dark'] .oraxen-callout--info {
+  --callout-bg: #123c46;
+  --callout-text: rgba(230, 252, 255, 0.92);
+}
+[data-theme='dark'] .oraxen-callout {
+  --callout-title: color-mix(in srgb, var(--callout-accent) 72%, #ffffff);
+}
+[data-theme='dark'] .oraxen-callout--warning {
+  --callout-bg: #3a2f12;
+  --callout-text: rgba(255, 249, 229, 0.92);
+}
+[data-theme='dark'] .oraxen-callout--important {
+  --callout-bg: #0f2548;
+  --callout-text: rgba(234, 245, 255, 0.92);
+}
+[data-theme='dark'] .oraxen-callout--danger {
+  --callout-bg: #3b1414;
+  --callout-text: rgba(255, 237, 237, 0.92);
+}
+[data-theme='dark'] .oraxen-callout--tip {
+  --callout-bg: #0f2f1d;
+  --callout-text: rgba(236, 253, 245, 0.92);
 }

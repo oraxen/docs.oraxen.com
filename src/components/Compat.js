@@ -3,8 +3,25 @@ import Admonition from '@theme/Admonition';
 import ThemeDetails from '@theme/Details';
 
 export function Callout({children, type = 'info'}) {
-  const types = {important: 'danger', warning: 'warning', tip: 'tip', note: 'note', info: 'info'};
-  return <Admonition type={types[type] || 'info'}>{children}</Admonition>;
+  const types = {
+    danger: {admonitionType: 'danger'},
+    important: {admonitionType: 'info', title: 'important'},
+    info: {admonitionType: 'info'},
+    note: {admonitionType: 'note'},
+    tip: {admonitionType: 'tip'},
+    warning: {admonitionType: 'warning'},
+  };
+  const normalizedType = type.toLowerCase();
+  const resolvedType = types[normalizedType] ? normalizedType : 'info';
+  const callout = types[resolvedType];
+  return (
+    <Admonition
+      type={callout.admonitionType}
+      title={callout.title || resolvedType}
+      className={`oraxen-callout oraxen-callout--${resolvedType}`}>
+      {children}
+    </Admonition>
+  );
 }
 
 export function Details({children}) {
