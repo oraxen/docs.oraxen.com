@@ -48,6 +48,29 @@ details.alert {
 details.alert > div > div { border-top: 0; margin-top: .5rem; padding-top: 0; }
 .oraxen-details { background: var(--ifm-color-emphasis-200); border: 0; border-radius: 8px; box-shadow: none; margin: 1rem 0; padding: .75rem 1rem; }
 .oraxen-details > summary, .file-tree summary { cursor: pointer; }
+summary[id] { padding-right: 2rem; position: relative; }
+.summary-link {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  border-radius: 4px;
+  color: var(--ifm-color-primary);
+  cursor: pointer;
+  display: inline-flex;
+  font-size: 1.15rem;
+  font-weight: 700;
+  line-height: 1;
+  opacity: 0;
+  padding: .15rem;
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+}
+summary[id]:hover .summary-link,
+.summary-link:focus-visible { opacity: 1; }
+.summary-link:hover { text-decoration: underline; }
+.summary-link:focus-visible { outline: 2px solid var(--ifm-color-primary); outline-offset: 2px; }
 .oraxen-steps {
   counter-reset: oraxen-step;
   margin: 2rem 0;
