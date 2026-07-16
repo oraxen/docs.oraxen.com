@@ -11,7 +11,7 @@ const sidebars = {docsSidebar: [
     {type: 'category', label: '🔊 Sounds', link: {type: 'doc', id: 'configuration/sounds/index'}, items: []},
     {type: 'category', label: '🏞️ Paintings', link: {type: 'doc', id: 'configuration/paintings/index'}, items: []},
   ]},
-  {type: 'category', label: '🕹️ Usage', items: [
+  {type: 'category', label: '🕹️ Usage', link: {type: 'doc', id: 'usage/index'}, items: [
     {type: 'category', label: '📖 Tutorials', link: {type: 'doc', id: 'usage/tutorials/index'}, items: [
       'usage/tutorials/13lfg3', 'usage/tutorials/23ho7', 'usage/tutorials/39d3x', 'usage/tutorials/491d3', 'usage/tutorials/9d13l', 'usage/tutorials/a7k2m', 'usage/tutorials/c82mx', 'usage/tutorials/d017g', 'usage/tutorials/d31l5f', 'usage/tutorials/f3g7k', 'usage/tutorials/f4q9x', 'usage/tutorials/v6n8r',
     ]},
