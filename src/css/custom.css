@@ -46,8 +46,22 @@ details.alert {
   box-shadow: none;
 }
 details.alert > div > div { border-top: 0; margin-top: .5rem; padding-top: 0; }
-.oraxen-details { background: var(--ifm-color-emphasis-200); border: 0; border-radius: 8px; box-shadow: none; margin: 1rem 0; padding: .75rem 1rem; }
+.oraxen-details { background: var(--ifm-color-emphasis-200); border: 0; border-radius: 8px; box-shadow: none; margin: 1rem 0; padding: .5rem 1rem; }
 .oraxen-details > summary, .file-tree summary { cursor: pointer; }
+details.alert > summary::before {
+  background-color: var(--docusaurus-details-decoration-color);
+  border: 0;
+  height: 1rem;
+  left: 0;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='m9 18 6-6-6-6' fill='none' stroke='%23000' stroke-linecap='round' stroke-linejoin='round' stroke-width='2'/%3E%3C/svg%3E") center / contain no-repeat;
+  top: .2rem;
+  transform-origin: center;
+  width: 1rem;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='m9 18 6-6-6-6' fill='none' stroke='%23000' stroke-linecap='round' stroke-linejoin='round' stroke-width='2'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+@media (prefers-reduced-motion: reduce) {
+  details.alert > summary::before { transition: none; }
+}
 summary[id] { padding-right: 2rem; position: relative; }
 .summary-link {
   align-items: center;
@@ -117,7 +131,7 @@ summary[id]:hover .summary-link,
 }
 .oraxen-tab { border: 1px solid var(--ifm-color-emphasis-300); border-radius: 8px; margin: 1rem 0; padding: 1rem; }
 .oraxen-tab[data-label]::before { content: attr(data-label); display: block; font-weight: 700; margin-bottom: .75rem; }
-.file-tree { background: var(--ifm-color-emphasis-200); border: 0; border-radius: 8px; box-shadow: none; font-family: var(--ifm-font-family-monospace); margin: 1rem 0; padding: .75rem 1rem; }
+.file-tree { background: var(--ifm-color-emphasis-200); border: 0; border-radius: 8px; box-shadow: none; font-family: var(--ifm-font-family-monospace); margin: 1rem 0; padding: .5rem 1rem; }
 .file-tree-list { list-style: none; margin: 0; padding-left: 1.25rem; }
 .file-tree > .file-tree-list { padding-left: 0; }
 

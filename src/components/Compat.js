@@ -1,5 +1,6 @@
 import React, {Children, cloneElement, isValidElement} from 'react';
 import Admonition from '@theme/Admonition';
+import ThemeDetails from '@theme/Details';
 
 export function Callout({children, type = 'info'}) {
   const types = {important: 'danger', warning: 'warning', tip: 'tip', note: 'note', info: 'info'};
@@ -7,7 +8,13 @@ export function Callout({children, type = 'info'}) {
 }
 
 export function Details({children}) {
-  return <details className="oraxen-details">{children}</details>;
+  const items = Children.toArray(children);
+  const summary = items.find((child) => isValidElement(child) && child.type === 'summary');
+  return (
+    <ThemeDetails className="oraxen-details" summary={summary}>
+      {items.filter((child) => child !== summary)}
+    </ThemeDetails>
+  );
 }
 
 export function Steps({children}) {
