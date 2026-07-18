@@ -12,6 +12,7 @@ const config = {
   projectName: 'docs.oraxen.com',
   onBrokenLinks: 'throw',
   i18n: {defaultLocale: 'en', locales: ['en']},
+  plugins: ['./plugins/raw-docs'],
   presets: [['classic', {
     docs: {
       sidebarPath: './sidebars.js',
