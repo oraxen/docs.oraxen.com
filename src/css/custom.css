@@ -27,6 +27,10 @@
   padding: 0;
   position: absolute;
 }
+.oraxen-mobile-navbar { display: none; }
+@media (max-width: 996px) {
+  .oraxen-mobile-navbar { display: block; }
+}
 .theme-doc-sidebar-container {
   --ifm-menu-link-padding-vertical: .5rem;
   border-right: 0 !important;
