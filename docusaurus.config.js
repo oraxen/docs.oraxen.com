@@ -27,10 +27,7 @@ const config = {
     navbar: {
       title: 'Oraxen',
       logo: {alt: 'Oraxen logo', src: 'img/logo.png'},
-      items: [
-        {type: 'docSidebar', sidebarId: 'docsSidebar', position: 'left', label: 'Documentation'},
-        {href: 'https://github.com/oraxen/oraxen', label: 'GitHub', position: 'right'},
-      ],
+      items: [],
     },
     prism: {
       theme: prismThemes.github,
