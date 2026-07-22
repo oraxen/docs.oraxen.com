@@ -1,11 +1,11 @@
 ---
-title: "🌐 Resource packs on a proxy"
+title: "🌐 Using resource packs on a proxy"
 description: "Using Oraxen resource packs on a Velocity or BungeeCord network."
 ---
 
 import { Callout, Steps } from '@site/src/components/Compat'
 
-# 🌐 Resource packs on a proxy
+# 🌐 Using resource packs on a proxy
 
 ## Overview
 
@@ -55,8 +55,7 @@ The resource-pack request should not appear again. If it does, compare the final
 
 </Steps>
 
-## Different packs on different servers
-
+<Callout type="tip">
 OneTimePack only suppresses a duplicate resource pack. A backend with a different pack must still send that pack to the player.
 
 On Minecraft `1.20.3+`, Oraxen can use resource-pack layers to keep distinct packs active together. Give each independently dispatched pack a unique layer name.
@@ -68,3 +67,4 @@ Pack:
 ```
 
 Layers allow multiple packs to coexist, but players still have to download each unique pack at least once.
+</Callout>
