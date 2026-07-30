@@ -462,12 +462,17 @@ backpack:
       title: "<red>Backpack"
       open_sound: "entity.shulker.open"
       close_sound: "entity.shulker.close"
+      blocked-items:
+        - shulker_box
+        - minecraft:ender_chest
+        - oraxen:another_backpack
 ```
 
 **Options**<br />
 `rows` defines the inventory size.<br />
 `title` defines the backpack GUI title.<br />
-`open_sound` and `close_sound` define the sounds played when the backpack opens and closes.
+`open_sound` and `close_sound` define the sounds played when the backpack opens and closes.<br />
+`blocked-items` defines items that cannot be stored in the backpack. Vanilla item IDs can be namespaced or unnamespaced, while Oraxen item IDs require the `oraxen:` prefix. Blocking `shulker_box` also blocks every colored shulker box.
 
 <Callout type="warning">
   Use `unstackable: true` for backpack items. Stackable materials can cause duplication issues.
