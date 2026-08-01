@@ -870,7 +870,7 @@ Mechanics:
         drops: # Drops when this tool is used
           - item: crystalmush_log
             probability: 1.0
-            silk-touch: false # Only drop when this tool has silk touch
+            silk-touch: any # Drop with or without Silk Touch
             fortune: 1 # Percentage (1 = 100%) to increase the loot amount per fortune level
         durability:
           remove: 1 # Remove or add durability when breaking.
@@ -883,6 +883,32 @@ Mechanics:
         durability:
           remove: 2 # Remove or add durability when breaking.
           add: 0
+```
+
+Each loot entry can use `silk-touch` to control whether it drops based on the breaking tool.<br />
+- `any` or `false` (default); Drop with or without Silk Touch.
+- `required` or `true`; drop only with Silk Touch.
+- `forbidden`; drop only without Silk Touch.
+
+This allows one block to drop itself with Silk Touch and different loot without it.
+
+```yaml
+magic_ore:
+  Mechanics:
+    block:
+      type: FULL
+      breaking:
+        - when: ["#minecraft:pickaxes"]
+          hardness: 3
+          drops:
+            - item: magic_ore
+              silk-touch: required
+              probability: 1.0
+            - item: magic_shard
+              silk-touch: forbidden
+              amount: 2..4
+              fortune: 0.5
+              probability: 1.0
 ```
 </Details>
 
