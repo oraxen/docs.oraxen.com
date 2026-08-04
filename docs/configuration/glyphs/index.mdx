@@ -9,7 +9,7 @@ import { Callout } from '@site/src/components/Compat'
 # 🖼️ Glyphs
 
 ## Overview
-Glyphs allow you to display custom textures anywhere text appears in Minecraft. Including chat messages, item names, lore, scoreboards, and more. They work by mapping Unicode characters to custom image files through Minecraft's font system. Since Minecraft supports multiple font sets, the same character can display different visuals depending on the font used. This powerful system enables you to create custom GUIs, HUDs, emojis, rank icons, and much more.
+Glyphs allow you to display custom textures anywhere text appears in Minecraft, including chat messages, item names, lore, scoreboards, and more. They work by mapping Unicode characters to custom image files through Minecraft's font system. Since Minecraft supports multiple font sets, the same character can display different visuals depending on the font used. This powerful system enables you to create custom GUIs, HUDs, emojis, rank icons, and much more.
 
 ## Configuration
 Glyphs are configured in `.yml` files in the `plugins/Oraxen/glyphs` directory.
@@ -56,7 +56,7 @@ Glyphs are configured in `.yml` files in the `plugins/Oraxen/glyphs` directory.
   The height value must always be greater than or equal to the ascent value. This is a strict requirement enforced by Minecraft.
 </Callout>
 <Callout type="info">
-    Glyphs will not affect standard characters and cannot be used by players through chat, anvils, or other means, unless you use minecrafts `minecraft:default` font. Please avoid using that font unless you have to.
+    Glyphs will not affect standard characters and cannot be used by players through chat, anvils, or other means, unless you use Minecraft's `minecraft:default` font. Please avoid using that font unless you have to.
 </Callout>
 
 ### Additional Properties
@@ -69,7 +69,7 @@ Makes glyphs tab complete in chat.
   This only works for glyphs using the `minecraft:default` font.
 </Callout>
 
-`tabcomplete` - Wheter the glyph should tabcomplete.
+`tabcomplete` - Whether the glyph should tabcomplete.
 
 ```yaml
 chat:
@@ -121,7 +121,7 @@ Renders PNG sprite sheets and makes them animated ingame using core shaders.
 </Callout>
 
 <Callout type="important">
-  Its important that your texture is a square (e.g. `16x16`), otherwise your glyph will move to the right in each frame.<br />
+  It's important that your texture is a square (e.g. `16x16`), otherwise your glyph will move to the right in each frame.<br />
 </Callout>
 
 `frames` - The number of frames in the sprite sheet.<br />
@@ -166,10 +166,10 @@ myglyph:
 <details>
 <summary id="reference"><strong>🔗 Reference</strong></summary>
 
-Reference glyphs let you alias part of an existing multi bitmap glyph.
+Reference glyphs let you alias part of an existing multi-bitmap glyph.
 
 `glyph` - The unique identifier of the glyph.<br />
-`index` - The Characters to include (1-indexed).<br />
+`index` - The characters to include (1-indexed).<br />
 
 ```yaml
 reference:
