@@ -29,7 +29,7 @@ debug: false
 <Details>
 <summary id="plugin"><strong>🧩 `Plugin`</strong></summary>
 
-Controls Oraxen's global behavior. This includes config housekeeping, language selection, first-run messaging, repair-command behavior, Paper config tweaks for custom blocks, default asset/config generation, and which UI surfaces use MiniMessage formatting.
+Controls Oraxen's global behavior, including config housekeeping, language selection, first-run messaging, Paper config tweaks for custom blocks, default asset/config generation, and which UI surfaces use MiniMessage formatting.
 
 ```yaml
 Plugin:
@@ -38,9 +38,6 @@ Plugin:
   introduction:
     enabled: true
     console_sent: false
-  commands:
-    repair:
-      oraxen_durability_only: false
   auto_update_paper_config: true
   generation:
     default_assets: true
@@ -56,11 +53,10 @@ Plugin:
     books: true
 ```
 
-`keep_this_up_to_date` - Automatically updates the config when new settings are added by an update. Oraxen may delete old settings when this is enabled.<br />
+`keep_this_up_to_date` - Automatically updates the config when settings change between Oraxen versions. Oraxen may delete obsolete settings when this is enabled.<br />
 `language` - Selects the language file Oraxen uses for messages. Valid options include `czech`, `english`, `french`, `german`, `jpn_JP`, `korean`, `ru-RU`, `zh-CN`, and `zh-TW`.<br />
 `introduction.enabled` - Shows the first-run welcome message. Set this to `false` to suppress it entirely.<br />
 `introduction.console_sent` - Internal flag set after the welcome message has been shown in console.<br />
-`commands.repair.oraxen_durability_only` - Makes `/oraxen repair` skip vanilla item durability if enabled.<br />
 `auto_update_paper_config` - Updates `paper-global.yml` to disable block updates for custom blocks.<br />
 `generation.default_assets` - Generates the default resource-pack assets that ship with Oraxen.<br />
 `generation.default_configs` - Generates the default config files that Oraxen provides.<br />
@@ -80,38 +76,15 @@ Plugin:
 </Details>
 
 <Details>
-<summary id="worldedit"><strong>🧱 `WorldEdit`</strong></summary>
-
-Experimental clipboard support for note blocks, string blocks, and furniture when copying and pasting with WorldEdit.
-
-```yaml
-WorldEdit:
-  noteblock_mechanic: false
-  stringblock_mechanic: false
-  furniture_mechanic: false
-```
-
-`noteblock_mechanic` - Enables WorldEdit support for copying and pasting note blocks.<br />
-`stringblock_mechanic` - Enables WorldEdit support for copying and pasting string blocks. This works, but can be buggy with some string blocks, especially ones using the `Tall` property.<br />
-`furniture_mechanic` - Enables WorldEdit support for copying and pasting furniture. This only handles clipboard operations such as cut, copy, and paste.<br />
-
-<Callout type="warning">
-	These WorldEdit integrations are experimental and should be used with caution.
-</Callout>
-
-</Details>
-
-<Details>
 <summary id="configstools"><strong>🛠️ `ConfigsTools`</strong></summary>
 
-Controls config migration helpers, model-data skipping, glyph-code generation, and the fallback item shown when a config entry cannot be resolved.
+Controls model-data and glyph-code generation, plus the fallback item shown when a config entry cannot be resolved.
 
 ```yaml
 ConfigsTools:
   skipped_model_data_numbers: []
   disable_automatic_model_data: false
   disable_automatic_glyph_code: false
-  enable_configs_updater: true
   error_item:
     material: PODZOL
     excludeFromInventory: false
@@ -119,9 +92,8 @@ ConfigsTools:
 ```
 
 `skipped_model_data_numbers` - Reserves specific CustomModelData values so Oraxen will not assign them automatically. This list accepts singular numbers and ranges such as `1-4`.<br />
-`disable_automatic_model_data` - Stops Oraxen from assigning model data values on its own.<br />
+`disable_automatic_model_data` - Disables automatic model-data assignment.<br />
 `disable_automatic_glyph_code` - Stops Oraxen from auto-generating glyph codes.<br />
-`enable_configs_updater` - Enables the config updater that migrates older configs to newer formats.<br />
 `error_item.material` - Material used for the fallback item shown when a config entry fails.<br />
 `error_item.excludeFromInventory` - Hides the fallback item from inventories when enabled.<br />
 `error_item.injectID` - Injects the invalid entry's ID into the fallback item for easier debugging.<br />
@@ -131,64 +103,23 @@ ConfigsTools:
 <Details>
 <summary id="glyphs"><strong>✦ `Glyphs`</strong></summary>
 
-Configures the glyph backend, whether emojis are hidden behind permissions, how Unicode completions behave, and the hover text shown when a glyph is displayed in chat.
+Controls emoji-list permissions and glyph tab completions.
 
 ```yaml
 Glyphs:
-  glyph_handler: VANILLA
   emoji_list_permission_only: true
   unicode_completions: true
-  chat_hover_text: "<glyph_placeholder>"
 ```
 
-`glyph_handler` - Chooses the backend Oraxen uses to render glyphs. Valid handlers are `VANILLA` and `NMS`.<br />
 `emoji_list_permission_only` - Shows only emojis the player has permission to use.<br />
 `unicode_completions` - Makes glyph tab completion show Unicode values instead of glyph placeholders.<br />
-`chat_hover_text` - Sets the hover text shown for glyphs in chat.<br />
-
-</Details>
-
-<Details>
-<summary id="texteffects"><strong>✨ `TextEffects`</strong></summary>
-
-Enables shader-driven animated text effects such as rainbow, wave, and shake, and controls which shader template and encoding strategy Oraxen uses when rendering them. Effect definitions and GLSL snippets live in `text_effects.yml`.
-
-```yaml
-TextEffects:
-  enabled: true
-  shader:
-    template: auto
-    encoding: effect_font
-```
-
-`enabled` - Master toggle for all shader-based text effects.<br />
-`shader.template` - Chooses which shader template Oraxen uses for text effects. Valid options are `auto`, `effects_only`, and `animated_only`.<br />
-`shader.encoding` - Chooses how text effect data is encoded for shaders. The default `effect_font` strategy uses dedicated effect font glyphs.<br />
-
-<Callout type="info">
-	Text effects are compatible with Minecraft 1.21.11+.
-</Callout>
-
-</Details>
-
-<Details>
-<summary id="chat"><strong>💬 `Chat`</strong></summary>
-
-Controls how glyphs are rendered in chat. `MODERN` is the default for current servers, while `LEGACY` is the fallback when another chat pipeline interferes with glyph rendering.
-
-```yaml
-Chat:
-  chat_handler: MODERN
-```
-
-`chat_handler` - Chooses the chat rendering mode used for glyphs in chat. Valid options are `MODERN` and `LEGACY`. Use `LEGACY` only if `MODERN` causes display issues.<br />
 
 </Details>
 
 <Details>
 <summary id="customarmor"><strong>🛡️ `CustomArmor`</strong></summary>
 
-Controls which custom armor system Oraxen uses, whether leather repair is allowed, and how component, trim, or shader-based armor assets are generated.
+Controls which custom armor system Oraxen uses and how component- or trim-based armor is configured.
 
 ```yaml
 CustomArmor:
@@ -200,43 +131,14 @@ CustomArmor:
   trims_settings:
     material_replacement: CHAINMAIL
     auto_assign_settings: true
-  shader_settings:
-    type: FANCY
-    armor_resolution: 16
-    animated_armor_framerate: 24
-    generate_shader_compatible_armor: true
-    generate_armor_shader_files: true
-    generate_custom_armor_textures: true
 ```
 
-`type` - Selects the custom armor system Oraxen should use. Valid types are `COMPONENT`, `SHADER`, `TRIMS`, and `NONE`.<br />
+`type` - Selects the custom armor system Oraxen should use. Valid types are `COMPONENT`, `TRIMS`, and `NONE`.<br />
 `auto_select_type` - Lets Oraxen replace incompatible armor types with the best type for the detected server version.<br />
 `disable_leather_repair` - Prevents custom armor from being repaired with leather. Custom armor can only be repaired with copies of the same custom armor.<br />
 `component_settings.auto_assign_component` - Automatically adds the equippable-model component unless you set it manually.<br />
 `trims_settings.material_replacement` - Chooses the vanilla material used to represent trim-based armor. Valid materials are `CHAINMAIL`, `IRON`, `GOLD`, `DIAMOND`, `NETHERITE`, and `LEATHER`.<br />
 `trims_settings.auto_assign_settings` - Automatically applies trim and item-flag settings for custom armor.<br />
-`shader_settings.type` - Chooses the shader armor style. Valid types are `FANCY` and `LESS_FANCY`.<br />
-`shader_settings.armor_resolution` - Sets the source armor texture resolution used for shader generation. For example, `64x32` maps to `16`, and `128x64` maps to `32`.<br />
-`shader_settings.animated_armor_framerate` - Controls the framerate used for animated armor textures.<br />
-`shader_settings.generate_shader_compatible_armor` - Generates armor output compatible with the shader armor pipeline.<br />
-`shader_settings.generate_armor_shader_files` - Generates the shader files needed for custom armor.<br />
-`shader_settings.generate_custom_armor_textures` - Generates the custom armor textures themselves.<br />
-
-</Details>
-
-<Details>
-<summary id="customblocks"><strong>🧱 `CustomBlocks`</strong></summary>
-
-Handles block correction and note-block compatibility behavior for custom blocks.
-
-```yaml
-CustomBlocks:
-  block_correction: NMS
-  use_legacy_noteblocks: true
-```
-
-`block_correction` - Chooses how Oraxen corrects custom blocks after placement or load. Valid types are `NMS` and `LEGACY`.<br />
-`use_legacy_noteblocks` - Keeps legacy note-block behavior enabled for compatibility. This setting is relevant for future changes; for now, leave it enabled unless you know you need otherwise.<br />
 
 </Details>
 
@@ -307,7 +209,6 @@ Pack:
       generate_predicates: false
     verify_pack_files: true
     fix_force_unicode_glyphs: true
-    texture_slicer: true
     atlas:
       exclude_malformed_from_atlas: true
       generate: true
@@ -322,15 +223,14 @@ Pack:
 
 `generation.generate` - Enables or disables all resource-pack generation.<br />
 `generation.disable_mcmeta_generation` - Prevents Oraxen from creating or modifying `pack.mcmeta`. The file at `plugins/Oraxen/pack/pack.mcmeta` is included exactly as provided, and automatic overlay entries are disabled.<br />
-`generation.multi_version_packs` - Generates separate packs with correct `pack_format` values for different client versions. This is intended for servers using ViaVersion or ProtocolSupport with upload types that can serve multiple files.<br />
+`generation.multi_version_packs` - Generates separate packs for clients on 1.21.3 and below and clients on 1.21.4+. ViaVersion is used for client-version detection; without it, players receive the server-version pack. Multi-version packs require the `lobfile`, `polymath`, or `external` upload type.<br />
 `generation.excluded_file_extensions` - Lists file extensions that should not be included in the final zipped resource pack.<br />
 `generation.appearance.item_properties` - Uses the `minecraft:item_model` component with Oraxen item IDs and generates `assets/oraxen/items/<item_id>.json` for Minecraft 1.21.4+.<br />
-`generation.appearance.model_data_ids` - Uses `custom_model_data.strings[0]` with stable string identifiers such as `oraxen:<item_id>` and generates `minecraft:select` item definitions.<br />
-`generation.appearance.model_data_float` - Uses `custom_model_data.floats[0]` with `minecraft:range_dispatch` and also sets integer CustomModelData for plugin compatibility.<br />
+`generation.appearance.model_data_ids` - Uses `custom_model_data.strings[0]` with stable string identifiers such as `oraxen:<item_id>` and generates `minecraft:select` item definitions. This only applies to items that explicitly set `Pack.custom_model_data`.<br />
+`generation.appearance.model_data_float` - Uses `custom_model_data.floats[0]` with `minecraft:range_dispatch` and also sets integer CustomModelData for plugin compatibility. This only applies to items that explicitly set `Pack.custom_model_data`.<br />
 `generation.appearance.generate_predicates` - Generates legacy predicate override files on 1.21.4+. This is not normally needed unless an external tool requires legacy JSON files. Pre-1.21.4 servers always generate predicates.<br />
 `generation.verify_pack_files` - Checks textures and models for valid resource-pack formatting.<br />
 `generation.fix_force_unicode_glyphs` - Fixes glyphs not showing when Force Unicode is enabled.<br />
-`generation.texture_slicer` - Slices default-texture overrides into the newer 1.20.2 format.<br />
 `generation.atlas.exclude_malformed_from_atlas` - Excludes malformed textures from the atlas instead of including invalid entries.<br />
 `generation.atlas.generate` - Generates atlas files for the resource pack.<br />
 `generation.atlas.type` - Chooses the atlas mode. Valid options are `SPRITE` and `DIRECTORY`.<br />
@@ -434,7 +334,7 @@ Pack:
       actions:
         sound:
           enabled: true
-          type: minecraft:welcome
+          type: oraxen:welcome
           volume: 1.0
           pitch: 1.0
         delay: 5
@@ -522,7 +422,7 @@ Supported receive statuses are `loaded`, `accepted`, `denied`, `failed_download`
 <Details>
 <summary id="misc"><strong>⚙️ `Misc`</strong></summary>
 
-Contains the smaller global toggles that do not fit elsewhere, including recipes, scoreboard and tablist visuals, armor-equip bypasses, and vanilla item display overrides.
+Contains smaller global toggles including recipes, scoreboard and tablist visuals, armor-equip bypasses, and vanilla item display overrides.
 
 ```yaml
 Misc:
@@ -542,52 +442,48 @@ Misc:
 
 `reset_recipes` - Resets Oraxen recipes on reload. This can conflict with other plugins, but makes recipe testing easier.<br />
 `add_recipes_to_book` - Adds unlocked Oraxen recipes to the player recipe book.<br />
-`hide_scoreboard_numbers` - Hides scoreboard numbers on the sidebar.<br />
-`hide_scoreboard_background` - Hides the scoreboard background.<br />
-`hide_tablist_background` - Hides the tablist background on 1.21+.<br />
+`hide_scoreboard_numbers` - Hides scoreboard numbers on the sidebar. On Minecraft 26.x and above, this requires a packet adapter such as ProtocolLib or PacketEvents.<br />
+`hide_scoreboard_background` - Hides the scoreboard background on Minecraft 1.21.6 through 1.21.7.<br />
+`hide_tablist_background` - Hides the tablist background on Minecraft 1.21.6 through 1.21.7.<br />
 `armor_equip_event_bypass` - Lists blocks that should not trigger armor equip behavior when right-clicked. This should include blocks with inventories and other blocks that should not equip armor on interaction.<br />
 `shield_display` - Sets the vanilla shield display transform used when Oraxen needs to add custom shields.<br />
 `bow_display` - Sets the vanilla bow display transform used when Oraxen needs to add custom bows.<br />
 `crossbow_display` - Sets the vanilla crossbow display transform used when Oraxen needs to add custom crossbows.<br />
 
-<Callout type="warning">
-	Due to Mojang core shader changes, hiding the tablist or scoreboard background may not work on 1.21.8+.
-</Callout>
 </Details>
 
 <Details>
-<summary id="oraxen_inventory"><strong>🗂️ `oraxen_inventory`</strong></summary>
+<summary id="inventory-menu"><strong>🗂️ `inventory-menu`</strong></summary>
 
 Configures the built-in browser GUI that players open with Oraxen commands. It controls the menu title, pagination, and the category buttons shown in the item browser.
 
 ```yaml
-oraxen_inventory:
-  main_menu_title: "<shift:-18><glyph:menu_items><shift:-193>"
-  menu_rows: 6
-  menu_size: 45
-  #exit_icon: exit_icon
-  #next_page_icon: next_page_icon
-  #previous_page_icon: previous_page_icon
-  menu_layout:
+inventory-menu:
+  title: "<shift:-18><glyph:menu_items><shift:-193>"
+  rows: 6
+  slots: 45
+
+  layout:
     armors:
       slot: 1
       icon: emerald_chestplate
-      displayname: "<green>Armors"
+      name: "<green>Armors"
       title: "<main_menu_title><#362753><glyph:menu_items_overlay:colorable>"
 ```
 
-`main_menu_title` - Sets the title used for the main browser GUI.<br />
-`menu_rows` - Sets how many rows the GUI uses.<br />
-`menu_size` - Sets how many item slots are shown per page.<br />
-`exit_icon` - Optional icon used for the exit button.<br />
-`next_page_icon` - Optional icon used for the next-page button.<br />
-`previous_page_icon` - Optional icon used for the previous-page button.<br />
-`menu_layout` - Defines the category buttons shown in the browser.<br />
-`menu_layout.<category>.slot` - Chooses the slot used for the category button.<br />
-`menu_layout.<category>.icon` - Chooses the Oraxen item icon shown for the category.<br />
-`menu_layout.<category>.displayname` - Sets the visible name of the category button.<br />
-`menu_layout.<category>.title` - Sets the GUI title shown when opening the category.<br />
+`title` - Sets the title used for the main browser GUI.<br />
+`rows` - Sets how many rows the GUI uses.<br />
+`slots` - Sets how many item slots are shown per page.<br />
+`layout` - Defines the category buttons shown in the browser.<br />
+`layout.<category>.slot` - Chooses the slot used for the category button.<br />
+`layout.<category>.icon` - Chooses the Oraxen item icon shown for the category.<br />
+`layout.<category>.name` - Sets the visible name of the category button.<br />
+`layout.<category>.title` - Sets the GUI title shown when opening the category.<br />
 
 Default categories include `armors`, `blocks`, `furniture`, `flowers`, `hats`, `items`, `mystical`, `plants`, `skins`, `tools`, and `weapons`.
+
+<Callout type="info">
+	Existing `oraxen_inventory` configurations are migrated automatically to the `inventory-menu` format.
+</Callout>
 
 </Details>
