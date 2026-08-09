@@ -12,7 +12,19 @@ const config = {
   projectName: 'docs.oraxen.com',
   onBrokenLinks: 'throw',
   i18n: {defaultLocale: 'en', locales: ['en']},
-  plugins: ['./plugins/raw-docs'],
+  plugins: [
+    './plugins/raw-docs',
+    ['@easyops-cn/docusaurus-search-local', {
+      docsRouteBasePath: '/',
+      indexBlog: false,
+      indexPages: false,
+      language: ['en'],
+      hashed: true,
+      searchBarPosition: 'right',
+      searchResultContextMaxLength: 100,
+      explicitSearchResultPath: true,
+    }],
+  ],
   presets: [['classic', {
     docs: {
       sidebarPath: './sidebars.js',
@@ -28,7 +40,7 @@ const config = {
     navbar: {
       title: 'Oraxen',
       logo: {alt: 'Oraxen logo', src: 'img/logo.png'},
-      items: [],
+      items: [{type: 'search', position: 'right'}],
     },
     prism: {
       theme: prismThemes.github,
