@@ -14,7 +14,7 @@
 
 ## Overview
 
-Oraxen Documentation is the source for the official [Oraxen documentation website](https://oraxen.mizius.com). It explains how to configure and use Oraxen, create custom items and resources, integrate supported plugins, and extend Oraxen through its API.
+Oraxen Documentation is the source for the official [Oraxen documentation website](https://docs.oraxen.com). It explains how to configure and use Oraxen, create custom items and resources, integrate supported plugins, and extend Oraxen through its API.
 
 The website is built with Docusaurus. Documentation pages are written in MDX and organized through a manually maintained sidebar.
 
