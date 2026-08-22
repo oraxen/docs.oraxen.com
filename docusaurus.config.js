@@ -6,7 +6,7 @@ const config = {
   tagline: 'Create custom content for Minecraft.',
   favicon: 'favicon.ico',
   future: {v4: true},
-  url: 'https://oraxen.mizius.com',
+  url: 'https://docs.oraxen.com',
   baseUrl: '/',
   organizationName: 'miziusLabs',
   projectName: 'OraxenDocs',
