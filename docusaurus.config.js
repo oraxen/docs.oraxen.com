@@ -35,7 +35,6 @@ const config = {
     theme: {customCss: './src/css/custom.css'},
   }]],
   themeConfig: {
-    image: 'img/logo.png',
     colorMode: {respectPrefersColorScheme: true},
     navbar: {
       title: 'Oraxen',
