@@ -25,6 +25,9 @@
   top: 1rem;
   z-index: var(--ifm-z-index-fixed);
 }
+body:has(.theme-announcement-bar) .oraxen-desktop-search {
+  top: calc(1rem + var(--docusaurus-announcement-bar-height));
+}
 .oraxen-desktop-search .navbar__search { margin-left: 0; }
 .oraxen-desktop-search,
 .oraxen-mobile-navbar {
@@ -53,6 +56,7 @@
 .theme-doc-sidebar-container {
   --ifm-menu-link-padding-vertical: .5rem;
   border-right: 0 !important;
+  margin-top: 0 !important;
 }
 .theme-doc-sidebar-container .menu__caret {
   margin: .25rem;
