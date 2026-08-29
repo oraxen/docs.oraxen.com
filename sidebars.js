@@ -20,7 +20,7 @@ const sidebars = {docsSidebar: [
   {type: 'category', label: '🤝 Compatibility', link: {type: 'doc', id: 'compatibility/index'}, items: [
     'compatibility/placeholderapi', 'compatibility/skript', 'compatibility/viaversion', 'compatibility/packlayer', 'compatibility/modelengine', 'compatibility/mythichud', 'compatibility/mythiccrucible', 'compatibility/mythicmobs', 'compatibility/mmoitems', 'compatibility/betterhud', 'compatibility/blocklocker', 'compatibility/ecoitems', 'compatibility/executableitems', 'compatibility/worldedit',
     {type: 'category', label: '🧱 Bedrock', link: {type: 'doc', id: 'compatibility/bedrock/index'}, items: [
-      {type: 'category', label: '🪶 FeatherConvert', link: {type: 'doc', id: 'compatibility/bedrock/feather/index'}, items: ['compatibility/bedrock/feather/usage']},
+      {type: 'category', label: '🪶 BedrockGen', link: {type: 'doc', id: 'compatibility/bedrock/bedrockgen/index'}, items: ['compatibility/bedrock/bedrockgen/usage']},
     ]},
     {type: 'category', label: '🌍 World Generators', link: {type: 'doc', id: 'compatibility/generators/index'}, items: ['compatibility/generators/iris', 'compatibility/generators/terralith', 'compatibility/generators/customoregen']},
     {type: 'category', label: '📂 Archives', link: {type: 'doc', id: 'compatibility/archives/index'}, items: ['compatibility/archives/bossshoppro', 'compatibility/archives/cratereloaded', 'compatibility/archives/trmenu', 'compatibility/archives/epicworldgenerator', 'compatibility/archives/realisticworldgenerator']},
