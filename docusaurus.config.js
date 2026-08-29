@@ -35,6 +35,13 @@ const config = {
     theme: {customCss: './src/css/custom.css'},
   }]],
   themeConfig: {
+    announcementBar: {
+      id: 'bedrockgen-support',
+      content: '<strong>NEW</strong>; Oraxen now supports Bedrock and Geyser through the <a href="/compatibility/bedrock/bedrockgen/">BedrockGen addon</a>.',
+      backgroundColor: '#e0f2fe',
+      textColor: '#0b2d35',
+      isCloseable: true,
+    },
     colorMode: {respectPrefersColorScheme: true},
     navbar: {
       title: 'Oraxen',
