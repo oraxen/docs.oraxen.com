@@ -118,7 +118,28 @@ Prevents death when the item is consumed and applies configured death effects.<b
 myitem:
   Components:
     death_protection:
-      death_effects: []
+      death_effects:
+        - apply_effects:
+            effects:
+              - type: REGENERATION
+                duration: 5
+                amplifier: 1
+        - remove_effects:
+            effects:
+              - POISON
+        - play_sound: true
+        - teleport_randomly: true
+```
+
+When triggered, the component prevents the player's death and applies the configured effects. Supported death effects include applying potion effects, removing effects, clearing all effects, teleporting randomly, and playing the death protection sound.
+
+```yaml
+myitem:
+  Components:
+    death_protection:
+      death_effects:
+        - clear_all_effects: true
+        - play_sound: true
 ```
 
 **Minecraft version**<br />
