@@ -45,6 +45,7 @@
 
   .search :global(.navbar__search) {
     margin-left: 0;
+    width: fit-content;
   }
 
   .rightSidebarViewport > :global(.table-of-contents) {
