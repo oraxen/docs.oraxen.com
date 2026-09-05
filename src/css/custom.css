@@ -20,7 +20,7 @@
 
 .navbar__logo img { border-radius: 6px; }
 .oraxen-desktop-search {
-  position: fixed;
+  position: absolute;
   right: 1.5rem;
   top: 1rem;
   z-index: var(--ifm-z-index-fixed);
