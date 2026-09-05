@@ -13,17 +13,18 @@
   }
 
   .rightSidebar {
+    align-self: flex-start;
     display: block;
+    height: 100vh;
+    position: sticky;
+    top: 0;
   }
 
   .rightSidebarViewport {
     display: flex;
     flex-direction: column;
     height: 100%;
-    max-height: 100vh;
     padding-top: 1rem;
-    position: sticky;
-    top: 0;
   }
 
   .search {
