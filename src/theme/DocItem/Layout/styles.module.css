@@ -15,7 +15,9 @@
   .rightSidebar {
     align-self: flex-start;
     display: block;
-    height: 100vh;
+    /* Match the main container's bottom padding so the sticky sidebar does not
+       get pushed upward when the page reaches its scroll boundary. */
+    height: calc(100vh - 2rem);
     position: sticky;
     top: 0;
   }
