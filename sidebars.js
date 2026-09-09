@@ -11,7 +11,7 @@ const sidebars = {docsSidebar: [
     {type: 'category', label: '🔊 Sounds', link: {type: 'doc', id: 'configuration/sounds/index'}, items: []},
     {type: 'category', label: '🏞️ Paintings', link: {type: 'doc', id: 'configuration/paintings/index'}, items: []},
     {type: 'category', label: '🇩🇪 Language', link: {type: 'doc', id: 'configuration/language/index'}, items: []},
-    'configuration/recipes',
+    {type: 'category', label: '📖 Recipes', link: {type: 'doc', id: 'configuration/recipes/index'}, items: []},
   ]},
   {type: 'category', label: '🕹️ Usage', link: {type: 'doc', id: 'usage/index'}, items: [
     {type: 'category', label: '📖 Tutorials', link: {type: 'doc', id: 'usage/tutorials/index'}, items: [

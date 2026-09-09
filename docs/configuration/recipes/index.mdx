@@ -124,7 +124,7 @@ Use `shape` and `ingredients` together. Each character in `shape` maps to one en
 `ingredients` - Character-to-item mapping.<br />
 `result` - Crafted output item.<br />
 
-```yaml
+```yaml title="plugins/Oraxen/recipes/shaped.yml"
 bedrock_pickaxe:
   shape:
     - AAA
@@ -153,7 +153,7 @@ Shapeless recipes ignore slot position. Each ingredient entry should include an 
 `amount` - How many times that ingredient must appear.<br />
 `result` - Crafted output item.<br />
 
-```yaml
+```yaml title="plugins/Oraxen/recipes/shapeless.yml"
 obsidian_mix:
   result:
     oraxen_item: obsidian_ingot
@@ -177,7 +177,7 @@ obsidian_mix:
 `cookingTime` - Cooking duration in ticks.<br />
 `experience` - Experience granted when the recipe completes.<br />
 
-```yaml
+```yaml title="plugins/Oraxen/recipes/furnace.yml, blasting.yml, campfire.yml, or smoking.yml"
 amethyst:
   experience: 200
   cookingTime: 200
@@ -193,7 +193,7 @@ amethyst:
 
 Stonecutting recipes use one `input` and one `result`.
 
-```yaml
+```yaml title="plugins/Oraxen/recipes/stonecutting.yml"
 polished_obsidian:
   result:
     oraxen_item: polished_obsidian_tile
@@ -212,7 +212,7 @@ Smithing recipes use the smithing table's three input slots. Paper performs the 
 `addition` - Material added to the base.<br />
 `result` - Result template for the transform.<br />
 
-```yaml
+```yaml title="plugins/Oraxen/recipes/smithing.yml"
 ruby_upgrade:
   permission: oraxen.recipe.ruby_upgrade
   template:
@@ -238,7 +238,7 @@ Anvil recipes produce a fixed result. The addition is optional; when omitted, th
 
 Ingredient sections support `amount` to consume more than one item from that slot.
 
-```yaml
+```yaml title="plugins/Oraxen/recipes/anvil.yml"
 repair_obsidian_sword:
   permission: oraxen.recipe.repair_obsidian_sword
   experience_cost: 5
@@ -266,7 +266,7 @@ Grindstone recipes also produce a fixed result. A recipe without `addition` acce
 `result` - Fixed output item.<br />
 `experience` - Experience points granted when taking the result. Defaults to `0`.<br />
 
-```yaml
+```yaml title="plugins/Oraxen/recipes/grindstone.yml"
 extract_ruby:
   experience: 7
   base:
@@ -293,7 +293,7 @@ Cauldron recipes run when a player right-clicks the matching cauldron with the c
 
 Water and powder-snow changes may reduce the level to an empty cauldron or raise it up to level `3`. Lava supports `-1` to empty the cauldron or `0` to preserve it.
 
-```yaml
+```yaml title="plugins/Oraxen/recipes/cauldron.yml"
 wash_ruby:
   permission: oraxen.recipe.wash_ruby
   fluid: water
@@ -310,7 +310,7 @@ wash_ruby:
 ## Ingame Builder
 
 ### Commands
-You can create recipes ingame with the recipe builder commands listed on the [commands page](../usage/commands#recipes).
+You can create recipes ingame with the recipe builder commands listed on the [commands page](../../usage/commands#recipes).
 
 ```yml
 /oraxen recipes builder shaped
@@ -356,7 +356,7 @@ Crafting-table recipes can also appear in `/oraxen recipes show`, which opens Or
 ## Disabling Existing Recipes
 You can disable vanilla or already-registered recipes by adding their namespaced keys to `disabled.yml`.
 
-```yaml
+```yaml title="plugins/Oraxen/recipes/disabled.yml"
 disabled:
   - minecraft:diamond_sword
   - minecraft:iron_pickaxe
