@@ -10,12 +10,14 @@ const sidebars = {docsSidebar: [
     {type: 'category', label: '✨ Text Effects', link: {type: 'doc', id: 'configuration/texteffects/index'}, items: []},
     {type: 'category', label: '🔊 Sounds', link: {type: 'doc', id: 'configuration/sounds/index'}, items: []},
     {type: 'category', label: '🏞️ Paintings', link: {type: 'doc', id: 'configuration/paintings/index'}, items: []},
+    {type: 'category', label: '🇩🇪 Language', link: {type: 'doc', id: 'configuration/language/index'}, items: []},
+    'configuration/recipes',
   ]},
   {type: 'category', label: '🕹️ Usage', link: {type: 'doc', id: 'usage/index'}, items: [
     {type: 'category', label: '📖 Tutorials', link: {type: 'doc', id: 'usage/tutorials/index'}, items: [
       'usage/tutorials/13lfg3', 'usage/tutorials/23ho7', 'usage/tutorials/39d3x', 'usage/tutorials/491d3', 'usage/tutorials/9d13l', 'usage/tutorials/a7k2m', 'usage/tutorials/c82mx', 'usage/tutorials/d017g', 'usage/tutorials/d31l5f', 'usage/tutorials/f3g7k', 'usage/tutorials/f4q9x', 'usage/tutorials/g7p4t', 'usage/tutorials/h2k8m', 'usage/tutorials/v6n8r',
     ]},
-    'usage/commands', 'usage/recipes', 'usage/merging', 'usage/hosting', 'usage/settings',
+    'usage/commands', 'usage/merging', 'usage/hosting', 'usage/settings',
   ]},
   {type: 'category', label: '🤝 Compatibility', link: {type: 'doc', id: 'compatibility/index'}, items: [
     'compatibility/placeholderapi', 'compatibility/skript', 'compatibility/viaversion', 'compatibility/packlayer', 'compatibility/modelengine', 'compatibility/mythichud', 'compatibility/mythiccrucible', 'compatibility/mythicmobs', 'compatibility/mmoitems', 'compatibility/betterhud', 'compatibility/blocklocker', 'compatibility/ecoitems', 'compatibility/executableitems', 'compatibility/worldedit', 'compatibility/mineresetlite',

@@ -1,0 +1,88 @@
+---
+title: "🇩🇪 Language"
+description: "Overriding Minecraft language components using Oraxen."
+asIndexPage: true
+---
+
+import { Callout } from '@site/src/components/Compat'
+
+# 🇩🇪 Language
+
+## Overview
+Minecraft uses language components for text throughout the game, including menu labels, inventory titles, item descriptions and messages.
+Oraxen lets you override these components through the resource pack.
+
+## Configuration
+Language overrides are configured in `plugins/Oraxen/pack/lang`.
+
+<PluginFileTree
+  initialTreeData={[
+    {
+      id: "plugins",
+      name: "plugins",
+      children: [
+        {
+          id: "plugins/Oraxen",
+          name: "Oraxen",
+          children: [
+            {
+              id: "plugins/Oraxen/pack",
+              name: "pack",
+              children: [
+                {
+                  id: "plugins/Oraxen/pack/lang",
+                  name: "lang",
+                  children: [
+                    { id: "plugins/Oraxen/pack/lang/global.json", name: "global.json", isLeaf: true },
+                    { id: "plugins/Oraxen/pack/lang/en_us.json", name: "en_us.json", isLeaf: true },
+                    { id: "plugins/Oraxen/pack/lang/de_de.json", name: "de_de.json", isLeaf: true }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]}
+/>
+
+<Callout type="note">
+  Language files must contain valid JSON. Separate entries with commas and use double quotes around both components and values.
+</Callout>
+
+## Global Overrides
+Entries in `global.json` apply to every language supported by Oraxen.<br />
+
+```json title="plugins/Oraxen/pack/lang/global.json"
+{
+  "container.inventory": "",
+  "menu.returnToGame": "Return to the server"
+}
+```
+
+`container.inventory` controls the **Inventory** text shown inside the player inventory. An empty value hides it.
+
+## Language-specific Overrides
+Use a locale file such as `en_us.json`, `de_de.json` or `fr_fr.json` when an override should only apply to players using that language.<br />
+
+```json title="plugins/Oraxen/pack/lang/de_de.json"
+{
+  "menu.returnToGame": "Zurück zum Server"
+}
+```
+
+Oraxen adds the entries from `global.json` to every locale during pack generation. If the same component is defined in a locale file, the language-specific value takes priority.
+
+<Callout type="info">
+  Locale filenames use Minecraft's language codes. For example, use `en_us.json` for English (US) and `de_de.json` for German (Germany).
+</Callout>
+
+## Language Components
+A full list of language components can be found <Highlight color="#1877F2" to="https://assets.mcasset.cloud/26.2/assets/minecraft/lang/en_us.json">**here**</Highlight>.<br />
+
+Copy the component you want to change into `global.json` or a locale file, then replace its value with your own text.
+
+<Callout type="important">
+  Run `/oraxen reload pack` after editing a language file. Players must receive the regenerated resource pack before the changes appear. They may need to reconnect or re-apply the server resource pack.
+</Callout>
