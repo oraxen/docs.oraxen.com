@@ -29,12 +29,6 @@ function DiscordComponentEmbed({metadata}) {
               content: `# ${metadata.title}\n${metadata.description}`,
             },
           ],
-          accessory: {
-            type: 2,
-            style: 5,
-            url: new URL(metadata.permalink, 'https://docs.oraxen.com').href,
-            label: 'Go to docs',
-          },
         },
       ],
     },
