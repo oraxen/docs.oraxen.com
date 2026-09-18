@@ -22,13 +22,8 @@ function DiscordComponentEmbed({metadata}) {
       type: 17,
       components: [
         {
-          type: 9,
-          components: [
-            {
-              type: 10,
-              content: `# ${metadata.title}\n${metadata.description}`,
-            },
-          ],
+          type: 10,
+          content: `# ${metadata.title}\n${metadata.description}`,
         },
       ],
     },
