@@ -1,5 +1,6 @@
 import React from 'react';
 import clsx from 'clsx';
+import Head from '@docusaurus/Head';
 import {useWindowSize} from '@docusaurus/theme-common';
 import {useDoc} from '@docusaurus/plugin-content-docs/client';
 import ContentVisibility from '@theme/ContentVisibility';
@@ -14,6 +15,39 @@ import DocVersionBanner from '@theme/DocVersionBanner';
 import SearchBar from '@theme/SearchBar';
 
 import styles from './styles.module.css';
+
+function DiscordComponentEmbed({metadata}) {
+  const payload = {
+    component: {
+      type: 17,
+      components: [
+        {
+          type: 9,
+          components: [
+            {
+              type: 10,
+              content: `# ${metadata.title}\n${metadata.description}`,
+            },
+          ],
+          accessory: {
+            type: 2,
+            style: 5,
+            url: new URL(metadata.permalink, 'https://docs.oraxen.com').href,
+            label: 'Go to docs',
+          },
+        },
+      ],
+    },
+  };
+
+  return (
+    <Head>
+      <script id="discord:component-embed" type="application/json">
+        {JSON.stringify(payload).replaceAll('<', '\\u003c')}
+      </script>
+    </Head>
+  );
+}
 
 function useDocTOC() {
   const {frontMatter, toc} = useDoc();
@@ -34,29 +68,32 @@ export default function DocItemLayout({children}) {
   const {metadata} = useDoc();
 
   return (
-    <div className="row">
-      <div className={clsx('col', styles.docItemCol)}>
-        <ContentVisibility metadata={metadata} />
-        <DocVersionBanner />
-        <div className={styles.docItemContainer}>
-          <article>
-            <DocBreadcrumbs />
-            <DocVersionBadge />
-            {docTOC.mobile}
-            <DocItemContent>{children}</DocItemContent>
-            <DocItemFooter />
-          </article>
-          <DocItemPaginator />
-        </div>
-      </div>
-      <aside className={clsx('col col--3', styles.rightSidebar)}>
-        <div className={styles.rightSidebarViewport}>
-          <div className={styles.search}>
-            <SearchBar />
+    <>
+      <DiscordComponentEmbed metadata={metadata} />
+      <div className="row">
+        <div className={clsx('col', styles.docItemCol)}>
+          <ContentVisibility metadata={metadata} />
+          <DocVersionBanner />
+          <div className={styles.docItemContainer}>
+            <article>
+              <DocBreadcrumbs />
+              <DocVersionBadge />
+              {docTOC.mobile}
+              <DocItemContent>{children}</DocItemContent>
+              <DocItemFooter />
+            </article>
+            <DocItemPaginator />
           </div>
-          {docTOC.desktop}
         </div>
-      </aside>
-    </div>
+        <aside className={clsx('col col--3', styles.rightSidebar)}>
+          <div className={styles.rightSidebarViewport}>
+            <div className={styles.search}>
+              <SearchBar />
+            </div>
+            {docTOC.desktop}
+          </div>
+        </aside>
+      </div>
+    </>
   );
 }
