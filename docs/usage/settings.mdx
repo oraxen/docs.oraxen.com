@@ -27,6 +27,23 @@ debug: false
 </Details>
 
 <Details>
+<summary id="update-checker"><strong>🔔 `update-checker`</strong></summary>
+
+Checks GitHub for a newer Oraxen release and notifies players with `oraxen.update.notify` when they join.
+
+```yaml
+update-checker:
+  enabled: true
+  interval: 24h
+```
+
+`enabled` - Enables update checks. Set it to `false` to disable checks and join notifications.<br />
+`interval` - Time between checks, using a positive whole number followed by `s` (seconds), `m` (minutes), `h` (hours), or `d` (days). Defaults to `24h`; invalid values fall back to `24h`.<br />
+
+The first check runs when Oraxen starts. This setting checks for updates; installing a newer release is still manual.
+</Details>
+
+<Details>
 <summary id="plugin"><strong>🧩 `Plugin`</strong></summary>
 
 Controls Oraxen's global behavior, including config housekeeping, language selection, first-run messaging, Paper config tweaks for custom blocks, default asset/config generation, and which UI surfaces use MiniMessage formatting.
@@ -226,8 +243,8 @@ Pack:
 `generation.multi_version_packs` - Generates separate packs for clients on 1.21.3 and below and clients on 1.21.4+. ViaVersion is used for client-version detection; without it, players receive the server-version pack. Multi-version packs require the `lobfile`, `polymath`, or `external` upload type.<br />
 `generation.excluded_file_extensions` - Lists file extensions that should not be included in the final zipped resource pack.<br />
 `generation.appearance.item_properties` - Uses the `minecraft:item_model` component with Oraxen item IDs and generates `assets/oraxen/items/<item_id>.json` for Minecraft 1.21.4+.<br />
-`generation.appearance.model_data_ids` - Uses `custom_model_data.strings[0]` with stable string identifiers such as `oraxen:<item_id>` and generates `minecraft:select` item definitions. This only applies to items that explicitly set `Pack.custom_model_data`.<br />
-`generation.appearance.model_data_float` - Uses `custom_model_data.floats[0]` with `minecraft:range_dispatch` and also sets integer CustomModelData for plugin compatibility. This only applies to items that explicitly set `Pack.custom_model_data`.<br />
+`generation.appearance.model_data_ids` - Uses `custom_model_data.strings[0]` with stable string identifiers such as `oraxen:<item_id>` and generates `minecraft:select` item definitions. This only applies to items that explicitly set `pack.custom_model_data`.<br />
+`generation.appearance.model_data_float` - Uses `custom_model_data.floats[0]` with `minecraft:range_dispatch` and also sets integer CustomModelData for plugin compatibility. This only applies to items that explicitly set `pack.custom_model_data`.<br />
 `generation.appearance.generate_predicates` - Generates legacy predicate override files on 1.21.4+. This is not normally needed unless an external tool requires legacy JSON files. Pre-1.21.4 servers always generate predicates.<br />
 `generation.verify_pack_files` - Checks textures and models for valid resource-pack formatting.<br />
 `generation.fix_force_unicode_glyphs` - Fixes glyphs not showing when Force Unicode is enabled.<br />
@@ -454,7 +471,7 @@ Misc:
 
 `reset_recipes` - Resets Oraxen recipes on reload. This can conflict with other plugins, but makes recipe testing easier.<br />
 `add_recipes_to_book` - Adds unlocked Oraxen recipes to the player recipe book.<br />
-`hide_scoreboard_numbers` - Hides scoreboard numbers on the sidebar. On Minecraft 26.x and above, this requires a packet adapter such as ProtocolLib or PacketEvents.<br />
+`hide_scoreboard_numbers` - Hides scoreboard numbers on the sidebar using Oraxen's native packet handling on supported Paper versions. Legacy servers require PacketEvents for packet features.<br />
 `hide_scoreboard_background` - Hides the scoreboard background on Minecraft 1.21.6 through 1.21.7.<br />
 `hide_tablist_background` - Hides the tablist background on Minecraft 1.21.6 through 1.21.7.<br />
 `armor_equip_event_bypass` - Lists blocks that should not trigger armor equip behavior when right-clicked. This should include blocks with inventories and other blocks that should not equip armor on interaction.<br />

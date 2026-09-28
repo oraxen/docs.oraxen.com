@@ -8,14 +8,14 @@ import { Callout, Tabs, Steps } from '@site/src/components/Compat'
 # 🧩 Mechanics (Developers)
 
 ## Overview
-Mechanics are item-bound behaviors in Oraxen. A mechanic is configured per-item under `Mechanics:` in your item YAML, and Oraxen applies the mechanic during item parsing.
+Mechanics are item-bound behaviors in Oraxen. A mechanic is configured per-item under `mechanics:` in your item YAML, and Oraxen applies the mechanic during item parsing.
 
 <Callout type="info">
   Oraxen is open source, allowing you to create a pull request with the needed changes for your integration. If you are unsure about how to contribute, refer to our <Highlight color="#1877F2" to="./contributing">**Contributing Guide**</Highlight>.
 </Callout>
 
 <Callout type="warning">
-  Minecraft 1.20.5+ introduces vanilla item components. Some legacy mechanics (like `durability`) are deprecated in favor of components. Use mechanics for custom behavior; use `Components:` for vanilla-backed data when possible.
+  Minecraft 1.20.5+ introduces vanilla item components. Some legacy mechanics (like `durability`) are deprecated in favor of components. Use mechanics for custom behavior; use `components:` for vanilla-backed data when possible.
 </Callout>
 
 ## Usage
@@ -155,12 +155,12 @@ damage_multiplier:
   enabled: true
 ```
 
-Use it on any item under `Mechanics:`.
+Use it on any item under `mechanics:`.
 
 ```yaml
 my_sword:
   material: DIAMOND_SWORD
-  Mechanics:
+  mechanics:
     damage_multiplier:
       multiplier: 1.25
 ```

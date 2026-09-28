@@ -8,7 +8,7 @@ import { Callout, Details } from '@site/src/components/Compat'
 # 🖌️ Appearance
 
 ## Overview
-Item appearance is controlled by the `Pack` section in each item config and by the appearance systems enabled in `settings.yml`.
+Item appearance is controlled by the `pack` section in each item config and by the appearance systems enabled in `settings.yml`.
 Oraxen generates the required resource pack files (models, textures, and item definitions) based on those settings.
 
 <Callout type="info">
@@ -81,7 +81,7 @@ Appearance is configured per item in `.yml` files inside `plugins/Oraxen/items`,
 ```yaml {3-4}
 my_item:
   material: IRON_SWORD
-  Pack:
+  pack:
     model: weapons/swords/ice_sword
 ```
 
@@ -141,7 +141,7 @@ Path to an existing model JSON (relative to `pack/models/`, without `.json`).
 
 ```yaml
 my_item:
-  Pack:
+  pack:
     model: weapons/swords/ice_sword
 ```
 </Details>
@@ -153,7 +153,7 @@ Model used in inventory/GUI contexts. When set, `model` is used for held/equippe
 
 ```yaml
 my_item:
-  Pack:
+  pack:
     model: weapons/swords/ice_sword_3d
     gui_model: weapons/swords/ice_sword_icon
 ```
@@ -169,7 +169,7 @@ Automatically generates a model JSON from `textures`. Effectively defaults to `f
 
 ```yaml
 my_item:
-  Pack:
+  pack:
     generate_model: true
     parent_model: item/generated
     textures:
@@ -185,14 +185,14 @@ Accepts either an array (layer0, layer1, ...) or a named map.
 
 ```yaml
 my_item:
-  Pack:
+  pack:
     textures:
       - weapons/swords/ice_sword
 ```
 
 ```yaml
 my_item:
-  Pack:
+  pack:
     textures:
       layer0: weapons/swords/ice_sword
       particle: weapons/swords/ice_sword
@@ -206,7 +206,7 @@ Parent model used when `generate_model` is enabled.
 
 ```yaml
 my_item:
-  Pack:
+  pack:
     parent_model: item/handheld
 ```
 
@@ -221,7 +221,7 @@ Custom output path for generated model files. Supports namespaced paths like `or
 
 ```yaml
 my_item:
-  Pack:
+  pack:
     generated_model_path: oraxen:weapons
 ```
 </Details>
@@ -234,7 +234,7 @@ Sets a specific CustomModelData value (auto-generated if not set). Used by legac
 
 ```yaml
 my_item:
-  Pack:
+  pack:
     custom_model_data: 120001
 ```
 </Details>
@@ -246,7 +246,7 @@ Additional model definitions registered as `oraxen:<item_id>/<key>`. Useful for 
 
 ```yaml
 my_item:
-  Pack:
+  pack:
     models:
       active: weapons/swords/ice_sword_active
       cracked: weapons/swords/ice_sword_cracked
@@ -260,7 +260,7 @@ Shield blocking model or texture. If you provide a texture, Oraxen generates a m
 
 ```yaml
 my_shield:
-  Pack:
+  pack:
     blocking_texture: weapons/shields/ice_shield_blocking
 ```
 </Details>
@@ -272,7 +272,7 @@ Bow pulling stage models or textures. Provide multiple entries (from early to la
 
 ```yaml
 my_bow:
-  Pack:
+  pack:
     pulling_models:
       - weapons/bows/ice_bow_pull_0
       - weapons/bows/ice_bow_pull_1
@@ -287,7 +287,7 @@ Crossbow charged model or texture.
 
 ```yaml
 my_crossbow:
-  Pack:
+  pack:
     charged_model: weapons/crossbows/ice_crossbow_charged
 ```
 </Details>
@@ -299,7 +299,7 @@ Crossbow-with-firework model or texture.
 
 ```yaml
 my_crossbow:
-  Pack:
+  pack:
     firework_texture: weapons/crossbows/ice_crossbow_firework
 ```
 </Details>
@@ -311,7 +311,7 @@ Fishing rod cast model or texture.
 
 ```yaml
 my_rod:
-  Pack:
+  pack:
     cast_model: tools/rods/ice_rod_cast
 ```
 </Details>
@@ -323,7 +323,7 @@ Durability-based model or texture stages, from least to most damaged.
 
 ```yaml
 my_item:
-  Pack:
+  pack:
     damaged_textures:
       - tools/picks/ice_pick_1
       - tools/picks/ice_pick_2
@@ -338,7 +338,7 @@ Exclude this item from CustomModelData predicate generation. Works on all versio
 
 ```yaml
 my_item:
-  Pack:
+  pack:
     exclude_from_predicates: true
 ```
 </Details>
@@ -350,7 +350,7 @@ Exclude this item from the `minecraft:item_model` component.
 
 ```yaml
 my_item:
-  Pack:
+  pack:
     exclude_from_item_model: true
 ```
 
@@ -365,7 +365,7 @@ Allows oversized rendering in GUI contexts for item definitions.
 
 ```yaml
 my_item:
-  Pack:
+  pack:
     oversized_in_gui: true
 ```
 
@@ -380,7 +380,7 @@ Controls whether the hand animation plays when swapping to this item.
 
 ```yaml
 my_item:
-  Pack:
+  pack:
     hand_animation_on_swap: false
 ```
 
@@ -398,7 +398,7 @@ Scales the item swap animation.
 
 ```yaml
 my_item:
-  Pack:
+  pack:
     swap_animation_scale: 0.75
 ```
 
@@ -415,7 +415,7 @@ my_item:
 ice_sword:
   material: IRON_SWORD
   itemname: "<gradient:#80d9ff:#1c7fd1>Ice Sword"
-  Pack:
+  pack:
     model: weapons/swords/ice_sword
     gui_model: weapons/swords/ice_sword_icon
     generate_model: false

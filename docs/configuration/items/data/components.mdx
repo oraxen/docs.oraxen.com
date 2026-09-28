@@ -51,7 +51,7 @@ Components are configured per item in `.yml` files inside the `plugins/Oraxen/it
 ```yaml {3-4}
 my_item:
   material: PAPER
-  Components:
+  components:
     max_stack_size: 2
 ```
 
@@ -64,7 +64,7 @@ Sets the maximum stack size of the item.<br />
 
 ```yaml
 myitem:
-  Components:
+  components:
     max_stack_size: 64
 ```
 
@@ -82,7 +82,7 @@ Overrides the enchantment glint of an item.<br />
 
 ```yaml
 myitem:
-  Components:
+  components:
     enchantment_glint_override: true
 ```
 	
@@ -101,7 +101,7 @@ Makes the item immune to fire and lava damage when dropped.<br />
 
 ```yaml
 myitem:
-  Components:
+  components:
     fire_resistant: true
 ```
 
@@ -116,7 +116,7 @@ Prevents death when the item is consumed and applies configured death effects.<b
 
 ```yaml
 myitem:
-  Components:
+  components:
     death_protection:
       death_effects:
         - apply_effects:
@@ -135,7 +135,7 @@ When triggered, the component prevents the player's death and applies the config
 
 ```yaml
 myitem:
-  Components:
+  components:
     death_protection:
       death_effects:
         - clear_all_effects: true
@@ -157,7 +157,7 @@ Hides the item's tooltip entirely.<br />
 
 ```yaml
 myitem:
-  Components:
+  components:
     hide_tooltip: true
 ```
 
@@ -172,7 +172,7 @@ Defines custom durability behavior for the item.<br />
 
 ```yaml
 myitem:
-  Components:
+  components:
     durability:
       value: 250
       damage_block_break: true
@@ -191,7 +191,7 @@ An integer value works as shorthand for the section form.
 
 ```yaml
 myitem:
-  Components:
+  components:
     durability: 250
 ```
 
@@ -207,7 +207,7 @@ Makes the item behave like food and defines how much hunger and saturation it re
 
 ```yaml
 myitem:
-  Components:
+  components:
     food:
       nutrition: 6
       saturation: 7.2
@@ -234,7 +234,7 @@ Controls how the item is consumed, including timing, animation, particles, and s
 
 ```yaml
 myitem:
-  Components:
+  components:
     consumable:
       consume_seconds: 1.6
       animation: "eat"
@@ -254,7 +254,7 @@ myitem:
 
 ```yaml
 myitem:
-  Components:
+  components:
     consumable:
       on_consume_effects:
         - type: apply_effects
@@ -277,7 +277,7 @@ Makes the item equippable and defines slot-related behavior.<br />
 
 ```yaml
 myitem:
-  Components:
+  components:
     equippable:
       slot: HEAD
       model: "oraxen:my_helmet"
@@ -321,7 +321,7 @@ Defines tool mining behavior, including default speed and optional mining rules.
 
 ```yaml
 myitem:
-  Components:
+  components:
     tool:
       damage_per_block: 1
       default_mining_speed: 4.0
@@ -347,7 +347,7 @@ Adds a cooldown after using the item.<br />
 
 ```yaml
 myitem:
-  Components:
+  components:
     use_cooldown:
       seconds: 2.5
       group: "magic_wands"
@@ -368,7 +368,7 @@ Defines which item remains after the item is consumed or used up.<br />
 
 ```yaml
 myitem:
-  Components:
+  components:
     use_remainder:
       minecraft_type: "BOWL"
       amount: 1
@@ -376,7 +376,7 @@ myitem:
 
 ```yaml
 myitem:
-  Components:
+  components:
     use_remainder:
       oraxen_item: "empty_bottle"
       amount: 1
@@ -398,7 +398,7 @@ Makes the item playable in jukeboxes.<br />
 
 ```yaml
 myitem:
-  Components:
+  components:
     jukebox_playable:
       show_in_tooltip: true
       song_key: "oraxen:my_song"
@@ -426,7 +426,7 @@ Sets a custom tooltip style resource location.<br />
 
 ```yaml
 myitem:
-  Components:
+  components:
     tooltip_style: "oraxen:epic_tooltip"
 ```
 
@@ -441,7 +441,7 @@ Sets a custom item model resource location through the component system.<br />
 
 ```yaml
 myitem:
-  Components:
+  components:
     item_model: "oraxen:weapons/flame_blade"
 ```
 
@@ -456,7 +456,7 @@ Allows you to use Minecraft components that are not specifically handled by Orax
 
 ```yaml
 myitem:
-  Components:
+  components:
     repairable:
       items:
         - minecraft:diamond
@@ -464,7 +464,7 @@ myitem:
 
 ```yaml
 myitem:
-  Components:
+  components:
     custom_component:
       some_property: value
       another_property: 123
@@ -483,7 +483,7 @@ Sets the painting variant of the item when placed.<br />
 
 ```yaml
 myitem:
-  Components:
+  components:
     painting_variant: "oraxen:edna"
 ```
 
@@ -501,7 +501,7 @@ myitem:
 myitem:
   itemname: "<gold>Traveler's Meal"
   material: BREAD
-  Components:
+  components:
     max_stack_size: 16
     fire_resistant: false
     food:

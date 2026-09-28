@@ -64,11 +64,11 @@ Create `plugins/Oraxen/items/ruby_armor.yml` and add all four pieces.
 ruby_helmet:
   itemname: "<gradient:#ff1744:#9c0025>Ruby Helmet</gradient>"
   material: PAPER
-  Components:
+  components:
     equippable:
       slot: HEAD
       model: oraxen:ruby
-  Pack:
+  pack:
     generate_model: true
     parent_model: "item/generated"
     textures:
@@ -77,11 +77,11 @@ ruby_helmet:
 ruby_chestplate:
   itemname: "<gradient:#ff1744:#9c0025>Ruby Chestplate</gradient>"
   material: PAPER
-  Components:
+  components:
     equippable:
       slot: CHEST
       model: oraxen:ruby
-  Pack:
+  pack:
     generate_model: true
     parent_model: "item/generated"
     textures:
@@ -90,11 +90,11 @@ ruby_chestplate:
 ruby_leggings:
   itemname: "<gradient:#ff1744:#9c0025>Ruby Leggings</gradient>"
   material: PAPER
-  Components:
+  components:
     equippable:
       slot: LEGS
       model: oraxen:ruby
-  Pack:
+  pack:
     generate_model: true
     parent_model: "item/generated"
     textures:
@@ -103,11 +103,11 @@ ruby_leggings:
 ruby_boots:
   itemname: "<gradient:#ff1744:#9c0025>Ruby Boots</gradient>"
   material: PAPER
-  Components:
+  components:
     equippable:
       slot: FEET
       model: oraxen:ruby
-  Pack:
+  pack:
     generate_model: true
     parent_model: "item/generated"
     textures:
@@ -129,7 +129,7 @@ Reapply the generated pack, then get the pieces from `/oraxen inv` or `/oraxen g
 </Steps>
 
 <Callout type="note">
-With `auto_assign_component: true`, you may omit `Components.equippable`. Oraxen derives the slot and model from the shared prefix and one of the recognized suffixes: `_helmet`, `_chestplate`, `_leggings`, or `_boots`.
+With `auto_assign_component: true`, you may omit `components.equippable`. Oraxen derives the slot and model from the shared prefix and one of the recognized suffixes: `_helmet`, `_chestplate`, `_leggings`, or `_boots`.
 </Callout>
 
 ## Troubleshooting
