@@ -29,23 +29,22 @@ Add the following configuration.
 wooden_chair:
   itemname: "<gold>Wooden Chair"
   material: PAPER
-  Pack:
+  pack:
     generate_model: false
     model: furniture/wooden_chair
-  Mechanics:
+  mechanics:
     furniture:
       type: DISPLAY_ENTITY
       barrier: true
-      hitbox:
-        width: 0.8
-        height: 1.0
+      hitboxes:
+        - "0,0,0 0.8,1.0"
       rotatable: true
       restricted_rotation: VERY_STRICT
 ```
 
-`Pack.model` is the path to the model below `plugins/Oraxen/pack/models`, without `.json`.
+`pack.model` is the path to the model below `plugins/Oraxen/pack/models`, without `.json`.
 
-`DISPLAY_ENTITY` is the recommended furniture type for modern servers. The barrier and hitbox make the furniture interactable and stop players from walking through it.
+`DISPLAY_ENTITY` is the recommended furniture type for modern servers. The barrier provides solid collision and interaction. For interaction without a solid barrier, remove `barrier: true` and use the `hitboxes` list.
 
 ### Reload Oraxen
 
@@ -65,7 +64,7 @@ Reconnect if necessary so the client receives the regenerated resource pack. Pla
 Use `display_entity_properties` to adjust the size or position of a display-entity model.
 
 ```yaml
-Mechanics:
+mechanics:
   furniture:
     type: DISPLAY_ENTITY
     display_entity_properties:
@@ -79,7 +78,7 @@ Mechanics:
         z: 0
 ```
 
-Use `hitbox` for a simple collision area. Use `hitboxes` when the furniture needs multiple collision areas.
+Use `hitboxes` for one or more interaction areas, with each entry formatted as `<x>,<y>,<z> <width>,<height>`. Legacy `hitbox` configurations are migrated automatically.
 </Callout>
 
 <Callout type="info">

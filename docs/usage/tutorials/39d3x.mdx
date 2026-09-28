@@ -48,12 +48,12 @@ Create a new item in the items directory (or edit an existing `.yml` file).
 magic_elytra:
   itemname: "<gradient:#9B59B6:#5B6BBF:#1A237E>Magic Elytra</gradient>"
   material: ELYTRA
-  Components:
+  components:
     max_stack_size: 1
     equippable:
       slot: CHEST
       model: oraxen:magic_elytra
-  Pack:
+  pack:
     generate_model: true
     parent_model: item/generated
     textures:
@@ -63,7 +63,7 @@ magic_elytra:
 `itemname` - The display name shown for the item.<br />
 `material` - The base Minecraft material used for the item.<br />
 
-`Components` - Vanilla item component settings for the item.<br />
+`components` - Vanilla item component settings for the item.<br />
 `max_stack_size` - Limits the item to a stack size of `1`.<br />
 `equippable` - Makes the item wearable in the chest slot.<br />
 `slot` - The equipment slot used by the item.<br />
@@ -79,6 +79,6 @@ Run `/oraxen reload all` and then give yourself the item via `/oraxen give @s ma
 </Steps>
 
 ## Troubleshooting
-- Missing texture in inventory - check `Pack.textures` and icon file path.
+- Missing texture in inventory - check `pack.textures` and icon file path.
 - Texture in inventory works, but worn Elytra is wrong - check `equippable.model` and `magic_elytra.png` file path.
 - No visible changes - reload Oraxen and re-apply the generated resource pack.

@@ -237,13 +237,46 @@ myitem:
 </Details>
 
 <Details>
-<summary id="disable_enchanting"><strong>✨ `disable_enchanting`</strong></summary>
+<summary id="enchantable"><strong>✨ `enchantable`</strong></summary>
 
-Prevents the item from being enchanted.<br />
+Controls whether the item can be enchanted. Defaults to `true`; set it to `false` to prevent enchanting.<br />
 
 ```yaml
 myitem:
-  disable_enchanting: true
+  enchantable: false
+```
+</Details>
+
+<Details>
+<summary id="glowing"><strong>✨ `glowing`</strong></summary>
+
+Gives the dropped item a colored outline on Minecraft `1.21.4+`.
+
+```yaml
+myitem:
+  material: DIAMOND
+  glowing: red
+```
+
+Use a named color: `black`, `dark_blue`, `dark_green`, `dark_aqua`, `dark_red`, `dark_purple`, `gold`, `gray`, `dark_gray`, `blue`, `green`, `aqua`, `red`, `light_purple`, `yellow`, or `white`. Omit `glowing` to leave the outline disabled. This affects dropped items.
+</Details>
+
+<Details>
+<summary id="invulnerable"><strong>🛡️ `invulnerable`</strong></summary>
+
+Protects dropped items from selected damage causes.
+
+```yaml
+myitem:
+  material: DIAMOND
+  invulnerable:
+    - lava
+    - fire
+    - fire_tick
+    - contact # Cactus
+    - block_explosion # Respawn anchor
+    - entity_explosion # Creeper and TNT
+    - lightning
 ```
 </Details>
 
@@ -336,7 +369,7 @@ A full list of supported attributes can be found <Highlight color="#1877F2" to="
 Unrecognized values silently fall back to `ANY`.
  
  <Callout type="important">
-  Requires `Minecraft 1.20.5+` and `Oraxen v1.212.0+` for "modern" format attributes. 
+  Requires `Minecraft 1.20.5+` for "modern" format attributes.
  </Callout>
  
  <Callout type="info">
@@ -375,7 +408,7 @@ Unrecognized values silently fall back to `ANY`.
    - `override` or `custom` (replace tooltip line with `display.text`)
    
    <Callout type="important">
-       Requires `Oraxen v1.212.0+` and `Minecraft 1.21.6+`.
+       Requires `Minecraft 1.21.6+`.
    </Callout>
  </Details>
 </Details>
@@ -429,7 +462,7 @@ myitem:
   excludeFromInventory: false
   excludeFromCommands: false
   no_auto_update: false
-  disable_enchanting: false
+  enchantable: true
   ItemFlags:
     - HIDE_ATTRIBUTES
     - HIDE_UNBREAKABLE

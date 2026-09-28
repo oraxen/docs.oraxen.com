@@ -320,6 +320,9 @@ You can create recipes ingame with the recipe builder commands listed on the [co
 /oraxen recipes builder campfire <cookingtime> <experience>
 /oraxen recipes builder smoking <cookingtime> <experience>
 /oraxen recipes builder stonecutting
+/oraxen recipes builder smithing
+/oraxen recipes builder anvil <experience_cost>
+/oraxen recipes builder grindstone <experience>
 /oraxen recipes save <name> [permission]
 ```
 
@@ -335,11 +338,11 @@ You can create recipes ingame with the recipe builder commands listed on the [co
 </Callout>
 
 <Callout type="warning">
-  Recipe builders are player-only commands. Cooking builders require both `cookingtime` and `experience` arguments when you create them.
+  Recipe builders are player-only commands. Cooking builders require both `cookingtime` and `experience` arguments. The anvil builder requires `experience_cost` in player levels; the grindstone builder requires `experience` in experience points. Use `0` for no cost or reward.
 </Callout>
 
 <Callout type="note">
-  Smithing, cauldron, anvil, and grindstone recipes currently need to be configured manually in their matching YAML files.
+  For smithing, fill the template, base, addition, and result slots. For anvil and grindstone recipes, fill the base and result slots; the addition is optional. Cauldron recipes must be configured manually in `cauldron.yml`.
 </Callout>
 
 ## Recipe Showcase And Permissions
