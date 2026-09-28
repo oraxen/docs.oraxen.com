@@ -1109,25 +1109,19 @@ my_furniture:
               condition: 'player.hasPermission("myserver.furniture.use")'
             - message: '<green>Hello <Player>!'
               conditions:
-                - '#player.gameMode.name() != "ADVENTURE"'
+                - '!player.hasPermission("myserver.furniture")'
                 - '#server.getOnlinePlayers().size() > 10'
 ```
 
-`click` accepts `left`, `right`, or `both` and defaults to `both`.<br />
-`actions` runs commands and messages in order. A `command` action accepts an `executor` value of `PLAYER` (default), `CONSOLE`, or `OP-PLAYER`. A `message` action sends MiniMessage text to the clicking player.<br />
-`<Player>` is replaced by the player's name; `<player>` and `<PLAYER>` also work. PlaceholderAPI placeholders are supported when that plugin is installed.<br />
+`click` accepts `left`, `right`, or `both` (default). Actions run in order.<br />
+`command` uses `PLAYER` (default), `CONSOLE`, or `OP-PLAYER` as its `executor`.<br />
+`message` sends MiniMessage text to the clicking player. `<Player>` (also `<player>` or `<PLAYER>`) inserts the player's name. PlaceholderAPI placeholders work when installed.
+
 ### Conditions
 
-A condition is a check that decides whether an action should run. For example, you can require a permission, check the player's game mode, or require a certain number of online players. Write the check in quotes after `condition`, as shown above.
+Set `condition` for one check or `conditions` for a list; every check must pass for that action to run. Checks can use expressions based on methods and properties available on the server's Player or Server API.
+`player` / `#player` refers to the clicking player, and `server` / `#server` to the server. 
 
-The checks in the example have the following meanings.
+For example, `player.hasPermission("myserver.furniture.use")` checks a permission and `#server.getOnlinePlayers().size() > 10` checks the player count. Prefix a check with `!` to require it to be false, as in `!player.hasPermission("myserver.furniture.bypass")`. Comparisons include `==`, `!=`, `>`, and `<`.
 
-- `player.hasPermission("myserver.furniture.use")` - The clicking player must have this permission before the command runs.
-- `#player.gameMode.name() != "ADVENTURE"` - The player must be in a game mode other than Adventure.
-- `#server.getOnlinePlayers().size() > 10` - More than 10 players must be online.
-
-Use `condition` for one check or `conditions` for a list of checks. Every check in the list must pass. Each action has its own conditions. In the example, the permission controls the command, while the game mode and player count control the message. Without conditions, the action runs whenever its click type matches. An invalid check skips that action and logs a warning.
-
-`player` or `#player` refers to the clicking player; `server` or `#server` refers to the server. The part after the dot asks for information about them. For example, `hasPermission("myserver.furniture.use")` checks a permission, and `getOnlinePlayers().size()` counts online players. Use `==` for "equals", `!=` for "does not equal", `>` for "greater than", and `<` for "less than".
-
-To find other checks you can use, see the [Paper Player API reference](https://jd.papermc.io/paper/26.3/org/bukkit/entity/Player.html) for player information and the [Paper Server API reference](https://jd.papermc.io/paper/26.3/org/bukkit/Server.html) for server information. Their method lists describe what each check returns, such as a yes/no answer, a number, or a name.
+Conditions are per action; without one, the action runs on a matching click. An invalid check skips its action and logs a warning. For available methods, see the [Paper Player API](https://jd.papermc.io/paper/26.3/org/bukkit/entity/Player.html) and [Paper Server API](https://jd.papermc.io/paper/26.3/org/bukkit/Server.html).
