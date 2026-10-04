@@ -1,0 +1,64 @@
+---
+title: "🔱 Tridents"
+description: "Creating custom tridents using Oraxen."
+asIndexPage: true
+---
+
+import { Callout } from '@site/src/components/Compat'
+
+# 🔱 Tridents
+
+## Overview
+Oraxen lets you create custom tridents using the `trident` mechanic.
+
+## Configuration
+Tridents are configured as items in `.yml` files inside the `plugins/Oraxen/items` folder.
+
+<PluginFileTree
+  initialTreeData={[
+    {
+      id: "plugins",
+      name: "plugins",
+      children: [
+        {
+          id: "plugins/Oraxen",
+          name: "Oraxen",
+          children: [
+            {
+              id: "plugins/Oraxen/items",
+              name: "items",
+              children: [
+                {
+                  id: "plugins/Oraxen/items/weapons.yml",
+                  name: "weapons.yml",
+                },
+                {
+                  id: "plugins/Oraxen/items/foods.yml",
+                  name: "foods.yml",
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]}
+/>
+
+```yml
+ender_trident:
+  itemname: <dark_purple>Ender trident
+  material: TRIDENT
+  mechanics:
+    trident:
+      sounds:
+        throw: trident.throw.sound # The sound to play when the trident is thrown.
+        hit: trident.hit.sound # The sound to play when the trident hits an entity.
+        hit-ground: trident.hit.sound # The sound to play when the trident hits the ground. Uses sounds.hit when not specified.
+        return: trident.return.sound # The sound to play when the trident returns to the player. Uses sounds.throw when not specified.
+      appearance:
+        model: oraxen:tridents/ender_trident # The model thats used when the trident is held.
+        thrown-model: oraxen:tridents/ender_trident_throwing # The model thats used when the trident has been thrown.
+        charging-model: oraxen:tridents/ender_trident_charging # The model thats used when the trident is charging.
+        transform: FIXED # The transformation applied to the trident model. Uses NONE when not specified.
+```
