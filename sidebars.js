@@ -10,7 +10,7 @@ const sidebars = {docsSidebar: [
     {type: 'category', label: '✨ Text Effects', link: {type: 'doc', id: 'configuration/texteffects/index'}, items: []},
     {type: 'category', label: '🔊 Sounds', link: {type: 'doc', id: 'configuration/sounds/index'}, items: []},
     {type: 'category', label: '🏞️ Paintings', link: {type: 'doc', id: 'configuration/paintings/index'}, items: []},
-    {type: 'category', label: '🇩🇪 Language', link: {type: 'doc', id: 'configuration/language/index'}, items: []},
+    {type: 'category', label: '🏳️ Languages', link: {type: 'doc', id: 'configuration/languages/index'}, items: []},
     {type: 'category', label: '📖 Recipes', link: {type: 'doc', id: 'configuration/recipes/index'}, items: []},
   ]},
   {type: 'category', label: '🕹️ Usage', link: {type: 'doc', id: 'usage/index'}, items: [
