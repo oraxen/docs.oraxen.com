@@ -66,13 +66,18 @@ ender_trident:
 ```
 
 ### Appearance
-- `appearance.model` and `appearance.thrown-model` are required resource-pack models.
-- `appearance.charging-model` is an optional resource-pack model and falls back to the held model when not specified.<br />
+- `appearance.model` and `appearance.thrown-model` are required resource-pack models. 
+- `appearance.charging-model` is optional and uses the held model when not specified.
+- `appearance.transform` applies to the thrown model and defaults to `NONE`.
 
 For example, `oraxen:tridents/ender_trident` refers to `assets/oraxen/models/tridents/ender_trident.json`.
 
 For the thrown model, orient the model's shaft along its Y axis, with the tip pointing toward positive Y.
-- `appearance.transform` applies to the thrown model and defaults to `NONE`. 
+
+To customize the charging pose, use a separate charging model copied from the held model. Adjust its third-person hand rotations and translations to set the charging direction and grip position without changing the normal held pose. The charging model's first-person display settings determine its first-person appearance.
+
+### Behavior
+The mechanic uses a normal trident projectile, so damage, durability, pickup, Loyalty, Channeling, and Riptide keep their vanilla behavior.
 
 ### Sounds
 Sounds can be vanilla sound identifiers or <Tooltip trigger="custom sound identifiers">Sounds added through Oraxen or other resource packs.</Tooltip>.
@@ -83,7 +88,20 @@ When a sound is not specified.
 - `return` uses `throw`.
 
 ## Troubleshooting
-- If the model's tip extends far ahead of the projectile, the tip can enter a wall before the projectile stops.
+- If the model's tip extends far ahead of the projectile position, the tip can enter a wall before the projectile stops.
 
-  <img src="/assets/tridents/model-ahead-projectile.png" alt="Model ahead of projectile, tip extending through a wall." width="750"/> <br />
-  To reduce this, move the thrown model backward along its shaft so its tip sits near the projectile position. This keeps the model's size and lets the shaft extend behind the collision point. Keep the tip pointing toward positive Y.
+  <img src="/assets/tridents/model-ahead-projectile.png" alt="Model ahead of projectile, tip extending through a wall." width="750"/>
+
+  To reduce this, use a separate model for flight and move it backward along its shaft so its tip sits near the projectile position. This keeps the model's size and lets the shaft extend behind the collision point. Keep the tip pointing toward positive Y, and edit the file referenced by `appearance.thrown-model` rather than the handheld model.
+
+  Set `appearance.transform` to `FIXED` in the trident mechanic. In the thrown model JSON, replace `display.fixed` with a transform like this.
+
+  ```json
+  {
+    "rotation": [0, 0, 0],
+    "translation": [0, -21, 0],
+    "scale": [1, 1, 1]
+  }
+  ```
+
+  At scale 1, set the Y translation to `8 - tipY`, where `tipY` is the tip's Y coordinate after element rotations. For a tip at Y=29, use `-21`. Keep X and Z at zero if the shaft is centered on X=8 and Z=8.
