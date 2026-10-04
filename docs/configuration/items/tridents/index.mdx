@@ -5,11 +5,13 @@ asIndexPage: true
 ---
 
 import { Callout } from '@site/src/components/Compat'
+import Tooltip from '@site/src/components/Tooltip'
 
 # 🔱 Tridents
 
 ## Overview
-Oraxen lets you create custom tridents using the `trident` mechanic.
+Oraxen lets you create custom tridents using the `trident` mechanic.<br />
+This requires Paper `1.21.4` or higher, including Folia. Enable `trident` in `mechanics.yml`.
 
 ## Configuration
 Tridents are configured as items in `.yml` files inside the `plugins/Oraxen/items` folder.
@@ -59,6 +61,29 @@ ender_trident:
       appearance:
         model: oraxen:tridents/ender_trident # The model thats used when the trident is held.
         thrown-model: oraxen:tridents/ender_trident_throwing # The model thats used when the trident has been thrown.
-        charging-model: oraxen:tridents/ender_trident_charging # The model thats used when the trident is charging.
-        transform: FIXED # The transformation applied to the trident model. Uses NONE when not specified.
+        charging-model: oraxen:tridents/ender_trident_charging # The model thats used when the trident is charging. Uses the held model when not specified.
+        transform: FIXED # The transformation applied to the thrown model. Uses NONE when not specified.
 ```
+
+### Appearance
+- `appearance.model` and `appearance.thrown-model` are required resource-pack models.
+- `appearance.charging-model` is an optional resource-pack model and falls back to the held model when not specified.<br />
+
+For example, `oraxen:tridents/ender_trident` refers to `assets/oraxen/models/tridents/ender_trident.json`.
+
+For the thrown model, orient the model's shaft along its Y axis, with the tip pointing toward positive Y.
+- `appearance.transform` applies to the thrown model and defaults to `NONE`. 
+
+### Sounds
+Sounds can be vanilla sound identifiers or <Tooltip trigger="custom sound identifiers">Sounds added through Oraxen or other resource packs.</Tooltip>.
+
+When a sound is not specified.
+- `throw` and `hit` use their vanilla sounds.
+- `hit-ground` uses `hit`.
+- `return` uses `throw`.
+
+## Troubleshooting
+- If the model's tip extends far ahead of the projectile, the tip can enter a wall before the projectile stops.
+
+  <img src="/assets/tridents/model-ahead-projectile.png" alt="Model ahead of projectile, tip extending through a wall." width="750"/> <br />
+  To reduce this, move the thrown model backward along its shaft so its tip sits near the projectile position. This keeps the model's size and lets the shaft extend behind the collision point. Keep the tip pointing toward positive Y.

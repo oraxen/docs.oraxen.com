@@ -36,8 +36,8 @@ const config = {
   future: {v4: true},
   url: 'https://docs.oraxen.com',
   baseUrl: '/',
-  organizationName: 'miziusLabs',
-  projectName: 'OraxenDocs',
+  organizationName: 'oraxen',
+  projectName: 'docs.oraxen.com',
   onBrokenLinks: 'throw',
   i18n: {defaultLocale: 'en', locales: ['en']},
   plugins: [
@@ -57,7 +57,7 @@ const config = {
     docs: {
       sidebarPath: './sidebars.js',
       routeBasePath: '/',
-      editUrl: 'https://github.com/miziusLabs/OraxenDocs/edit/main/',
+      editUrl: 'https://github.com/oraxen/docs.oraxen.com/edit/main/',
     },
     blog: false,
     theme: {customCss: './src/css/custom.css'},
