@@ -11,7 +11,9 @@ import Tooltip from '@site/src/components/Tooltip'
 
 ## Overview
 Oraxen lets you create custom tridents using the `trident` mechanic.<br />
-This requires Paper `1.21.4` or higher, including Folia. Enable `trident` in `mechanics.yml`.
+This requires Paper `1.21.4` or higher, including Folia.
+
+<img src="/assets/tridents/throwing.gif" alt="Throwing a trident." width="650"/>
 
 ## Configuration
 Tridents are configured as items in `.yml` files inside the `plugins/Oraxen/items` folder.
@@ -79,6 +81,9 @@ To customize the charging pose, use a separate charging model copied from the he
 ### Behavior
 The mechanic uses a normal trident projectile, so damage, durability, pickup, Loyalty, Channeling, and Riptide keep their vanilla behavior.
 
+  <img src="/assets/tridents/loyalty.gif" alt="Loyalty" width="650"/>
+  <img src="/assets/tridents/riptide.gif" alt="Riptide" width="650"/>
+
 ### Sounds
 Sounds can be vanilla sound identifiers or <Tooltip trigger="custom sound identifiers">Sounds added through Oraxen or other resource packs.</Tooltip>.
 
@@ -90,7 +95,7 @@ When a sound is not specified.
 ## Troubleshooting
 - If the model's tip extends far ahead of the projectile position, the tip can enter a wall before the projectile stops.
 
-  <img src="/assets/tridents/model-ahead-projectile.png" alt="Model ahead of projectile, tip extending through a wall." width="750"/>
+  <img src="/assets/tridents/model-ahead-projectile.png" alt="Model ahead of projectile, tip extending through a wall." width="650"/>
 
   To reduce this, use a separate model for flight and move it backward along its shaft so its tip sits near the projectile position. This keeps the model's size and lets the shaft extend behind the collision point. Keep the tip pointing toward positive Y, and edit the file referenced by `appearance.thrown-model` rather than the handheld model.
 
