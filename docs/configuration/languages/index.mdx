@@ -5,6 +5,7 @@ asIndexPage: true
 ---
 
 import { Callout } from '@site/src/components/Compat'
+import Tooltip from '@site/src/components/Tooltip'
 
 # 🏳️ Languages
 
@@ -13,7 +14,7 @@ Minecraft uses language components for text throughout the game, including menu 
 Oraxen lets you override these components through the resource pack.
 
 ## Configuration
-Language overrides are configured in `plugins/Oraxen/pack/lang`.
+Configure language overrides in `plugins/Oraxen/pack/lang`.
 
 <PluginFileTree
   initialTreeData={[
@@ -47,12 +48,16 @@ Language overrides are configured in `plugins/Oraxen/pack/lang`.
   ]}
 />
 
-<Callout type="note">
-  Language files must contain valid JSON. Separate entries with commas and use double quotes around both components and values.
-</Callout>
+```yml
+{
+  "container.inventory": "", # Replaces the "container.inventory" component with nothing.
+  "menu.returnToGame": "Return to the server" # Replaces the "menu.returnToGame" component with "Return to the server".
+}
+```
 
-## Global Overrides
-Entries in `global.json` apply to every language supported by Oraxen.<br />
+
+### Overrides
+Use `global.json` to override a component for all Minecraft languages.<br />
 
 ```json title="plugins/Oraxen/pack/lang/global.json"
 {
@@ -61,10 +66,9 @@ Entries in `global.json` apply to every language supported by Oraxen.<br />
 }
 ```
 
-`container.inventory` controls the **Inventory** text shown inside the player inventory. An empty value hides it.
+For example, `container.inventory` controls the **Inventory** text in the player inventory.
 
-## Language-specific Overrides
-Use a locale file such as `en_us.json`, `de_de.json` or `fr_fr.json` when an override should only apply to players using that language.<br />
+Use a locale file such as `en_us.json`, `de_de.json` or `fr_fr.json` to override a component only for players using that language.<br />
 
 ```json title="plugins/Oraxen/pack/lang/de_de.json"
 {
@@ -72,17 +76,10 @@ Use a locale file such as `en_us.json`, `de_de.json` or `fr_fr.json` when an ove
 }
 ```
 
-Oraxen adds the entries from `global.json` to every locale during pack generation. If the same component is defined in a locale file, the language-specific value takes priority.
+Oraxen adds the entries from `global.json` to every locale during pack generation. If a locale file defines the same component, the language-specific value takes priority.
 
-<Callout type="info">
-  Locale filenames use Minecraft's language codes. For example, use `en_us.json` for English (US) and `de_de.json` for German (Germany).
-</Callout>
-
-## Language Components
-A full list of language components can be found <Highlight color="#1877F2" to="https://assets.mcasset.cloud/26.3/assets/minecraft/lang/en_us.json">**here**</Highlight>.<br />
-
-Copy the component you want to change into `global.json` or a locale file, then replace its value with your own text.
+See the <Highlight color="#1877F2" to="https://assets.mcasset.cloud/26.3/assets/minecraft/lang/en_us.json"><strong>full list of language components</strong></Highlight>.<br />
 
 <Callout type="important">
-  Run `/oraxen reload pack` after editing a language file. Players must receive the regenerated resource pack before the changes appear. They may need to reconnect or re-apply the server resource pack.
+    Minecraft supports named <Tooltip trigger="color codes">`<red>`, `<gray>`, `<blue>`</Tooltip> in language overrides, but not <Tooltip trigger="hex colors">`<#FF55AA>`</Tooltip>.
 </Callout>
