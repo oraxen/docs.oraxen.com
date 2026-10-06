@@ -15,6 +15,8 @@
   --ifm-color-primary-lighter: #1fa0e6;
   --ifm-color-primary-lightest: #40afea;
   --ifm-code-font-size: 95%;
+  /* Preserve the theme's code background before callouts override it. */
+  --oraxen-code-background: var(--ifm-code-background);
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
 }
 
@@ -242,6 +244,11 @@ summary[id]:hover .summary-link,
 .oraxen-tooltip__content :is(code, kbd, samp, pre) {
   overflow-wrap: normal;
   white-space: pre;
+}
+.oraxen-tooltip__content code:not(pre code) {
+  background-color: var(--oraxen-code-background);
+  color: var(--ifm-font-color-base);
+  font-weight: var(--ifm-font-weight-normal);
 }
 .oraxen-tooltip__content pre {
   max-width: 100%;
