@@ -8,7 +8,38 @@ import { Callout, Tabs, Tab, Steps } from '@site/src/components/Compat'
 # 🗺️ WorldEdit
 
 ## Overview
-WorldEdit and FastAsyncWorldEdit are optional dependencies. When either is installed, Oraxen uses it to paste schematics for the sapling mechanic's schematic-based tree growth.
+Oraxen includes built-in WorldEdit and FastAsyncWorldEdit compatibility. When either is installed, Oraxen uses it to paste schematics for the sapling mechanic's schematic-based tree growth. Oraxen also removes furniture when its barrier hitboxes are replaced by an edit and restores it when the edit is undone.
+
+<Callout type="info">
+  Furniture cleanup and undo support require Minecraft 1.21.4 or newer. Earlier Minecraft versions retain schematic support.
+</Callout>
 
 ## Usage
-No configuration is needed. Install WorldEdit or FastAsyncWorldEdit and set a `schematicName` in your sapling mechanic.
+Install WorldEdit or FastAsyncWorldEdit and restart your server. No additional Oraxen configuration is needed.
+
+<details>
+<summary id="removing-furniture"><strong>Removing Furniture</strong></summary>
+
+Select an area containing an Oraxen furniture barrier and replace it with another block, for example using `//set air`. Oraxen removes the furniture model together with its remaining barriers, seats, interactions and text displays.
+
+Selecting a single barrier is enough to remove the whole furniture, including furniture with several barriers. Ordinary barriers and barriers belonging to nearby furniture are left alone.
+
+</details>
+
+<details>
+<summary id="undoing-furniture-removal"><strong>Undoing Furniture Removal</strong></summary>
+
+Use `//undo` to restore furniture removed by an edit together with its barriers. Seats, interactions and text displays are recreated, and saved furniture data, including storage contents and evolution data, is retained. Restored furniture can be removed by a later edit as usual.
+
+</details>
+
+<details>
+<summary id="pasting-sapling-schematics"><strong>Pasting Sapling Schematics</strong></summary>
+
+Set a `schematicName` in your sapling mechanic to use schematic-based tree growth.
+
+</details>
+
+<Callout type="warning">
+  If your WorldEdit or FastAsyncWorldEdit setup requires integrations to be trusted, approve Oraxen in that plugin's trust settings and restart the server. Oraxen does not change these settings automatically.
+</Callout>
