@@ -61,13 +61,13 @@ Reconnect if necessary so the client receives the regenerated resource pack. Pla
 </Steps>
 
 <Callout type="note">
-Use `display_entity_properties` to adjust the size or position of a display-entity model.
+Use `properties` under `mechanics.furniture` to adjust the size or position of a display-entity model. `ARMOR_STAND` furniture also uses `properties` for `scale` and `translation`.
 
 ```yaml
 mechanics:
   furniture:
     type: DISPLAY_ENTITY
-    display_entity_properties:
+    properties:
       scale:
         x: 0.8
         y: 0.8

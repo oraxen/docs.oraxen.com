@@ -1035,7 +1035,7 @@ table:
         text:
           - "<gold>Workshop Table"
         offset: { x: 0.0, y: 1.2, z: 0.0 }
-      display_entity_properties:
+      properties:
         display_transform: NONE
         brightness:
           block_light: 15
@@ -1056,15 +1056,6 @@ table:
         shadow_radius: 0
         displayWidth: 0
         displayHeight: 0
-      armor_stand_properties:
-        scale:
-          x: 1
-          y: 1
-          z: 1
-        translation:
-          x: 0
-          y: 0
-          z: 0
       drop:
         silktouch: false
         loots:
@@ -1083,12 +1074,14 @@ table:
 `limited_placing`, `blocklocker`, and `storage` add placement rules, protection, and container behavior. `limited_placing` also supports `block_tags`, `oraxen_blocks`, and a `radius_limitation` subsection with `radius` and `amount`. `storage` also supports `open_sound`, `close_sound`, `open_animation`, `close_animation`, `volume`, and `pitch`.<br />
 `jukebox` lets the furniture play music discs and swap to an active model.<br />
 `evolution`, `farmland_required`, and `farmblock_required` support plant and farming setups. `evolution` also supports `light_boost`, `rain_boost`, and `bone_meal` subsections.<br />
-`text_entity`, `text_entities`, and `display_entity_properties` configure attached text displays and display entity rendering. Text displays also support `line_width`, `background_color`, `text_opacity`, `see_through`, `shadow`, `default_background`, `alignment`, `billboard`, `scale`, `view_range`, and `refresh_ticks`. Display entity properties support `display_transform`, `scale`, `translation`, `brightness.block_light`, `brightness.sky_light`, `tracking_rotation`, `view_range`, `interpolation_duration`, `interpolation_delay`, `shadow_strength`, `shadow_radius`, `displayWidth`, and `displayHeight`.<br />
-`armor_stand_properties` configures armor-stand furniture `scale` and `translation`; armor stands can also reuse `display_entity_properties.scale` and `display_entity_properties.translation` for convenience.<br />
+`text_entity` and `text_entities` configure attached text displays. Text displays also support `line_width`, `background_color`, `text_opacity`, `see_through`, `shadow`, `default_background`, `alignment`, `billboard`, `scale`, `view_range`, and `refresh_ticks`.<br />
+`properties` configures furniture rendering under `mechanics.furniture`. The available options depend on `type`.<br />
+For `DISPLAY_ENTITY`, `properties` supports `display_transform`, `scale`, `translation`, `brightness.block_light`, `brightness.sky_light`, `tracking_rotation`, `view_range`, `interpolation_duration`, `interpolation_delay`, `shadow_strength`, `shadow_radius`, `displayWidth`, and `displayHeight`.<br />
+For `ARMOR_STAND`, use the same `properties` section for `scale` and `translation`. `scale` accepts a number for uniform scaling or an `x`, `y`, `z` section. Armor-stand scaling affects the generated model's head transform and helps choose the stand's small size. Set `small` directly under `furniture` to override the size choice.<br />
 `modelengine_id` is also supported for ModelEngine-based furniture.
 
 <Callout type="info">
-  `storage` on furniture requires a barrier or barriers. For modern servers, `DISPLAY_ENTITY` furniture also supports `hitboxes` and `display_entity_properties`.
+  `storage` on furniture requires a barrier or barriers. `DISPLAY_ENTITY` furniture also supports `hitboxes` and display settings under `properties`.
 </Callout>
 </Details>
 
