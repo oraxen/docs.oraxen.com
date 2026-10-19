@@ -21,7 +21,7 @@ export default function rawDocsPlugin(context) {
         const destination = path.resolve(outDir, rawPath);
         const relativeDestination = path.relative(outDir, destination);
         if (relativeDestination.startsWith('..') || path.isAbsolute(relativeDestination)) {
-          throw new Error(`Raw documentation path escapes the build directory: ${doc.permalink}`);
+          throw new Error(`Raw documentation path escapes the build folder: ${doc.permalink}`);
         }
 
         await mkdir(path.dirname(destination), {recursive: true});
