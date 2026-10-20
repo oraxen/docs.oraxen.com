@@ -23,7 +23,8 @@ const sidebars = {
             },
             "configuration/items/appearance",
             "configuration/items/mechanics",
-            "configuration/items/tridents/index",
+            "configuration/items/tridents",
+            "configuration/items/furniture",
           ],
         },
         {
