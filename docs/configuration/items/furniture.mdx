@@ -1,0 +1,181 @@
+---
+title: "🪑 Furniture"
+description: "Creating custom furniture using Oraxen."
+asIndexPage: true
+---
+
+import { Callout } from '@site/src/components/Compat'
+import Tooltip from '@site/src/components/Tooltip'
+
+# 🪑 Furniture
+
+## Overview
+Oraxen lets you create custom furniture using the `furniture` mechanic.<br />
+
+<img src="/assets/furniture/sitting.gif" alt="Sitting on a furniture." width="650"/>
+
+## Configuration
+Furniture is configured as items in `.yml` files inside the `plugins/Oraxen/items` folder.
+
+<PluginFileTree
+  initialTreeData={[
+    {
+      id: "plugins",
+      name: "plugins",
+      children: [
+        {
+          id: "plugins/Oraxen",
+          name: "Oraxen",
+          children: [
+            {
+              id: "plugins/Oraxen/items",
+              name: "items",
+              children: [
+                {
+                  id: "plugins/Oraxen/items/decorations.yml",
+                  name: "decorations.yml",
+                },
+                {
+                  id: "plugins/Oraxen/items/flowers.yml",
+                  name: "flowers.yml",
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]}
+/>
+
+```yml
+table:
+  itemname: <#8B4513>Table
+  material: PAPER
+  mechanics:
+    furniture:
+      type: DISPLAY_ENTITY # 
+      barrier: true
+      barriers:
+        - origin
+        - z: 1
+      hitboxes:
+        - 0,0,0 1,3 # Hitbox with 0,0,0 offset from the furniture with the size 1x3.
+        - 1,0,3 0.5,2.5 # Hitbox with 1,0,3 offset from the furniture with the size 0.5x2.5.
+
+      seats:
+        - 0,0,0 # Seat offset relative to the furniture center, uses furniture yaw.
+        - 0.5,0,0 90 # Seat offset with a fixed yaw.
+      lights:
+        - 0,1,0 15 # Light offset with level 15.
+      restricted_rotation: VERY_STRICT
+      rotatable: true
+      hardness: 5
+      breakable: true
+      events:
+        - click: right
+          actions:
+            - command: 'say "<Player> clicked this furniture"'
+              executor: CONSOLE
+              condition: 'player.hasPermission("myserver.furniture.use")'
+            - message: '<green>Hi <Player>!'
+      item: different_item_id
+      farmland_required: false
+      farmblock_required: false
+      blocklocker:
+        can_protect: true
+        protection_type: CONTAINER
+      limited_placing:
+        floor: true
+        wall: false
+        roof: false
+        type: ALLOW
+        block_types:
+          - GRASS_BLOCK
+      storage:
+        type: STORAGE
+        rows: 5
+        title: "<red>My Storage"
+      jukebox:
+        active_model: opened
+        volume: 1.0
+        pitch: 1.0
+        permission: "oraxen.jukebox.play"
+      evolution:
+        delay: 6000
+        next_stage: my_plant_stage2
+        probability: 0.5
+      text_entity:
+        text:
+          - "<gold>Workshop Table"
+        offset: { x: 0.0, y: 1.2, z: 0.0 }
+      properties:
+        display_transform: NONE
+        brightness:
+          block_light: 15
+          sky_light: 0
+        scale:
+          x: 1
+          y: 1
+          z: 1
+        translation:
+          x: 0
+          y: 0
+          z: 0
+        tracking_rotation: FIXED
+        view_range: 1
+        interpolation_duration: 0
+        interpolation_delay: 0
+        shadow_strength: 0
+        shadow_radius: 0
+        displayWidth: 0
+        displayHeight: 0
+      drop:
+        silktouch: false
+        loots:
+          - { oraxen_item: table, probability: 1.0 }
+```
+
+### Appearance
+- `appearance.model` and `appearance.thrown-model` are required resource-pack models. 
+- `appearance.charging-model` is optional and uses the held model when not specified.
+- `appearance.transform` applies to the thrown model and defaults to `NONE`.
+
+For example, `oraxen:tridents/ender_trident` refers to `assets/oraxen/models/tridents/ender_trident.json`.
+
+For the thrown model, orient the model's shaft along its Y axis, with the tip pointing toward positive Y.
+
+To customize the charging pose, use a separate charging model copied from the held model. Adjust its third-person hand rotations and translations to set the charging direction and grip position without changing the normal held pose. The charging model's first-person display settings determine its first-person appearance.
+
+### Behavior
+The mechanic uses a normal trident projectile, so damage, durability, pickup, Loyalty, Channeling, and Riptide keep their vanilla behavior.
+
+  <img src="/assets/tridents/loyalty.gif" alt="Loyalty" width="650"/>
+  <img src="/assets/tridents/riptide.gif" alt="Riptide" width="650"/>
+
+### Sounds
+Sounds can be vanilla sound identifiers or <Tooltip trigger="custom sound identifiers">Sounds added through Oraxen or other resource packs.</Tooltip>.
+
+When a sound is not specified.
+- `throw` and `hit` use their vanilla sounds.
+- `hit-ground` uses `hit`.
+- `return` uses `throw`.
+
+## Troubleshooting
+- If the model's tip extends far ahead of the projectile position, the tip can enter a wall before the projectile stops.
+
+  <img src="/assets/tridents/model-ahead-projectile.png" alt="Model ahead of projectile, tip extending through a wall." width="650"/>
+
+  To reduce this, use a separate model for flight and move it backward along its shaft so its tip sits near the projectile position. This keeps the model's size and lets the shaft extend behind the collision point. Keep the tip pointing toward positive Y, and edit the file referenced by `appearance.thrown-model` rather than the handheld model.
+
+  Set `appearance.transform` to `FIXED` in the trident mechanic. In the thrown model JSON, replace `display.fixed` with a transform like this.
+
+  ```json
+  {
+    "rotation": [0, 0, 0],
+    "translation": [0, -21, 0],
+    "scale": [1, 1, 1]
+  }
+  ```
+
+  At scale 1, set the Y translation to `8 - tipY`, where `tipY` is the tip's Y coordinate after element rotations. For a tip at Y=29, use `-21`. Keep X and Z at zero if the shaft is centered on X=8 and Z=8.
