@@ -58,7 +58,7 @@ The resource-pack request should not appear again. If it does, compare the final
 <Callout type="tip">
 OneTimePack only suppresses a duplicate resource pack. A backend with a different pack must still send that pack to the player.
 
-On Minecraft `1.20.3+`, Oraxen sends its pack without replacing other packs. Packs sent by a proxy coexist automatically. The `Pack.dispatch.layer` setting currently has no effect.
+To keep packs sent by your proxy, set `pack.dispatch.layer` to a nonempty value. This keeps Oraxen from clearing those packs.
 
 Players still have to download each unique pack at least once.
 </Callout>

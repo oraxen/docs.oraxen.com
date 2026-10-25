@@ -26,9 +26,10 @@ One option is [TheSalt's Text Effects](https://modrinth.com/resourcepack/thesalt
 #### 3. Make sure Oraxen imports the pack's core shaders (`plugins/Oraxen/settings.yml`).
 
 ```yaml
-Pack:
+pack:
   import:
-    remove_core_shaders_from_imported_packs: false
+    exclude:
+      core-shaders: false
 ```
 
 #### 4. Reload or restart the server to regenerate the final resource pack.

@@ -4,9 +4,6 @@ description: "Creating custom furniture using Oraxen."
 asIndexPage: true
 ---
 
-import { Callout } from '@site/src/components/Compat'
-import Tooltip from '@site/src/components/Tooltip'
-
 # 🪑 Furniture
 
 ## Overview
@@ -50,15 +47,14 @@ Furniture is configured as items in `.yml` files inside the `plugins/Oraxen/item
 
 ```yml
 table:
-  itemname: <#8B4513>Table
+  name: <#8B4513>Table
   material: PAPER
   mechanics:
     furniture:
-      type: DISPLAY_ENTITY # 
-      barrier: true
+      type: DISPLAY_ENTITY
       barriers:
-        - origin
-        - z: 1
+        - 0,0,0
+        - 0,0,1
       hitboxes:
         - 0,0,0 1,3 # Hitbox with 0,0,0 offset from the furniture with the size 1x3.
         - 1,0,3 0.5,2.5 # Hitbox with 1,0,3 offset from the furniture with the size 0.5x2.5.
@@ -136,46 +132,39 @@ table:
           - { oraxen_item: table, probability: 1.0 }
 ```
 
-### Appearance
-- `appearance.model` and `appearance.thrown-model` are required resource-pack models. 
-- `appearance.charging-model` is optional and uses the held model when not specified.
-- `appearance.transform` applies to the thrown model and defaults to `NONE`.
+## Barriers and hitboxes
 
-For example, `oraxen:tridents/ender_trident` refers to `assets/oraxen/models/tridents/ender_trident.json`.
+<code>barriers</code> places solid collision blocks relative to the furniture. Each entry uses integer coordinates in the form <code>x,y,z</code>. <code>hitboxes</code> adds interaction areas without placing solid collision blocks.
 
-For the thrown model, orient the model's shaft along its Y axis, with the tip pointing toward positive Y.
+```yaml
+mechanics:
+  furniture:
+    barriers:
+      - 0,0,0
+      - 0,0,1
+    hitboxes:
+      - 0,0,0 1,2
+```
 
-To customize the charging pose, use a separate charging model copied from the held model. Adjust its third-person hand rotations and translations to set the charging direction and grip position without changing the normal held pose. The charging model's first-person display settings determine its first-person appearance.
+## Appearance
 
-### Behavior
-The mechanic uses a normal trident projectile, so damage, durability, pickup, Loyalty, Channeling, and Riptide keep their vanilla behavior.
+The top-level <code>pack</code> section controls the item shown in inventories. Use <code>mechanics.furniture.appearance</code> to set the model and textures used by placed furniture.
 
-  <img src="/assets/tridents/loyalty.gif" alt="Loyalty" width="650"/>
-  <img src="/assets/tridents/riptide.gif" alt="Riptide" width="650"/>
+```yaml
+chair:
+  material: PAPER
+  pack:
+    model: furniture/chair_inventory
+  mechanics:
+    furniture:
+      type: DISPLAY_ENTITY
+      barriers:
+        - 0,0,0
+      appearance:
+        model: furniture/chair_placed
+        generate_model: false
+        models:
+          grown: furniture/chair_grown
+```
 
-### Sounds
-Sounds can be vanilla sound identifiers or <Tooltip trigger="custom sound identifiers">Sounds added through Oraxen or other resource packs.</Tooltip>.
-
-When a sound is not specified.
-- `throw` and `hit` use their vanilla sounds.
-- `hit-ground` uses `hit`.
-- `return` uses `throw`.
-
-## Troubleshooting
-- If the model's tip extends far ahead of the projectile position, the tip can enter a wall before the projectile stops.
-
-  <img src="/assets/tridents/model-ahead-projectile.png" alt="Model ahead of projectile, tip extending through a wall." width="650"/>
-
-  To reduce this, use a separate model for flight and move it backward along its shaft so its tip sits near the projectile position. This keeps the model's size and lets the shaft extend behind the collision point. Keep the tip pointing toward positive Y, and edit the file referenced by `appearance.thrown-model` rather than the handheld model.
-
-  Set `appearance.transform` to `FIXED` in the trident mechanic. In the thrown model JSON, replace `display.fixed` with a transform like this.
-
-  ```json
-  {
-    "rotation": [0, 0, 0],
-    "translation": [0, -21, 0],
-    "scale": [1, 1, 1]
-  }
-  ```
-
-  At scale 1, set the Y translation to `8 - tipY`, where `tipY` is the tip's Y coordinate after element rotations. For a tip at Y=29, use `-21`. Keep X and Z at zero if the shaft is centered on X=8 and Z=8.
+The <code>appearance</code> section accepts the model, texture, and model-generation options documented on the [Appearance page](/configuration/items/appearance). Use <code>appearance.models</code> to assign models to named growth stages. The placed model can differ from the inventory item model.

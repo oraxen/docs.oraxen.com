@@ -47,10 +47,10 @@ Go to your Oraxen plugin folder and open `plugins/Oraxen/settings.yml`.
 />
 
 ### Find the welcome sound section
-In the `settings.yml`, the welcome sound is located in the `Pack.receive.loaded.actions.sound` section.
+In `settings.yml`, the welcome sound is located in the `pack.receive.loaded.actions.sound` section.
 
 ```yaml
-Pack:
+pack:
   receive:
     enabled: true
     loaded:
@@ -66,7 +66,7 @@ Pack:
 To stop the welcome sound from playing, change `enabled: true` to `enabled: false`.
 
 ```yaml
-Pack:
+pack:
   receive:
     enabled: true
     loaded:
@@ -86,7 +86,7 @@ Pack:
 If you want to keep the effect but use another sound, leave `enabled: true` and replace `type` with a valid Minecraft sound key.
 
 ```yaml
-Pack:
+pack:
   receive:
     enabled: true
     loaded:
