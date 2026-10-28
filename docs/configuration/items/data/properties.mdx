@@ -47,7 +47,7 @@ Properties are configured per item in `.yml` files inside the `plugins/Oraxen/it
 ```yaml {2-3}
 my_item:
   material: PAPER
-  itemname: "Cool Item"
+  name: "Cool Item"
 ```
 
 ## Properties
@@ -66,43 +66,24 @@ A full list of supported materials can be found <Highlight to="https://hub.spigo
 </Details>
 
 <Details>
-<summary id="itemname"><strong>🏷️ `itemname`</strong></summary>
+<summary id="name"><strong>🏷️ `name`</strong></summary>
 
-Sets the item's display name using MiniMessage formatting.<br />
+Sets the base item name using MiniMessage formatting.<br />
 
 ```yaml
 myitem:
-  itemname: "<red>My Cool Item"
+  name: "<red>My Cool Item"
 ```
-
-<Callout type="info">
-  `itemname` is the recommended property for `1.20.5+`.
-</Callout>
 </Details>
 
 <Details>
-<summary id="displayname"><strong>🏷️ `displayname`</strong></summary>
+<summary id="custom-name"><strong>🏷️ `custom-name`</strong></summary>
 
-Sets the legacy display name.<br />
-
-```yaml
-myitem:
-  displayname: "<red>My Cool Item"
-```
-
-<Callout type="warning">
-  `displayname` is deprecated. Prefer using `itemname` instead.
-</Callout>
-</Details>
-
-<Details>
-<summary id="customname"><strong>🏷️ `customname`</strong></summary>
-
-Sets the item's custom name on `1.20.5+`. This sets the display name component, distinct from `itemname` which sets the item_name component.<br />
+Sets an anvil-editable name that overrides `name`.<br />
 
 ```yaml
 myitem:
-  customname: "<red>My Cool Item"
+  custom-name: "<red>My Cool Item"
 ```
 </Details>
 
@@ -461,7 +442,7 @@ myitem:
 ```yaml
 myitem:
   material: DIAMOND_SWORD
-  itemname: "<gradient:red:gold>Flame Blade"
+  name: "<gradient:red:gold>Flame Blade"
   lore:
     - "<gray>A weapon forged in heat"
     - "<red>Very dangerous"

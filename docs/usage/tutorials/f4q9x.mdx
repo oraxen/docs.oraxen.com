@@ -27,7 +27,7 @@ Add the following configuration.
 
 ```yaml
 wooden_chair:
-  itemname: "<gold>Wooden Chair"
+  name: "<gold>Wooden Chair"
   material: PAPER
   pack:
     generate_model: false
@@ -35,7 +35,8 @@ wooden_chair:
   mechanics:
     furniture:
       type: DISPLAY_ENTITY
-      barrier: true
+      barriers:
+        - 0,0,0
       hitboxes:
         - "0,0,0 0.8,1.0"
       rotatable: true
@@ -44,7 +45,7 @@ wooden_chair:
 
 `pack.model` is the path to the model below `plugins/Oraxen/pack/models`, without `.json`.
 
-`DISPLAY_ENTITY` is the recommended furniture type for modern servers. The barrier provides solid collision and interaction. For interaction without a solid barrier, remove `barrier: true` and use the `hitboxes` list.
+`DISPLAY_ENTITY` is the recommended furniture type for modern servers. The `barriers` list places solid collision blocks. Use `hitboxes` for interaction areas that do not need solid collision.
 
 ### Reload Oraxen
 

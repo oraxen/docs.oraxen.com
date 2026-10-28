@@ -8,25 +8,26 @@ import { Callout, Tabs, Tab, Steps } from '@site/src/components/Compat'
 # 🔧 ModelEngine
 
 ## Overview
-Oraxen allows you to merge / integrate ModelEngine's pack into Oraxen for ModelEngine to use it to display its custom mobs.
+Oraxen imports ModelEngine's resource pack automatically when it generates its own pack. Automatic import is enabled by default. Oraxen waits for ModelEngine to finish generating its pack and then uses the latest available pack.
 
 <Callout>
-  Ensure you are not using ModelEngine Item Types (e.g. Leather Horse Armor) in e.g. Oraxen (as material) or in other Merged Packs.
+  Do not use ModelEngine item types, such as Leather Horse Armor, as materials in Oraxen items or other merged packs.
 </Callout>
 
 <Callout type="important">
-    ModelEngine typically includes core shader files. It is not possible to merge those files into Oraxen, as it's considered unstable and will cause issues. Oraxen has a settings option to automatically detect and disable core shader files from merged packs that you must enable.
+    ModelEngine may include core shader files that conflict with Oraxen. Exclude them from imported packs with this setting.
 
-    ```yml
-    Pack:
+    ```yaml
+    pack:
       import:
-        remove_core_shaders_from_imported_packs: true
+        exclude:
+          core-shaders: true
     ```
 </Callout>
 
-## Merging
-Merging a pack into Oraxen is simple and we have a dedicated documentation page for it [here](/usage/merging).
-You have to choose either one of those methods for merging your ModelEngine pack.
+## Manual import
+Automatic import is controlled by `pack.import.modelengine`. If you disable it, you can add the ModelEngine pack through the [pack merging guide](/usage/merging).
+Choose one of the manual methods below when you need to manage the pack yourself.
 
 <Callout type="note">
   We recommend the ZIP file uploads, since they are the easiest to maintain if you want to update the ModelEngine pack.

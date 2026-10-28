@@ -26,7 +26,7 @@ It works out of the box, needs almost no setup, and avoids extra port work.
 </Callout>
 
 ```yaml
-Pack:
+pack:
   upload:
     enabled: true
     type: polymath
@@ -54,7 +54,7 @@ This removes dependency on Atlas and helps in regions where external access is l
 Set up Polymath first from the <Highlight color="#2E8B57" to="https://github.com/oraxen/polymath/">**official repository**</Highlight>, then update Oraxen upload settings.
 
 ```yaml
-Pack:
+pack:
   upload:
     enabled: true
     type: polymath
@@ -87,7 +87,7 @@ Oraxen can serve the resource pack directly from your Minecraft server machine t
 </Callout>
 
 ```yaml
-Pack:
+pack:
   upload:
     enabled: true
     type: self-host
@@ -112,7 +112,7 @@ Pack:
 Lobfile is a free file sharing / hosting service.
 
 ```yaml
-Pack:
+pack:
   upload:
     enabled: true
     type: lobfile
@@ -141,10 +141,10 @@ You can find / change the API key in your lobfile settings (after creating an ac
 
 `type: external` loads a custom hosting provider from another plugin or library.
 
-`Pack.upload.options.class` must name a fully qualified class implementing `HostingProvider` with a no-arg constructor or one taking a `ConfigurationSection`. The whole `options` section is passed to the provider.
+`pack.upload.options.class` must name a fully qualified class implementing `HostingProvider` with a no-arg constructor or one taking a `ConfigurationSection`. The whole `options` section is passed to the provider.
 
 ```yaml
-Pack:
+pack:
   upload:
     enabled: true
     type: external
@@ -167,10 +167,10 @@ Pack:
 ## Example
 
 ```yaml
-Pack:
+pack:
   upload:
     enabled: true
-    type: polymath #lobfile, polymath, self-host, or external
+    type: polymath # lobfile, polymath, s3, self-host, or external
     polymath:
       server: atlas.oraxen.com # you can also host your own polymath instance
       secret: "oraxen" # change this if you host your own polymath to limit access to resource pack uploading

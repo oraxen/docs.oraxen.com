@@ -1,0 +1,170 @@
+---
+title: "🪑 Furniture"
+description: "Creating custom furniture using Oraxen."
+asIndexPage: true
+---
+
+# 🪑 Furniture
+
+## Overview
+Oraxen lets you create custom furniture using the `furniture` mechanic.<br />
+
+<img src="/assets/furniture/sitting.gif" alt="Sitting on a furniture." width="650"/>
+
+## Configuration
+Furniture is configured as items in `.yml` files inside the `plugins/Oraxen/items` folder.
+
+<PluginFileTree
+  initialTreeData={[
+    {
+      id: "plugins",
+      name: "plugins",
+      children: [
+        {
+          id: "plugins/Oraxen",
+          name: "Oraxen",
+          children: [
+            {
+              id: "plugins/Oraxen/items",
+              name: "items",
+              children: [
+                {
+                  id: "plugins/Oraxen/items/decorations.yml",
+                  name: "decorations.yml",
+                },
+                {
+                  id: "plugins/Oraxen/items/flowers.yml",
+                  name: "flowers.yml",
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]}
+/>
+
+```yml
+table:
+  name: <#8B4513>Table
+  material: PAPER
+  mechanics:
+    furniture:
+      type: DISPLAY_ENTITY
+      barriers:
+        - 0,0,0
+        - 0,0,1
+      hitboxes:
+        - 0,0,0 1,3 # Hitbox with 0,0,0 offset from the furniture with the size 1x3.
+        - 1,0,3 0.5,2.5 # Hitbox with 1,0,3 offset from the furniture with the size 0.5x2.5.
+
+      seats:
+        - 0,0,0 # Seat offset relative to the furniture center, uses furniture yaw.
+        - 0.5,0,0 90 # Seat offset with a fixed yaw.
+      lights:
+        - 0,1,0 15 # Light offset with level 15.
+      restricted_rotation: VERY_STRICT
+      rotatable: true
+      hardness: 5
+      breakable: true
+      events:
+        - click: right
+          actions:
+            - command: 'say "<Player> clicked this furniture"'
+              executor: CONSOLE
+              condition: 'player.hasPermission("myserver.furniture.use")'
+            - message: '<green>Hi <Player>!'
+      item: different_item_id
+      farmland_required: false
+      farmblock_required: false
+      blocklocker:
+        can_protect: true
+        protection_type: CONTAINER
+      limited_placing:
+        floor: true
+        wall: false
+        roof: false
+        type: ALLOW
+        block_types:
+          - GRASS_BLOCK
+      storage:
+        type: STORAGE
+        rows: 5
+        title: "<red>My Storage"
+      jukebox:
+        active_model: opened
+        volume: 1.0
+        pitch: 1.0
+        permission: "oraxen.jukebox.play"
+      evolution:
+        delay: 6000
+        next_stage: my_plant_stage2
+        probability: 0.5
+      text_entity:
+        text:
+          - "<gold>Workshop Table"
+        offset: { x: 0.0, y: 1.2, z: 0.0 }
+      properties:
+        display_transform: NONE
+        brightness:
+          block_light: 15
+          sky_light: 0
+        scale:
+          x: 1
+          y: 1
+          z: 1
+        translation:
+          x: 0
+          y: 0
+          z: 0
+        tracking_rotation: FIXED
+        view_range: 1
+        interpolation_duration: 0
+        interpolation_delay: 0
+        shadow_strength: 0
+        shadow_radius: 0
+        displayWidth: 0
+        displayHeight: 0
+      drop:
+        silktouch: false
+        loots:
+          - { oraxen_item: table, probability: 1.0 }
+```
+
+## Barriers and hitboxes
+
+<code>barriers</code> places solid collision blocks relative to the furniture. Each entry uses integer coordinates in the form <code>x,y,z</code>. <code>hitboxes</code> adds interaction areas without placing solid collision blocks.
+
+```yaml
+mechanics:
+  furniture:
+    barriers:
+      - 0,0,0
+      - 0,0,1
+    hitboxes:
+      - 0,0,0 1,2
+```
+
+## Appearance
+
+The top-level <code>pack</code> section controls the item shown in inventories. Use <code>mechanics.furniture.appearance</code> to set the model and textures used by placed furniture.
+
+```yaml
+chair:
+  material: PAPER
+  pack:
+    model: furniture/chair_inventory
+  mechanics:
+    furniture:
+      type: DISPLAY_ENTITY
+      barriers:
+        - 0,0,0
+      appearance:
+        model: furniture/chair_placed
+        generate_model: false
+        models:
+          grown: furniture/chair_grown
+```
+
+The <code>appearance</code> section accepts the model, texture, and model-generation options documented on the [Appearance page](/configuration/items/appearance). Use <code>appearance.models</code> to assign models to named growth stages. The placed model can differ from the inventory item model.
