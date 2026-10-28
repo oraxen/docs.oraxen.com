@@ -226,7 +226,7 @@ pack:
 ```
 
 <code>pack.generation.generate</code> enables resource-pack generation.<br />
-<code>pack.generation.unprotected-location</code> optionally writes a readable ZIP before obfuscation. Relative paths use the server working folder, and Oraxen creates parent folders as needed. Keep the output outside <code>plugins/Oraxen/pack</code> so Oraxen does not import it on a later build.<br />
+<code>pack.generation.unprotected-location</code> optionally writes an unprotected, unobfuscated ZIP after pack generation and before obfuscation. Oraxen does not upload or send this export to players. Relative paths use the server working folder, and Oraxen creates parent folders as needed. Keep the output outside <code>plugins/Oraxen/pack</code> so Oraxen does not import it on a later build.<br />
 <code>pack.generation.mcmeta</code> generates <code>pack.mcmeta</code> and overlay entries. Disable it to use the file in <code>plugins/Oraxen/pack</code> as supplied and manage overlays yourself.<br />
 <code>pack.generation.multi-version-packs</code> creates separate packs for clients on Minecraft 1.20 through 1.21.3 and clients on 1.21.4 and above. ViaVersion detects each client version. Without ViaVersion, players receive the server-version pack. Use an upload type other than self-host.<br />
 <code>pack.generation.model-definitions</code> generates modern item definitions for Minecraft 1.21.4 and above. Oraxen uses legacy item model overrides for clients that do not support item definitions.<br />
