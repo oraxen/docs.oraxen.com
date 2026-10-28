@@ -8,7 +8,7 @@ import { Callout, Tabs, Tab, Steps } from '@site/src/components/Compat'
 # 🌐 ViaVersion
 
 ## Overview
-Oraxen has **full ViaVersion support**, which can work in two ways. When `MultiVersionPacks` is not enabled, Oraxen supports versions 1.21.4–26.3 by using overlays (version-specific directories) for its core shaders. When `MultiVersionPacks` is enabled, Oraxen provides full support for versions 1.19–26.3. This works by generating a resource pack for each version, detecting the version of the player joining, and sending them the correct pack.
+Oraxen has **ViaVersion support** (which has its limits), which can work in two ways. When `MultiVersionPacks` is not enabled, Oraxen supports versions 1.21.4–26.3 by using overlays (version-specific directories) for its core shaders. When `MultiVersionPacks` is enabled, Oraxen provides full support for versions 1.19–26.3. This works by generating a resource pack for each version, detecting the version of the player joining, and sending them the correct pack.
 
 <Callout>
   `MultiVersionPacks` are not enabled by default.
@@ -42,3 +42,10 @@ On a `1.21.4+` server, ViaVersion support for `1.21.4–26.3` works out of the b
 </Callout>
 
 Please note that some features cannot be supported across all versions due to Minecraft's version differences. This mainly affects features that rely on Item Model Definitions, which were introduced in `1.21.4`, as well as TextEffects, which are unavailable on `1.21.3` and below.
+
+### Imported packs
+Oraxen handles version-specific compatibility for its generated resource pack assets. Imported resource packs must provide their own compatibility for the Minecraft versions they intend to support, including any necessary overlays.
+
+For example, importing a resource pack designed for `1.21.4` does not automatically make it compatible with `26.2`. Supporting every version difference would require an extensive resource-pack translation system, similar to how ViaVersion translates network packets between Minecraft versions. Such a system would be difficult to maintain and is currently outside Oraxen's scope.
+
+**Oraxen supports merging imported resource packs and their overlays, but does not guarantee cross-version compatibility for third-party models, textures or shaders.**
