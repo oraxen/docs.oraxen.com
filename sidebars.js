@@ -5,6 +5,14 @@ const sidebars = {
     "faq",
     {
       type: "category",
+      label: "🛠️ Tools",
+      link: { type: "doc", id: "tools/index" },
+      items: [
+        "tools/guis",
+      ],
+    },
+    {
+      type: "category",
       label: "⚙️ Configuration",
       link: { type: "doc", id: "configuration/index" },
       items: [
@@ -23,7 +31,8 @@ const sidebars = {
             },
             "configuration/items/appearance",
             "configuration/items/mechanics",
-            "configuration/items/tridents/index",
+            "configuration/items/tridents",
+            "configuration/items/furniture",
           ],
         },
         {

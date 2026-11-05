@@ -20,13 +20,14 @@ Oraxen provides a powerful system to merge multiple resource packs into a single
 </Steps>
 
 <Callout type="info">
-  ZIP files and folders are merged the same way and are ordered together alphabetically by name (case-insensitive). The last pack processed wins in case of conflicts.
-  Merge conflicts are shown in the console.
+  ZIP files and folders are ordered together alphabetically by name, without regard to case. Oraxen combines supported duplicate resources when the relevant merge settings allow it. For other duplicate files, the later imported pack wins. ModelEngine content has higher priority than uploaded packs.
 </Callout>
 
 <Callout type="note">
   Imported packs' `pack.mcmeta` files are never copied as-is. Only their `overlays.entries` are merged into the generated `pack.mcmeta`. Only `assets/` content, overlay `assets/` content, `pack.mcmeta`, and `pack.png` are considered; other files are skipped.
 </Callout>
+
+`pack.import.exclude` filters files in the local pack folder and imported ZIP, folder, overlay, and ModelEngine contents. The rules filter files inside uploaded ZIPs, so those ZIPs remain import sources. Oraxen leaves the source files untouched and keeps resources it generates. See the [pack import settings](/usage/settings#pack) for the default rules and pattern syntax.
 
 ### 📂 Direct Folder
 <Steps>

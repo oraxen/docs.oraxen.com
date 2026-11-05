@@ -9,7 +9,7 @@ import { Callout, Steps } from '@site/src/components/Compat'
 
 ## Overview
 This tutorial demonstrates how to create a custom armor set using Oraxen's armor-trim system.
-Trim-based armor is intended for Minecraft `1.20`–`1.21.1`. On `1.21.2+`, use component-based armor.
+Trim-based armor supports Minecraft 1.20 through 1.21.1. Use component-based armor on 1.21.2 and later.
 
 <Callout type="important">
 	Armor pieces other than helmets do not support 3D models. This is a limitation of Minecraft and cannot be changed by Oraxen. Helmets support 3D models and therefore do not require armor-layer textures.
@@ -21,19 +21,19 @@ Trim-based armor is intended for Minecraft `1.20`–`1.21.1`. On `1.21.2+`, use 
 
 ### Enable trim-based armor
 
-Open `plugins/Oraxen/settings.yml` and configure the `CustomArmor` section.
+Open `plugins/Oraxen/settings.yml` and configure the `custom-armor` section.
 
 ```yaml
-CustomArmor:
+custom-armor:
   type: TRIMS
-  auto_select_type: true
-  disable_leather_repair: true
-  trims_settings:
-    material_replacement: CHAINMAIL
-    auto_assign_settings: true
+  auto-select-type: true
+  disable-leather-repair: true
+  trims:
+    material-replacement: CHAINMAIL
+    auto-assign-settings: true
 ```
 
-`material_replacement` is the vanilla armor material Oraxen reserves for custom trim armor. Valid materials are `CHAINMAIL`, `IRON`, `GOLD`, `DIAMOND`, `NETHERITE`, and `LEATHER`.
+`custom-armor.trims.material-replacement` is the vanilla armor material Oraxen reserves for custom trim armor. Valid materials are `CHAINMAIL`, `IRON`, `GOLD`, `DIAMOND`, `NETHERITE`, and `LEATHER`.
 
 Every piece must use the selected material. `CHAINMAIL` is recommended because it has no normal crafting recipe.
 
@@ -66,7 +66,7 @@ Create `plugins/Oraxen/items/ruby_armor.yml` and add all four pieces.
 
 ```yaml
 ruby_helmet:
-  itemname: "<gradient:#ff1744:#9c0025>Ruby Helmet</gradient>"
+  name: "<gradient:#ff1744:#9c0025>Ruby Helmet</gradient>"
   material: CHAINMAIL_HELMET
   pack:
     generate_model: true
@@ -75,7 +75,7 @@ ruby_helmet:
       - armor/ruby_helmet
 
 ruby_chestplate:
-  itemname: "<gradient:#ff1744:#9c0025>Ruby Chestplate</gradient>"
+  name: "<gradient:#ff1744:#9c0025>Ruby Chestplate</gradient>"
   material: CHAINMAIL_CHESTPLATE
   pack:
     generate_model: true
@@ -84,7 +84,7 @@ ruby_chestplate:
       - armor/ruby_chestplate
 
 ruby_leggings:
-  itemname: "<gradient:#ff1744:#9c0025>Ruby Leggings</gradient>"
+  name: "<gradient:#ff1744:#9c0025>Ruby Leggings</gradient>"
   material: CHAINMAIL_LEGGINGS
   pack:
     generate_model: true
@@ -93,7 +93,7 @@ ruby_leggings:
       - armor/ruby_leggings
 
 ruby_boots:
-  itemname: "<gradient:#ff1744:#9c0025>Ruby Boots</gradient>"
+  name: "<gradient:#ff1744:#9c0025>Ruby Boots</gradient>"
   material: CHAINMAIL_BOOTS
   pack:
     generate_model: true
@@ -124,7 +124,7 @@ Restart the server again after enabling the datapack.
 
 <Callout type="info">
 
-With `auto_assign_settings: true`, Oraxen assigns the trim and hides its tooltip:
+With `custom-armor.trims.auto-assign-settings: true`, Oraxen assigns the trim and hides its tooltip:
 
 ```yaml
 trim_pattern: oraxen:ruby
@@ -134,11 +134,11 @@ ItemFlags:
 </Callout>
 
 <Callout type="note">
-If `auto_assign_settings` is `false`, add these settings to every piece after generating the pattern and restarting:
+If `custom-armor.trims.auto-assign-settings` is `false`, add these settings to every piece after generating the pattern and restarting:
 
 ```yaml
 ruby_helmet:
-  itemname: "<red>Ruby Helmet"
+  name: "<red>Ruby Helmet"
   material: CHAINMAIL_HELMET
   trim_pattern: oraxen:ruby
   ItemFlags:

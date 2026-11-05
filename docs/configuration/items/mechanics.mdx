@@ -412,14 +412,14 @@ Creates a watering can system with linked empty and filled items.<br />
 
 ```yaml
 empty_watering_can:
-  displayname: "<gray>Empty Watering Can"
+  name: "<gray>Empty Watering Can"
   material: PAPER
   mechanics:
     watering:
       filledCanItem: filled_watering_can
 
 filled_watering_can:
-  displayname: "<aqua>Filled Watering Can"
+  name: "<aqua>Filled Watering Can"
   material: PAPER
   mechanics:
     watering:
@@ -473,7 +473,7 @@ Turns an item into portable storage.<br />
 
 ```yaml
 backpack:
-  displayname: backpack
+  name: backpack
   material: PAPER
   unstackable: true
   mechanics:
@@ -981,10 +981,9 @@ table:
   mechanics:
     furniture:
       type: DISPLAY_ENTITY
-      barrier: true
       barriers:
-        - origin
-        - z: 1
+        - 0,0,0
+        - 0,0,1
       hitboxes:
         - 0,0,0 1,3 # Hitbox with 0,0,0 offset from the furniture with the size 1x3.
         - 1,0,3 0.5,2.5 # Hitbox with 1,0,3 offset from the furniture with the size 0.5x2.5.
@@ -1064,13 +1063,15 @@ table:
 
 **Options**<br />
 `type` defines the furniture render type. Common values are `DISPLAY_ENTITY`, `ITEM_FRAME`, `GLOW_ITEM_FRAME`, and `ARMOR_STAND`.<br />
-`barrier` and `barriers` add solid collision areas. `hitboxes` defines interaction areas, formatted as `<x>,<y>,<z> <width>,<height>`, and supports one or more entries.<br />
+<code>barriers</code> adds solid collision areas. Each entry uses integer offsets in the form <code>x,y,z</code>. <code>hitboxes</code> defines interaction areas, formatted as <code>x,y,z width,height</code>, and supports one or more entries.
+<br />
 `seats` adds seats, formatted as `<x>,<y>,<z>` or `<x>,<y>,<z> <yaw>`. Offsets are relative to the furniture center and are rotated with the furniture. Omit `yaw` to use the furniture yaw.<br />
 `restricted_rotation` (`NONE`, `STRICT`, or `VERY_STRICT`) and `rotatable` control placement rotation.<br />
 `lights`, `hardness`, and `drop` define placed behavior. `lights` entries use `<x>,<y>,<z> <level>` for per-offset light sources. `drop` also supports `fortune`, `minimal_type`, and `best_tools`.<br />
 `events` runs actions when a player clicks furniture barriers or hitboxes. See [click events](#click-events).<br />
 `breakable` controls whether players can break the furniture. It defaults to `false` when an event listens for `left` or `both` clicks, allowing hits to trigger actions without removing the furniture; otherwise it defaults to `true`. Set it explicitly to override this behavior.<br />
 `item` defines an alternate display item when placed.<br />
+`appearance` sets the model and textures for placed furniture separately from the inventory item. It accepts the same model, texture, and model-generation options as the item's `pack` section. Use `appearance.models` to map growth-stage names to models.<br />
 `limited_placing`, `blocklocker`, and `storage` add placement rules, protection, and container behavior. `limited_placing` also supports `block_tags`, `oraxen_blocks`, and a `radius_limitation` subsection with `radius` and `amount`. `storage` also supports `open_sound`, `close_sound`, `open_animation`, `close_animation`, `volume`, and `pitch`.<br />
 `jukebox` lets the furniture play music discs and swap to an active model.<br />
 `evolution`, `farmland_required`, and `farmblock_required` support plant and farming setups. `evolution` also supports `light_boost`, `rain_boost`, and `bone_meal` subsections.<br />
@@ -1081,7 +1082,7 @@ For `ARMOR_STAND`, use the same `properties` section for `scale` and `translatio
 `modelengine_id` is also supported for ModelEngine-based furniture.
 
 <Callout type="info">
-  `storage` on furniture requires a barrier or barriers. `DISPLAY_ENTITY` furniture also supports `hitboxes` and display settings under `properties`.
+  <code>storage</code> on furniture requires at least one entry in <code>barriers</code>. <code>DISPLAY_ENTITY</code> furniture also supports <code>hitboxes</code> and display settings under <code>properties</code>.
 </Callout>
 </Details>
 
@@ -1095,7 +1096,8 @@ my_furniture:
   mechanics:
     furniture:
       type: DISPLAY_ENTITY
-      barrier: true
+      barriers:
+        - 0,0,0
       breakable: false
       events:
         - click: both

@@ -1,0 +1,115 @@
+.tool {
+  border: 0;
+  border-radius: 8px;
+  overflow: visible;
+  margin: 1.5rem 0;
+  background: var(--ifm-color-emphasis-200);
+  color: var(--ifm-color-content);
+}
+
+.tool button, .tool input, .tool select {
+  border: 0;
+  box-shadow: none;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.upload {
+  position: relative;
+  overflow: hidden;
+  padding: .6rem 1rem;
+  border-radius: 6px;
+  background: var(--ifm-color-emphasis-300);
+  color: var(--ifm-color-content);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.upload input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.upload:focus-within {
+  outline: 2px solid var(--ifm-font-color-base);
+  outline-offset: 3px;
+}
+
+.file { flex: 1; font-size: .85rem; overflow-wrap: anywhere; }
+
+.preview {
+  background: var(--ifm-color-emphasis-200);
+}
+
+.stage {
+  display: block;
+  margin: 0 auto;
+  max-width: 100%;
+  height: auto;
+  touch-action: none;
+  cursor: move;
+  user-select: none;
+}
+
+.stage image { image-rendering: pixelated; pointer-events: none; }
+.stage:focus, .stage:focus-visible { outline: none; }
+.controls { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 1rem; padding: 0 1rem 1rem; text-align: left; }
+.controls fieldset { min-width: 0; margin: 0; padding: .75rem; border: 0; }
+.controls legend { width: auto; margin-inline: 0; font-size: .9rem; font-weight: 600; padding: 0; text-align: left; }
+.field { display: flex; flex-direction: column; gap: .25rem; margin-bottom: .65rem; font-size: .85rem; }
+.field input, .field select { width: 100%; min-width: 0; padding: .4rem; border: 0; border-radius: 4px; background: var(--ifm-background-color); color: var(--ifm-color-content); font: inherit; }
+.controls button { padding: .4rem .65rem; border: 0; border-radius: 4px; background: var(--ifm-color-emphasis-300); color: var(--ifm-color-content); cursor: pointer; }
+.upload:hover, .controls button:hover { background: var(--ifm-color-emphasis-400); }
+.tool input:focus-visible, .tool select:focus-visible, .tool button:focus-visible { outline: 2px solid var(--ifm-color-primary); outline-offset: 2px; }
+.tool input[type='checkbox'] { appearance: none; display: inline-grid; place-content: center; width: 1rem; height: 1rem; margin: 0 .25rem 0 0; border-radius: 3px; background: var(--ifm-color-emphasis-300); vertical-align: middle; cursor: pointer; }
+.tool input[type='checkbox']:checked { background: var(--ifm-color-primary); }
+.tool input[type='checkbox']:checked::after { content: ''; width: .3rem; height: .55rem; border: solid var(--ifm-background-color); border-width: 0 2px 2px 0; transform: translateY(-1px) rotate(45deg); }
+.tool input[type='range'] { appearance: none; padding: .5rem 0; background: transparent; accent-color: var(--ifm-color-primary); }
+.tool input[type='range']::-webkit-slider-runnable-track { height: 4px; border: 0; border-radius: 2px; background: linear-gradient(to right, var(--ifm-color-primary) var(--slider-value), var(--ifm-color-emphasis-400) var(--slider-value)); }
+.tool input[type='range']::-webkit-slider-thumb { appearance: none; width: 14px; height: 14px; margin-top: -5px; border: 0; border-radius: 50%; background: var(--ifm-color-primary); cursor: pointer; }
+.tool input[type='range']::-moz-range-track { height: 4px; border: 0; border-radius: 2px; background: var(--ifm-color-emphasis-400); }
+.tool input[type='range']::-moz-range-thumb { width: 14px; height: 14px; border: 0; border-radius: 50%; background: var(--ifm-color-primary); cursor: pointer; }
+.help { font-size: .85rem; color: var(--ifm-color-emphasis-700); margin: .75rem 1rem; }
+fieldset .help, .output .help { margin: .5rem 0 0; }
+.error { color: var(--ifm-color-danger); margin: .75rem 1rem; }
+.output { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 1rem; padding: 1rem; }
+.output > div { min-width: 0; }
+.output h3 { font-size: 1rem; }
+.output pre { white-space: pre-wrap; overflow-wrap: anywhere; }
+.output pre code { white-space: inherit; }
+
+.select { position: relative; min-width: 7rem; }
+.tool .selectTrigger { display: flex; align-items: center; justify-content: space-between; gap: 1rem; width: 100%; padding: .6rem .75rem; border-radius: 7px; background: var(--ifm-background-color); color: inherit; font: inherit; text-align: left; cursor: pointer; transition: background 160ms ease; }
+.tool .selectTrigger:hover { background: var(--ifm-color-emphasis-100); }
+.chevron, .optionCheck { display: block; flex-shrink: 0; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
+.chevron { transition: transform 180ms ease; }
+.chevron[data-open='true'] { transform: rotate(180deg); }
+.selectMenu { position: absolute; top: calc(100% + 6px); left: 0; right: 0; z-index: 10; padding: .3rem; border-radius: 9px; background: var(--ifm-background-color); box-shadow: 0 8px 24px #0003; animation: menuEnter 160ms ease-out; }
+.selectMenu[hidden] { display: none; }
+.selectOption { display: flex; align-items: center; justify-content: space-between; gap: .75rem; padding: .5rem .6rem; border-radius: 5px; cursor: pointer; transition: background 120ms ease; }
+.selectOption[data-active='true'] { background: var(--ifm-color-emphasis-200); }
+.selectOption[aria-selected='true'] { color: var(--ifm-color-primary); font-weight: 600; }
+.tool .slider { height: 32px; cursor: pointer; }
+.tool .slider::-webkit-slider-thumb { transition: box-shadow 160ms ease; }
+.tool .slider::-moz-range-thumb { transition: box-shadow 160ms ease; }
+.tool .slider::-moz-range-progress { height: 4px; border-radius: 2px; background: var(--ifm-color-primary); }
+.tool .slider:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 5px var(--ifm-color-primary-lightest); }
+.tool .slider:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 5px var(--ifm-color-primary-lightest); }
+@keyframes menuEnter { from { opacity: 0; transform: translateY(-5px) scale(.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@media (prefers-reduced-motion: reduce) {
+  .selectMenu { animation: none; }
+  .tool .selectTrigger, .chevron, .selectOption { transition: none; }
+  .tool .slider::-webkit-slider-thumb { transition: none; }
+  .tool .slider::-moz-range-thumb { transition: none; }
+}
+
+.previewHelp { text-align: center; }

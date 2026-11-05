@@ -1,0 +1,22 @@
+---
+title: "💼 GUIs"
+description: "Utilities for creating custom GUIs with Oraxen."
+---
+
+# 💼 GUIs
+
+import GuiVisualizer from '@site/src/components/GuiVisualizer';
+
+## GUI Visualizer
+
+Upload a PNG texture and align it with a chest inventory. Your image does not get sent to a server.
+
+<GuiVisualizer />
+
+### Use the result
+
+Save the texture under `plugins/Oraxen/pack/textures/` at the texture path you entered. Copy the glyph settings into a file under `plugins/Oraxen/glyphs/`, then use the title in your menu plugin with MiniMessage support.
+
+Reload Oraxen with `/o reload all`, reload your menu plugin, and reopen the menu to check the alignment in game. The preview models a standard Java chest inventory with the default font. Other inventory types, custom fonts, and menu plugins can change the result.
+
+See [Creating a GUI](../usage/tutorials/f3g7k.mdx) for the full setup and [Glyphs](../configuration/glyphs/index.mdx) for configuration options.
