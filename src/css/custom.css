@@ -62,6 +62,20 @@
   border-right: 0 !important;
   margin-top: 0 !important;
 }
+.menu__list-item.sidebar-configuration {
+  margin-top: .5rem;
+  padding-top: .5rem;
+  position: relative;
+}
+.menu__list-item.sidebar-configuration::before {
+  background: var(--ifm-color-emphasis-200);
+  content: '';
+  height: 1px;
+  left: .75rem;
+  position: absolute;
+  right: .75rem;
+  top: 0;
+}
 .theme-doc-sidebar-container .menu__caret {
   margin: .25rem;
   padding: .25rem .5rem;
@@ -216,6 +230,12 @@ summary[id]:hover .summary-link,
   display: inline-block;
   position: relative;
 }
+li > p:has(+ .oraxen-tooltip) {
+  display: inline;
+}
+li > p:has(+ .oraxen-tooltip)::after {
+  content: ' ';
+}
 .oraxen-tooltip__trigger {
   text-decoration: underline dotted;
   text-underline-offset: .2em;
@@ -257,6 +277,7 @@ summary[id]:hover .summary-link,
 .oraxen-tooltip__content pre {
   max-width: 100%;
   overflow-x: auto;
+  text-align: left;
 }
 .oraxen-tooltip__content > :first-child { margin-top: 0; }
 .oraxen-tooltip__content > :last-child { margin-bottom: 0; }
@@ -324,4 +345,20 @@ summary[id]:hover .summary-link,
 [data-theme='dark'] .oraxen-callout--tip {
   --callout-bg: #0f2f1d;
   --callout-text: rgba(236, 253, 245, 0.92);
+}
+
+.discord-ping {
+  background-color: rgba(88, 101, 242, 0.3);
+  border-radius: 4px;
+  color: #c9d2ff;
+  font-weight: 500;
+  padding: 0 2px;
+}
+.oraxen-tooltip__trigger:has(.discord-ping) {
+  text-decoration: none;
+}
+.oraxen-tooltip:hover .oraxen-tooltip__trigger .discord-ping,
+.oraxen-tooltip:focus-within .oraxen-tooltip__trigger .discord-ping {
+  background-color: #5865f2;
+  color: #fff;
 }

@@ -20,18 +20,18 @@ Component-based armor requires Minecraft `1.21.2+`. For older versions, use the 
 
 ### Enable component-based armor
 
-Open `plugins/Oraxen/settings.yml` and configure the `CustomArmor` section.
+Open `plugins/Oraxen/settings.yml` and configure the `custom-armor` section.
 
 ```yaml
-CustomArmor:
+custom-armor:
   type: COMPONENT
-  auto_select_type: true
-  disable_leather_repair: true
-  component_settings:
-    auto_assign_component: true
+  auto-select-type: true
+  disable-leather-repair: true
+  component:
+    auto-assign-component: true
 ```
 
-This tutorial defines the equippable component for each piece explicitly. With `auto_assign_component`, Oraxen can instead derive the component from correctly named item IDs.
+This tutorial defines the equippable component for each piece explicitly. With `custom-armor.component.auto-assign-component`, Oraxen can instead derive the component from correctly named item IDs.
 
 ### Add the textures
 
@@ -62,7 +62,7 @@ Create `plugins/Oraxen/items/ruby_armor.yml` and add all four pieces.
 
 ```yaml
 ruby_helmet:
-  itemname: "<gradient:#ff1744:#9c0025>Ruby Helmet</gradient>"
+  name: "<gradient:#ff1744:#9c0025>Ruby Helmet</gradient>"
   material: PAPER
   components:
     equippable:
@@ -75,7 +75,7 @@ ruby_helmet:
       - armor/ruby_helmet
 
 ruby_chestplate:
-  itemname: "<gradient:#ff1744:#9c0025>Ruby Chestplate</gradient>"
+  name: "<gradient:#ff1744:#9c0025>Ruby Chestplate</gradient>"
   material: PAPER
   components:
     equippable:
@@ -88,7 +88,7 @@ ruby_chestplate:
       - armor/ruby_chestplate
 
 ruby_leggings:
-  itemname: "<gradient:#ff1744:#9c0025>Ruby Leggings</gradient>"
+  name: "<gradient:#ff1744:#9c0025>Ruby Leggings</gradient>"
   material: PAPER
   components:
     equippable:
@@ -101,7 +101,7 @@ ruby_leggings:
       - armor/ruby_leggings
 
 ruby_boots:
-  itemname: "<gradient:#ff1744:#9c0025>Ruby Boots</gradient>"
+  name: "<gradient:#ff1744:#9c0025>Ruby Boots</gradient>"
   material: PAPER
   components:
     equippable:
@@ -129,7 +129,7 @@ Reapply the generated pack, then get the pieces from `/oraxen inv` or `/oraxen g
 </Steps>
 
 <Callout type="note">
-With `auto_assign_component: true`, you may omit `components.equippable`. Oraxen derives the slot and model from the shared prefix and one of the recognized suffixes: `_helmet`, `_chestplate`, `_leggings`, or `_boots`.
+With `custom-armor.component.auto-assign-component: true`, you may omit `components.equippable`. Oraxen derives the slot and model from the shared prefix and one of the recognized suffixes: `_helmet`, `_chestplate`, `_leggings`, or `_boots`.
 </Callout>
 
 ## Troubleshooting

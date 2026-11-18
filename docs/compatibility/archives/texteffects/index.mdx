@@ -23,13 +23,9 @@ One option is [TheSalt's Text Effects](https://modrinth.com/resourcepack/thesalt
 <Steps>
 #### 1. Download a compatible version of the external resource pack.
 #### 2. Place the resource pack ZIP in `plugins/Oraxen/pack/uploads/`.
-#### 3. Make sure Oraxen imports the pack's core shaders (`plugins/Oraxen/settings.yml`).
+#### 3. Make sure `pack.import.exclude` does not contain `'**/assets/minecraft/shaders/core/**'`.
 
-```yaml
-Pack:
-  import:
-    remove_core_shaders_from_imported_packs: false
-```
+Oraxen does not exclude imported core shaders by default.
 
 #### 4. Reload or restart the server to regenerate the final resource pack.
 </Steps>

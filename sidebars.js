@@ -1,11 +1,20 @@
 /** @type {import('@docusaurus/plugin-content-docs').SidebarsConfig} */
 const sidebars = {
   docsSidebar: [
-    "introduction/index",
+    "introduction",
     "faq",
     {
       type: "category",
+      label: "🛠️ Tools",
+      link: { type: "doc", id: "tools/index" },
+      items: [
+        "tools/guis",
+      ],
+    },
+    {
+      type: "category",
       label: "⚙️ Configuration",
+      className: "sidebar-configuration",
       link: { type: "doc", id: "configuration/index" },
       items: [
         {
@@ -22,8 +31,16 @@ const sidebars = {
               ],
             },
             "configuration/items/appearance",
-            "configuration/items/mechanics",
-            "configuration/items/tridents/index",
+            {
+              type: "category",
+              label: "🔧 Mechanics",
+              link: { type: "doc", id: "configuration/items/mechanics/index" },
+              items: [
+                "configuration/items/mechanics/tridents",
+                "configuration/items/mechanics/furniture",
+                "configuration/items/mechanics/blocks",
+              ],
+            },
           ],
         },
         {
@@ -31,12 +48,6 @@ const sidebars = {
           label: "🖼️ Glyphs",
           link: { type: "doc", id: "configuration/glyphs/index" },
           items: [
-            {
-              type: "category",
-              label: "✨ Text Effects",
-              link: { type: "doc", id: "configuration/glyphs/texteffects/index" },
-              items: [],
-            },
             "configuration/glyphs/huds",
           ],
         },
@@ -149,6 +160,7 @@ const sidebars = {
           label: "📂 Archives",
           link: { type: "doc", id: "compatibility/archives/index" },
           items: [
+            "compatibility/archives/texteffects/index",
             "compatibility/archives/bossshoppro",
             "compatibility/archives/cratereloaded",
             "compatibility/archives/trmenu",

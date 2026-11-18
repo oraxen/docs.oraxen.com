@@ -1,0 +1,192 @@
+---
+title: "🧱 Blocks"
+description: "Create and configure custom blocks."
+asIndexPage: true
+---
+
+# 🧱 Blocks
+
+## Overview
+
+Oraxen lets you create custom blocks, stairs, trapdoors, doors and more using the `block` mechanic.
+
+## Configuration
+
+Blocks are configured as items in `.yml` files inside `plugins/Oraxen/items`.
+
+```yaml
+magic_ore: # Oraxen item ID for the block.
+  name: "<aqua>Magic Ore" # Display name of the item.
+  material: PAPER # Base Minecraft material used for the item.
+  pack: # Controls the item's hand and inventory appearance.
+    generate_model: true # Generates a model for the item.
+    parent_model: block/cube_all # Uses the cube model with one texture on all sides.
+    textures: # Textures used by the generated model.
+      - default/magic_ore # Texture applied to the cube.
+  mechanics:
+    block: # Configures the item as a custom block.
+      type: FULL # Uses the FULL block type.
+      custom-variation: 5 # Identifies the backing block state.
+      appearance: # Controls the placed block's appearance.
+        model: magic_ore # Model shown when the block is placed.
+      block-sounds: # Sounds played by the block.
+        break-sound: block.stone.break # Sound played when the block breaks.
+        place-sound: block.stone.place # Sound played when the block is placed.
+      placeable: # Controls which surfaces allow placement.
+        floor: true # Allows placement on floors.
+        wall: true # Allows placement on walls.
+        roof: false # Disallows placement on roofs.
+      breaking: # Rules for breaking the block and dropping items.
+        - when: ["#minecraft:pickaxes"] # Applies this rule to pickaxes.
+          hardness: 3 # Controls how long the block takes to break with a pickaxe.
+          drops: # Items dropped when this rule applies.
+            - item: magic_ore # Drops the ore item.
+              silk-touch: required # Requires Silk Touch for this drop.
+              probability: 1.0 # Gives the drop a 100% chance.
+            - item: magic_shard # Drops magic shards.
+              silk-touch: forbidden # Drops shards only without Silk Touch.
+              amount: 2..4 # Drops between two and four shards.
+              fortune: 0.5 # Increases the amount by 50% per Fortune level.
+              probability: 1.0 # Gives the drop a 100% chance.
+          durability: # Controls the tool's durability change.
+            remove: 1 # Removes one durability point from the pickaxe.
+        - else: # Applies when no tool-specific rule matches.
+          hardness: 6 # Makes the block take longer to break with other tools.
+          durability: # Controls the tool's durability change.
+            remove: 2 # Removes two durability points from the tool.
+```
+
+### Types
+
+Choose `FULL`, `STRING`, `CHORUS`, `STAIR`, `SLAB`, `DOOR`, `TRAPDOOR`, `GRATE`, or `BULB`. The type determines the backing block used for the custom block and its behavior.
+
+`custom-variation` identifies the backing block state used for the custom block. Assign different variations to blocks that use the same backing states.
+
+### Appearance
+
+`appearance.model` controls the model shown when the block is placed.
+
+For example, `oraxen:blocks/magic_ore` refers to `assets/oraxen/models/blocks/magic_ore.json`.
+
+```yaml
+mechanics:
+  block:
+    type: FULL
+    appearance:
+      model: oraxen:blocks/magic_ore
+```
+
+The `appearance` section also accepts `textures`.
+
+The hand and inventory appearance is controlled through the `pack` section. Details can be found <Highlight color="#1877F2" to="/configuration/items/appearance"><strong>here</strong></Highlight>.
+
+### Sounds
+`block-sounds` control the sounds of the blocks. It allows you to configure a `place-sound`, `break-sound`, `step-sound`, `hit-sound`, and `fall-sound`.
+
+```yaml
+mechanics:
+  block:
+    block-sounds:
+      place-sound: block.stone.place
+      break-sound: block.stone.break
+      step-sound: block.stone.step
+      hit-sound: block.stone.hit
+      fall-sound: block.stone.fall
+```
+
+### Breaking and drops
+
+Use `breaking` to set how long a block takes to break, what it drops, and how breaking it affects the tool. Rules can apply to specific tools or to every other tool.
+
+In this example, pickaxes drop the ore itself with Silk Touch and magic shards without it. Other tools take longer and drop nothing.
+
+```yaml
+mechanics:
+  block:
+    type: FULL
+    breaking:
+      - when:
+          - "#minecraft:pickaxes"
+        hardness: 3
+        drops:
+          - item: magic_ore
+            probability: 1.0
+            silk-touch: required
+          - item: magic_shard
+            probability: 1.0
+            amount: 2..4
+            silk-touch: forbidden
+            fortune: 0.5
+        durability:
+          remove: 1
+      - else:
+        hardness: 6
+        durability:
+          remove: 2
+```
+
+#### Tools
+
+- `when` accepts vanilla item IDs such as `minecraft:diamond_pickaxe` and item tags such as `#minecraft:pickaxes`. Quote tags so YAML does not treat `#` as a comment.
+- `else` applies when no `when` rule matches. Oraxen uses the first matching `when` rule, regardless of where `else` appears. If there are multiple `else` rules, it uses the first.
+- `hardness` controls the time needed to break the block. It defaults to `1`.
+- `durability.remove` removes durability points from the tool. `durability.add` restores them. In the example, pickaxes lose one point and other tools lose two.
+
+#### Drops
+
+Add entries under a rule's `drops` list. A rule without drops gives no items.
+
+- `item` identifies the dropped Oraxen item or vanilla item. Use the `minecraft:` prefix to select a vanilla item.
+- `probability` sets the chance of a drop. It defaults to `1.0`, which means 100%.
+- `amount` sets a range such as `2..4`. For a fixed amount, use a range with equal values, such as `3..3`. The default is one item.
+- `silk-touch` accepts `required`, `forbidden`, or `any`. The default is `any`. `true` also means `required`, and `false` means `any`.
+- `fortune` increases the amount by the configured fraction per Fortune level. For example, `0.5` adds 50% per level.
+
+### Events
+
+Add `events` to run actions when a player clicks, places, or breaks a block. Each event has a `trigger` and a list of `actions`.
+
+Set `trigger` to `click`, `break`, or `place`. The default is `click`. Set the `type` of click events to `LEFT`, `RIGHT`, or `BOTH`. The default is `BOTH`.
+
+Break actions run after a successful player break. Cancelled breaks and removals without a player do not run break actions.
+
+```yaml
+mechanics:
+  block:
+    events:
+      - trigger: click
+        type: RIGHT
+        actions:
+          - command: 'say "<Player> clicked this block"'
+            executor: CONSOLE
+            condition: 'player.hasPermission("myserver.block.use")'
+          - message: '<green>Hi <Player>!'
+            conditions:
+              - 'player.hasPermission("myserver.block.use")'
+              - 'player.isSneaking()'
+      - trigger: break
+        actions:
+          - message: '<yellow>You broke the block!'
+```
+
+<Details>
+  <summary><strong>Actions</strong></summary>
+
+Add each action to the event's `actions` list. Oraxen runs them in order.
+
+Use `command` to run a command. Set `executor` to `PLAYER`, `CONSOLE`, or `OP-PLAYER`. The default is `PLAYER`.
+
+Use `message` to send MiniMessage text to the player. `<Player>`, `<player>`, and `<PLAYER>` insert the player's name. PlaceholderAPI placeholders work when PlaceholderAPI is installed.
+</Details>
+
+<Details>
+  <summary><strong>Conditions</strong></summary>
+
+Add `condition` for one check or `conditions` for a list. The action runs only when every check passes. Use `player` or `#player` to check the player. Use `server` or `#server` to check the server.
+
+If an action has no conditions, it runs on every matching event. If a condition is invalid, Oraxen skips the action and logs a warning.
+
+In the example above, the command requires the `myserver.block.use` permission. The greeting also requires the player to be sneaking. Put conditions on each action you want to restrict.
+
+For available Java methods, see the Paper 26.3 <Highlight color="#1877F2" to="https://jd.papermc.io/paper/26.3/org/bukkit/entity/Player.html"><strong>Player API</strong></Highlight> and <Highlight color="#1877F2" to="https://jd.papermc.io/paper/26.3/org/bukkit/Server.html"><strong>Server API</strong></Highlight>. Use the Player API for player checks and the Server API for server checks.
+</Details>

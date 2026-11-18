@@ -1,0 +1,291 @@
+---
+title: "🪑 Furniture"
+description: "Create and configure custom furniture."
+asIndexPage: true
+---
+
+import Tooltip from '@site/src/components/Tooltip'
+
+# 🪑 Furniture
+
+## Overview
+Oraxen lets you create custom furniture using the `furniture` mechanic. It allow players to place items as furniture. You can add seats, lights, storage, and actions when players click it.<br />
+
+<img src="/assets/furniture/sitting.gif" alt="A player sitting on furniture." width="650"/>
+
+## Configuration
+Furniture is configured as items in `.yml` files inside the `plugins/Oraxen/items` folder.
+
+<PluginFileTree
+  initialTreeData={[
+    {
+      id: "plugins",
+      name: "plugins",
+      children: [
+        {
+          id: "plugins/Oraxen",
+          name: "Oraxen",
+          children: [
+            {
+              id: "plugins/Oraxen/items",
+              name: "items",
+              children: [
+                {
+                  id: "plugins/Oraxen/items/decorations.yml",
+                  name: "decorations.yml",
+                },
+                {
+                  id: "plugins/Oraxen/items/flowers.yml",
+                  name: "flowers.yml",
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]}
+/>
+
+```yml
+table:
+  material: PAPER
+  mechanics:
+    furniture:
+      type: DISPLAY_ENTITY # How Oraxen displays the furniture.
+      barriers: # Blocks that stop players from walking through the furniture.
+        - 0,0,0
+        - 0,0,1
+      ghasts: # Invisible solid hitboxes that stop players from walking through the furniture.
+        - 0,0,0 0.25
+      hitboxes: # Areas players can click.
+        - 0,0,0 1,3 # At 0,0,0, with a width of 1 and a height of 3.
+        - 1,0,3 0.5,2.5 # At 1,0,3, with a width of 0.5 and a height of 2.5.
+
+      seats: # Places where players can sit.
+        - 0,0,0 # Faces the same direction as the furniture.
+        - 0.5,0,0 90 # Faces 90 degrees.
+      lights: # Places where the furniture gives off light.
+        - 0,1,0 15 # One block above the furniture, with light level 15.
+      restricted_rotation: VERY_STRICT # Limits the directions the furniture can face when placed.
+      rotatable: true # Allows players to rotate the placed furniture.
+      hardness: 5 # Controls how long the furniture takes to break.
+      breakable: true # Allows players to break the furniture.
+      events: # Actions to run when a player clicks the furniture.
+        - trigger: click
+          type: RIGHT # Run the actions on a right-click.
+          actions: # Run these actions in order.
+            - command: 'say "<Player> clicked this furniture"' # Run this command with the player's name.
+              executor: CONSOLE # Runs the command as the server console.
+              condition: 'player.hasPermission("myserver.furniture.use")' # Run the command only if the player has this permission.
+            - message: '<green>Hi <Player>!' # Message sent to the interacting player.
+      item: different_item_id # Use this Oraxen item for the placed furniture.
+      farmland_required: false # Requires farmland beneath the furniture when enabled.
+      farmblock_required: false # Requires an Oraxen farmblock beneath the furniture when enabled.
+      blocklocker: # Control BlockLocker protection.
+        can_protect: true # Allows the furniture to be protected with BlockLocker.
+        protection_type: CONTAINER # BlockLocker protection category used for the furniture.
+      limited_placing: # Restricts where the furniture can be placed.
+        floor: true # Allows placement on floors.
+        wall: false # Allows placement on walls when enabled.
+        roof: false # Allows placement on the underside of blocks when enabled.
+        type: ALLOW # Allow placement on the listed blocks.
+        block_types: # Blocks where players can place the furniture.
+          - GRASS_BLOCK
+      storage: # Give the furniture an inventory.
+        type: STORAGE # Storage behavior used by the furniture.
+        rows: 5 # Number of inventory rows in the storage.
+        title: "<red>My Storage" # Title displayed in the storage interface.
+      jukebox: # Music playback settings for jukebox furniture.
+        active_model: opened # Model used while the jukebox is playing.
+        volume: 1.0 # Playback volume.
+        pitch: 1.0 # Playback pitch.
+        permission: "oraxen.jukebox.play" # Permission required to use the jukebox.
+      evolution: # Change the furniture to another stage over time.
+        delay: 6000 # Delay between evolution attempts.
+        next_stage: my_plant_stage2 # Oraxen furniture item ID for the next stage.
+        probability: 0.5 # Chance of evolving on each attempt.
+      text_entity: # Text displayed alongside the furniture.
+        text: # Lines of text to display.
+          - "<gold>Workshop Table"
+        offset: { x: 0.0, y: 1.2, z: 0.0 } # Place the text above the furniture.
+      properties: # Change how the furniture looks.
+        display_transform: NONE # Item display transform applied to the model.
+        brightness: # Set the light used to display the furniture.
+          block_light: 15 # Block light level used to render the furniture.
+          sky_light: 0 # Sky light level used to render the furniture.
+        scale: # Model scale along each axis.
+          x: 1 # Scale along the X axis.
+          y: 1 # Scale along the Y axis.
+          z: 1 # Scale along the Z axis.
+        translation: # Move the model from its original position.
+          x: 0 # Translation along the X axis.
+          y: 0 # Translation along the Y axis.
+          z: 0 # Translation along the Z axis.
+        tracking_rotation: FIXED # Keep the furniture facing one direction.
+        view_range: 1 # Adjust how far away players can see the furniture.
+        interpolation_duration: 0 # Duration in ticks used to interpolate display transformations.
+        interpolation_delay: 0 # Delay in ticks before transformation interpolation begins.
+        shadow_strength: 0 # Set how dark the shadow is.
+        shadow_radius: 0 # Set the size of the shadow.
+        displayWidth: 0 # Width used to decide when to hide the display. This does not change the hitbox.
+        displayHeight: 0 # Height used to decide when to hide the display. This does not change the hitbox.
+      drop: # Items dropped when the furniture is broken.
+        silktouch: false # Whether Silk Touch affects the furniture's drops.
+        loots: # Loot entries and their drop probabilities.
+          - { oraxen_item: table, probability: 1.0 } # Drops the Oraxen item 'table' with a 100% chance.
+```
+
+### Appearance
+
+`appearance.model` controls the model shown when the furniture is placed.
+
+For example, `oraxen:furniture/chair` refers to `assets/oraxen/models/furniture/chair.json`.
+
+```yaml
+chair:
+  mechanics:
+    furniture:
+      appearance:
+        model: oraxen:furniture/chair
+```
+
+The hand and inventory appearance is controlled through the `pack` section. Details can be found <Highlight color="#1877F2" to="/configuration/items/appearance"><strong>here</strong></Highlight>.
+
+The `appearance` section also accepts model-generation options such as `generate_model`, `parent_model`, and `textures`. These control the placed furniture separately from the inventory item.
+
+Use `appearance.models` to assign placed models to growth stages. Each key matches a model value in the furniture mechanic's stages list.
+
+```yaml
+plant:
+  mechanics:
+    furniture:
+      appearance:
+        model: oraxen:furniture/plant
+        models:
+          stage2: oraxen:furniture/plant_stage2
+          stage3: oraxen:furniture/plant_stage3
+      stages:
+        - model: stage2
+          evolution:
+            delay: 6000
+            probability: 1.0
+        - model: stage3
+```
+
+### Hitboxes
+
+- `barriers` add solid barrier hitboxes using
+
+  <Tooltip trigger={<code>x,y,z</code>}>
+
+  ```yaml
+  barriers:
+    - 0,0,0 # Barrier at the center of the furniture.
+    - 0,0,1 # Barrier one block above the center of the furniture.
+  ```
+
+  </Tooltip>
+- `ghasts` add invisible, solid hitboxes using
+
+  <Tooltip trigger={<code>x,y,z scale</code>}>
+
+  ```yaml
+  ghasts:
+    - 0,0,0 0.25 # Solid hitbox at the center of the furniture with scale 0.25.
+  ```
+
+  The scale ranges from `0.0625` to `1`.
+
+  </Tooltip>
+- `hitboxes` add clickable, non-solid hitboxes using
+
+  <Tooltip trigger={<code>x,y,z width,height</code>}>
+
+  ```yaml
+  hitboxes:
+    - 0,0,0 1,2 # Hitbox at the center of the furniture, one block wide and two blocks tall.
+  ```
+
+  </Tooltip>
+
+All hitboxes defines a position relative to the furniture as whole numbers in the format `x,y,z`. Some also require additional properties such as `scale`, `width` and `height`.
+
+```yaml
+mechanics:
+  furniture:
+    barriers:
+      - 0,0,0 # Barrier at the center of the furniture.
+      - 0,0,1 # Barrier one block above the center of the furniture.
+    ghasts:
+      - 0,0,0 0.25 # Solid hitbox at the center of the furniture with scale 0.25.
+    hitboxes:
+      - 0,0,0 1,2 # Hitbox at the center of the furniture, one block wide and two blocks tall.
+```
+
+### Lights
+
+Use `lights` to add light sources to placed furniture. Each entry uses `x,y,z level`. The coordinates are whole-number offsets relative to the furniture and rotate with it. The light level ranges from 0 to 15.
+
+```yaml
+mechanics:
+  furniture:
+    lights:
+      - 0,1,0 15 # Light one block above the furniture at level 15.
+      - 1,0,0 10 # Light one block to the side at level 10.
+```
+
+These lights illuminate the surrounding blocks. To change how bright the furniture model itself appears, use `properties.brightness` instead.
+
+### Events
+
+Add `events` to run actions when a player clicks, places, breaks, or sits on furniture. Each event has a `trigger` and a list of `actions`.
+
+Set `trigger` to `click`, `break`, or `place`. Furniture also supports `sit`, which runs after the player sits down. The default is `click`. Click events run when a player clicks a barrier or hitbox. Set their `type` to `LEFT`, `RIGHT`, or `BOTH`. The default is `BOTH`.
+
+Break actions run after a successful player break, once per furniture item even if it has multiple barriers. Cancelled breaks and removals without a player do not run break actions.
+
+Furniture with a `LEFT` or `BOTH` click event defaults to `breakable: false`. Other furniture, including furniture with only break events, defaults to `breakable: true`. Set `breakable` explicitly to override the default.
+
+```yaml
+my_furniture:
+  mechanics:
+    furniture:
+      breakable: true
+      events:
+        - trigger: click
+          type: RIGHT
+          actions:
+            - command: 'say "<Player> clicked this furniture"'
+              executor: CONSOLE
+              condition: 'player.hasPermission("myserver.furniture.use")'
+            - message: '<green>Hi <Player>!'
+              conditions:
+                - 'player.hasPermission("myserver.furniture.use")'
+                - 'player.isSneaking()'
+        - trigger: break
+          actions:
+            - message: '<yellow>You broke the furniture!'
+```
+
+<Details>
+  <summary><strong>Actions</strong></summary>
+
+Add each action to the event's `actions` list. Oraxen runs them in order.
+
+Use `command` to run a command. Set `executor` to `PLAYER`, `CONSOLE`, or `OP-PLAYER`. The default is `PLAYER`.
+
+Use `message` to send MiniMessage text to the player. `<Player>`, `<player>`, and `<PLAYER>` insert the player's name. PlaceholderAPI placeholders work when PlaceholderAPI is installed.
+</Details>
+
+<Details>
+  <summary><strong>Conditions</strong></summary>
+
+Add `condition` for one check or `conditions` for a list. The action runs only when every check passes. Use `player` or `#player` to check the player. Use `server` or `#server` to check the server.
+
+If an action has no conditions, it runs on every matching event. If a condition is invalid, Oraxen skips the action and logs a warning.
+
+In the example above, the command requires the `myserver.furniture.use` permission. The greeting also requires the player to be sneaking. Put conditions on each action you want to restrict.
+
+For available Java methods, see the Paper 26.3 <Highlight color="#1877F2" to="https://jd.papermc.io/paper/26.3/org/bukkit/entity/Player.html"><strong>Player API</strong></Highlight> and <Highlight color="#1877F2" to="https://jd.papermc.io/paper/26.3/org/bukkit/Server.html"><strong>Server API</strong></Highlight>. Use the Player API for player checks and the Server API for server checks.
+</Details>

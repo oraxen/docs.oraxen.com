@@ -8,7 +8,7 @@ import { Callout, Steps } from '@site/src/components/Compat'
 # 🪽 Creating an Elytra
 
 ## Overview
-Elytras & Armor are controlled via the <Highlight color="#1877F2">**Equippable**</Highlight> Component. It requires Minecraft `1.21.2+` and the default `CustomArmor.type: COMPONENT` setting in `settings.yml`. Elytras are made out of 2 assets, an "icon" model / texture and a wing texture. 
+Elytras & Armor are controlled via the <Highlight color="#1877F2">**Equippable**</Highlight> Component. It requires Minecraft `1.21.2+` and the default `custom-armor.type: COMPONENT` setting in `settings.yml`. Elytras are made out of 2 assets, an "icon" model / texture and a wing texture. 
 
 ## Tutorial
 
@@ -46,7 +46,7 @@ Create a new item in the items folder (or edit an existing `.yml` file).
 
 ```yaml
 magic_elytra:
-  itemname: "<gradient:#9B59B6:#5B6BBF:#1A237E>Magic Elytra</gradient>"
+  name: "<gradient:#9B59B6:#5B6BBF:#1A237E>Magic Elytra</gradient>"
   material: ELYTRA
   components:
     max_stack_size: 1
@@ -60,7 +60,7 @@ magic_elytra:
       - default/armors/magic_elytra_icon
 ```
 
-`itemname` - The display name shown for the item.<br />
+`name` - The base item name shown for the item.<br />
 `material` - The base Minecraft material used for the item.<br />
 
 `components` - Vanilla item component settings for the item.<br />

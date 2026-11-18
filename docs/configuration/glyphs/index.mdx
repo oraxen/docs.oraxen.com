@@ -62,7 +62,24 @@ Glyphs are configured in `.yml` files in the `plugins/Oraxen/glyphs` folder.
 </Callout>
 
 ### Additional Properties
+
 <details>
+<summary id="font"><strong>🔤 Font</strong></summary>
+
+Chooses the font file that contains the glyph's provider.
+
+`font` - The font to use for the glyph. Defaults to `minecraft:default`.<br />
+
+```yaml
+server_icon:
+  font: oraxen:icons
+```
+
+This writes the glyph provider to `assets/oraxen/font/icons.json`. Oraxen's glyph tags select the glyph's font automatically. When you insert the raw Unicode character yourself, apply the same font with MiniMessage, such as `<font:oraxen:icons>...</font>`.
+</details>
+
+<details>
+
 <summary id="tab-completion"><strong>💬 Tab Completion</strong></summary>
 
 Makes glyphs tab complete in chat.
@@ -76,19 +93,6 @@ Makes glyphs tab complete in chat.
 ```yaml
 chat:
   tabcomplete: true
-```
-</details>
-
-<details>
-<summary id="font"><strong>🔤 Font</strong></summary>
-
-Defines the font used for the glyph.
-
-`font` - The font that should be used for the glyph.
-
-```yaml
-appearance:
-  font: "minecraft:default"
 ```
 </details>
 

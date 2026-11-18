@@ -412,14 +412,14 @@ Creates a watering can system with linked empty and filled items.<br />
 
 ```yaml
 empty_watering_can:
-  displayname: "<gray>Empty Watering Can"
+  name: "<gray>Empty Watering Can"
   material: PAPER
   mechanics:
     watering:
       filledCanItem: filled_watering_can
 
 filled_watering_can:
-  displayname: "<aqua>Filled Watering Can"
+  name: "<aqua>Filled Watering Can"
   material: PAPER
   mechanics:
     watering:
@@ -473,7 +473,7 @@ Turns an item into portable storage.<br />
 
 ```yaml
 backpack:
-  displayname: backpack
+  name: backpack
   material: PAPER
   unstackable: true
   mechanics:
@@ -910,7 +910,8 @@ mechanics:
     appearance: # Also supports textures
       model: crystalmush_log
     events: # Run actions when a placed block is clicked
-      - click: right # both, left, right
+      - trigger: click
+        type: RIGHT # LEFT, RIGHT, BOTH
         actions:
           - command: 'say "<Player> clicked this block"'
             executor: CONSOLE # PLAYER, CONSOLE, OP-PLAYER
@@ -941,7 +942,7 @@ mechanics:
           add: 0
 ```
 
-`events` runs commands and messages when a placed block is clicked. See [click events](#click-events) for filters, executors, conditions, and migration details.
+`events` runs actions when a player places, clicks, or breaks a custom block. See [block and furniture events](#click-events) for triggers, executors, and conditions.
 
 Each loot entry can use `silk-touch` to control whether it drops based on the breaking tool.<br />
 - `any` or `false` (default); Drop with or without Silk Touch.
@@ -981,10 +982,9 @@ table:
   mechanics:
     furniture:
       type: DISPLAY_ENTITY
-      barrier: true
       barriers:
-        - origin
-        - z: 1
+        - 0,0,0
+        - 0,0,1
       hitboxes:
         - 0,0,0 1,3 # Hitbox with 0,0,0 offset from the furniture with the size 1x3.
         - 1,0,3 0.5,2.5 # Hitbox with 1,0,3 offset from the furniture with the size 0.5x2.5.
@@ -999,7 +999,8 @@ table:
       hardness: 5
       breakable: true
       events:
-        - click: right
+        - trigger: click
+          type: RIGHT
           actions:
             - command: 'say "<Player> clicked this furniture"'
               executor: CONSOLE
@@ -1064,13 +1065,15 @@ table:
 
 **Options**<br />
 `type` defines the furniture render type. Common values are `DISPLAY_ENTITY`, `ITEM_FRAME`, `GLOW_ITEM_FRAME`, and `ARMOR_STAND`.<br />
-`barrier` and `barriers` add solid collision areas. `hitboxes` defines interaction areas, formatted as `<x>,<y>,<z> <width>,<height>`, and supports one or more entries.<br />
+<code>barriers</code> adds solid collision areas. Each entry uses integer offsets in the form <code>x,y,z</code>. <code>hitboxes</code> defines interaction areas, formatted as <code>x,y,z width,height</code>, and supports one or more entries.
+<br />
 `seats` adds seats, formatted as `<x>,<y>,<z>` or `<x>,<y>,<z> <yaw>`. Offsets are relative to the furniture center and are rotated with the furniture. Omit `yaw` to use the furniture yaw.<br />
 `restricted_rotation` (`NONE`, `STRICT`, or `VERY_STRICT`) and `rotatable` control placement rotation.<br />
 `lights`, `hardness`, and `drop` define placed behavior. `lights` entries use `<x>,<y>,<z> <level>` for per-offset light sources. `drop` also supports `fortune`, `minimal_type`, and `best_tools`.<br />
-`events` runs actions when a player clicks furniture barriers or hitboxes. See [click events](#click-events).<br />
+`events` runs actions when a player clicks or breaks furniture. See [block and furniture events](#click-events).<br />
 `breakable` controls whether players can break the furniture. It defaults to `false` when an event listens for `left` or `both` clicks, allowing hits to trigger actions without removing the furniture; otherwise it defaults to `true`. Set it explicitly to override this behavior.<br />
 `item` defines an alternate display item when placed.<br />
+`appearance` sets the model and textures for placed furniture separately from the inventory item. It accepts the same model, texture, and model-generation options as the item's `pack` section. Use `appearance.models` to map growth-stage names to models.<br />
 `limited_placing`, `blocklocker`, and `storage` add placement rules, protection, and container behavior. `limited_placing` also supports `block_tags`, `oraxen_blocks`, and a `radius_limitation` subsection with `radius` and `amount`. `storage` also supports `open_sound`, `close_sound`, `open_animation`, `close_animation`, `volume`, and `pitch`.<br />
 `jukebox` lets the furniture play music discs and swap to an active model.<br />
 `evolution`, `farmland_required`, and `farmblock_required` support plant and farming setups. `evolution` also supports `light_boost`, `rain_boost`, and `bone_meal` subsections.<br />
@@ -1081,11 +1084,11 @@ For `ARMOR_STAND`, use the same `properties` section for `scale` and `translatio
 `modelengine_id` is also supported for ModelEngine-based furniture.
 
 <Callout type="info">
-  `storage` on furniture requires a barrier or barriers. `DISPLAY_ENTITY` furniture also supports `hitboxes` and display settings under `properties`.
+  <code>storage</code> on furniture requires at least one entry in <code>barriers</code>. <code>DISPLAY_ENTITY</code> furniture also supports <code>hitboxes</code> and display settings under <code>properties</code>.
 </Callout>
 </Details>
 
-## Click Events
+## Click events
 
 Placed blocks and furniture share the `events` format. Add it under `mechanics.block` or `mechanics.furniture`.
 
@@ -1095,10 +1098,12 @@ my_furniture:
   mechanics:
     furniture:
       type: DISPLAY_ENTITY
-      barrier: true
-      breakable: false
+      barriers:
+        - 0,0,0
+      breakable: true
       events:
-        - click: both
+        - trigger: click
+          type: RIGHT
           actions:
             - command: 'say <Player> clicked this furniture'
               executor: CONSOLE
@@ -1107,17 +1112,22 @@ my_furniture:
               conditions:
                 - '!player.hasPermission("myserver.furniture")'
                 - '#server.getOnlinePlayers().size() > 10'
+        - trigger: break
+          actions:
+            - message: '<yellow>You broke the furniture!'
 ```
 
-`click` accepts `left`, `right`, or `both` (default). Actions run in order.<br />
+Set `trigger` to `click`, `break`, or `place`. Furniture also supports `sit`, which runs after the player sits down. The default is `click`. For click events, `type` accepts `LEFT`, `RIGHT`, or `BOTH` (default). Actions run in order.<br />
+Break actions run after a successful player break. They do not run for cancelled breaks or removals without a player. Furniture break actions run once per furniture item, even when it has multiple barriers.<br />
+Furniture with a `LEFT` or `BOTH` click event defaults to `breakable: false`. Other furniture, including furniture with only break events, defaults to `breakable: true`. Set `breakable` explicitly to override the default.<br />
 `command` uses `PLAYER` (default), `CONSOLE`, or `OP-PLAYER` as its `executor`.<br />
-`message` sends MiniMessage text to the clicking player. `<Player>` (also `<player>` or `<PLAYER>`) inserts the player's name. PlaceholderAPI placeholders work when installed.
+`message` sends MiniMessage text to the player who triggered the event. `<Player>` (also `<player>` or `<PLAYER>`) inserts the player's name. PlaceholderAPI placeholders work when installed.
 
 ### Conditions
 
 Set `condition` for one check or `conditions` for a list; every check must pass for that action to run. Checks can use expressions based on methods and properties available on the server's Player or Server API.
-`player` / `#player` refers to the clicking player, and `server` / `#server` to the server. 
+`player` / `#player` refers to the player who triggered the event, and `server` / `#server` to the server.
 
 For example, `player.hasPermission("myserver.furniture.use")` checks a permission and `#server.getOnlinePlayers().size() > 10` checks the player count. Prefix a check with `!` to require it to be false, as in `!player.hasPermission("myserver.furniture.bypass")`. Comparisons include `==`, `!=`, `>`, and `<`.
 
-Conditions are per action; without one, the action runs on a matching click. An invalid check skips its action and logs a warning. For available methods, see the [Paper Player API](https://jd.papermc.io/paper/26.3/org/bukkit/entity/Player.html) and [Paper Server API](https://jd.papermc.io/paper/26.3/org/bukkit/Server.html).
+Conditions are per action; without one, the action runs on a matching event. An invalid check skips its action and logs a warning. For available methods, see the [Paper Player API](https://jd.papermc.io/paper/26.3/org/bukkit/entity/Player.html) and [Paper Server API](https://jd.papermc.io/paper/26.3/org/bukkit/Server.html).

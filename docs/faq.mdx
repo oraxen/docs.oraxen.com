@@ -9,7 +9,7 @@ import { Callout } from '@site/src/components/Compat'
 
 ### Can I Disable The Default Assets And Configs Oraxen Comes With?
 
-Yes. Default configs are controlled by `Plugin.generation.default_configs` in `settings.yml` and can be removed with `/oraxen remove-defaults`. For the default assets and branding we have a dedicated tutorial <Highlight color="#2E8B57" to="usage/tutorials/d017g">**here**</Highlight>.
+Yes. Default configs are controlled by `configuration.defaults.configs` in `settings.yml` and can be removed with `/oraxen remove-defaults`. Default assets are controlled by `configuration.defaults.assets`. For the default assets and branding we have a dedicated tutorial <Highlight color="#2E8B57" to="usage/tutorials/d017g">**here**</Highlight>.
 
 ### Can I Use Oraxen Items In Custom Recipes?
 Yes, Oraxen items can be used in both vanilla crafting recipes and custom recipes. You can reference Oraxen items in recipe configurations using their item IDs. Check the recipes documentation for detailed examples.
@@ -30,7 +30,7 @@ Simply back up your entire `/plugins/Oraxen/` folder, which contains all configu
 You can configure this in `settings.yml`. The example below shows where you can disable or change the sound.
 
 ```yaml
-Pack:
+pack:
   receive:
     loaded:
       actions:
@@ -48,22 +48,25 @@ Set `hide_tooltip: true` under the item's `components` section (1.20.5+). For va
 Go to your `settings.yml` file and set the following options.
 
 ```yaml
-Pack:
+pack:
   generation:
     generate: false
   upload:
     enabled: false
   dispatch:
     send: false
-Plugin:
-  keep_this_up_to_date: false
-Misc:
-  reset_recipes: false
-ItemUpdater:
-  update_items: false
+general:
+  auto-update:
+    settings: false
+utils:
+  recipes:
+    reset: false
+updater:
+  items:
+    update-items: false
 ```
 
-The configurations do not go in that exact order. Once you've changed these lines, delete what is inside the `/Oraxen/pack`, `/Oraxen/items` and `/Oraxen/glyphs` paths and restart the server.
+These settings stop Oraxen from generating, uploading, or sending a resource pack. They also disable automatic settings updates, recipe resets, and item updates. Item mechanics remain available.
 
 ### How Do I Optimize Oraxen Performance?
 

@@ -1,0 +1,198 @@
+.tool {
+  margin: 1.5rem 0;
+  color: var(--ifm-color-content);
+}
+
+.tool button, .tool input, .tool select {
+  border: 0;
+  box-shadow: none;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.upload {
+  position: relative;
+  overflow: hidden;
+  padding: .6rem 1rem;
+  border-radius: 6px;
+  background: var(--ifm-color-emphasis-300);
+  color: var(--ifm-color-content);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.upload input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.upload:focus-within {
+  outline: 2px solid var(--ifm-font-color-base);
+  outline-offset: 3px;
+}
+
+.stage {
+  display: block;
+  margin: 0 auto;
+  max-width: 100%;
+  height: auto;
+  touch-action: none;
+  cursor: move;
+  user-select: none;
+}
+
+.stage image { image-rendering: pixelated; pointer-events: none; }
+.slotNumber {
+  fill: #303030;
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 5px;
+  font-weight: 600;
+}
+.preview[data-loaded='true'] .slotNumber {
+  fill: #fff;
+  filter: drop-shadow(0 0.5px 0.6px #000);
+}
+.stage:focus, .stage:focus-visible { outline: none; }
+.controls { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 1rem; padding: 0 1rem 1rem; text-align: left; }
+.controls fieldset { min-width: 0; margin: 0; padding: .75rem; border: 0; }
+.controls legend { width: auto; margin-inline: 0; font-size: .9rem; font-weight: 600; padding: 0; text-align: left; }
+.field { display: flex; flex-direction: column; gap: .25rem; margin-bottom: .65rem; font-size: .85rem; }
+.field input, .field select { width: 100%; min-width: 0; padding: .4rem; border: 0; border-radius: 4px; background: var(--ifm-background-color); color: var(--ifm-color-content); font: inherit; }
+.controls button { padding: .4rem .65rem; border: 0; border-radius: 4px; background: var(--ifm-color-emphasis-300); color: var(--ifm-color-content); cursor: pointer; }
+.upload:hover, .controls button:hover { background: var(--ifm-color-emphasis-400); }
+.tool input:focus-visible, .tool select:focus-visible, .tool button:focus-visible { outline: 2px solid var(--ifm-color-primary); outline-offset: 2px; }
+.tool input[type='checkbox'] { appearance: none; display: inline-grid; place-content: center; width: 1rem; height: 1rem; margin: 0 .25rem 0 0; border-radius: 3px; background: var(--ifm-color-emphasis-300); vertical-align: middle; cursor: pointer; }
+.tool input[type='checkbox']:checked { background: var(--ifm-color-primary); }
+.tool input[type='checkbox']:checked::after { content: ''; width: .3rem; height: .55rem; border: solid var(--ifm-background-color); border-width: 0 2px 2px 0; transform: translateY(-1px) rotate(45deg); }
+.sliderTrack {
+  --slider-fill: calc(var(--slider-value) + var(--slider-offset));
+  position: relative;
+  display: block;
+  height: 28px;
+}
+.sliderTrack::before {
+  content: '';
+  position: absolute;
+  inset: 6px 0;
+  border-radius: 5px;
+  background: linear-gradient(to right, var(--slider-color, var(--ifm-color-emphasis-500)) var(--slider-fill), var(--ifm-color-emphasis-200) var(--slider-fill));
+  pointer-events: none;
+}
+.sliderTicks { position: absolute; inset: 0 8px; pointer-events: none; }
+.sliderTicks span {
+  position: absolute;
+  top: 10px;
+  width: 2px;
+  height: 8px;
+  border-radius: 1px;
+  transform: translateX(-50%);
+  background: var(--ifm-color-emphasis-600);
+  opacity: .5;
+}
+.sliderLabel { display: flex; justify-content: space-between; gap: .5rem; }
+.sliderLabel span { font-variant-numeric: tabular-nums; }
+.tool .slider {
+  position: relative;
+  display: block;
+  appearance: none;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  border-radius: 5px;
+  background: transparent;
+  cursor: grab;
+  touch-action: pan-y;
+  color: #fff;
+}
+.tool .slider:active { cursor: grabbing; }
+.tool .slider[data-pointer-focus='true']:focus { outline: none; }
+.tool .slider::-webkit-slider-runnable-track { height: 16px; background: transparent; }
+.tool .slider::-moz-range-track { height: 16px; background: transparent; }
+.tool .slider::-webkit-slider-thumb {
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border: 1px solid #0002;
+  border-radius: 5px;
+  background: currentColor;
+}
+.tool .slider::-moz-range-thumb {
+  box-sizing: border-box;
+  width: 16px;
+  height: 16px;
+  border: 1px solid #0002;
+  border-radius: 5px;
+  background: currentColor;
+}
+.help { font-size: .85rem; color: var(--ifm-color-emphasis-700); margin: .75rem 1rem; }
+fieldset .help, .output .help { margin: .5rem 0 0; }
+.error { color: var(--ifm-color-danger); margin: .75rem 1rem; }
+.output { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 1rem; padding: 1rem; }
+.output > div { min-width: 0; }
+.output h3 { font-size: 1rem; }
+.output pre { white-space: pre-wrap; overflow-wrap: anywhere; }
+.output pre code { white-space: inherit; }
+
+.select { position: relative; min-width: 7rem; }
+.tool .selectTrigger { display: flex; align-items: center; justify-content: space-between; gap: 1rem; width: 100%; padding: .6rem .75rem; border-radius: 7px; background: var(--ifm-background-color); color: inherit; font: inherit; text-align: left; cursor: pointer; transition: background 160ms ease; }
+.tool .selectTrigger:hover { background: var(--ifm-color-emphasis-100); }
+.chevron, .optionCheck { display: block; flex-shrink: 0; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
+.chevron { transition: transform 180ms ease; }
+.chevron[data-open='true'] { transform: rotate(180deg); }
+.selectMenu { position: absolute; top: calc(100% + 6px); left: 0; right: 0; z-index: 10; padding: .3rem; border-radius: 9px; background: var(--ifm-background-color); box-shadow: 0 8px 24px #0003; animation: menuEnter 160ms ease-out; }
+.selectMenu[hidden] { display: none; }
+.selectOption { display: flex; align-items: center; justify-content: space-between; gap: .75rem; padding: .5rem .6rem; border-radius: 5px; cursor: pointer; transition: background 120ms ease; }
+.selectOption[data-active='true'] { background: var(--ifm-color-emphasis-200); }
+.selectOption[aria-selected='true'] { color: var(--ifm-color-primary); font-weight: 600; }
+@keyframes menuEnter { from { opacity: 0; transform: translateY(-5px) scale(.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@media (prefers-reduced-motion: reduce) {
+  .selectMenu { animation: none; }
+  .tool .selectTrigger, .chevron, .selectOption { transition: none; }
+}
+
+.toolbar { justify-content: space-between; }
+.toolbar .field { margin-bottom: 0; }
+.toolbar .select { min-width: 0; }
+.upload, .upload:hover {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  background: var(--ifm-color-primary);
+  color: var(--ifm-color-primary-contrast-foreground);
+}
+.upload:hover { filter: brightness(.93); }
+
+.preview {
+  border-radius: 18px;
+  background: var(--ifm-color-emphasis-100);
+}
+.stage { cursor: default; touch-action: auto; }
+.preview[data-loaded='true'] .stage { cursor: grab; touch-action: none; }
+.preview[data-loaded='true'] .stage:active { cursor: grabbing; }
+.stage:focus-visible { outline: 2px solid var(--ifm-color-primary); outline-offset: -2px; border-radius: 8px; }
+.controls, .output {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr));
+  gap: 1.5rem;
+  padding: 1.25rem 0 0;
+}
+.controls fieldset { padding: 0; }
+.controls legend { margin-bottom: .65rem; }
+.field input[type='text'], .field input[type='number'], .controls .selectTrigger {
+  border-radius: 8px;
+  background: var(--ifm-color-emphasis-100);
+}
+.field input[type='text'], .field input[type='number'] { padding: .55rem .7rem; }
+.toggle { display: flex; align-items: center; gap: .35rem; font-size: .85rem; cursor: pointer; }
+.toggle input { flex-shrink: 0; }
+.controls button { font: inherit; font-size: .85rem; }
+.controls button:not(.selectTrigger) { padding-inline: 0; background: transparent; color: var(--ifm-color-primary); }
+.controls button:not(.selectTrigger):hover { text-decoration: underline; }
